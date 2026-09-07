@@ -1,0 +1,81 @@
+import type { Metadata } from "next";
+import { Inter, Poppins } from "next/font/google";
+import "./globals.css";
+import Header from "@/components/layout/Header";
+import Footer from "@/components/layout/Footer";
+import Ticker from "@/components/layout/Ticker";
+
+const inter = Inter({
+  variable: "--font-inter",
+  subsets: ["latin"],
+});
+
+const poppins = Poppins({
+  variable: "--font-poppins",
+  subsets: ["latin"],
+  weight: ["400", "500", "600", "700"],
+});
+
+const SITE_URL = process.env.NEXT_PUBLIC_SITE_URL || "https://theecho.in";
+const SITE_NAME = "The Echo";
+
+export const metadata: Metadata = {
+  metadataBase: new URL(SITE_URL),
+  title: {
+    default: `${SITE_NAME} — India's Digital Newsroom`,
+    template: `%s | ${SITE_NAME}`,
+  },
+  description:
+    "The Echo brings you breaking news, in-depth analysis, and stories from India and the world. Business, Technology, Politics, Sports, and more.",
+  keywords: ["news", "india news", "breaking news", "business", "technology", "politics", "sports"],
+  authors: [{ name: "The Echo" }],
+  creator: "The Echo",
+  publisher: "The Echo",
+  robots: {
+    index: true,
+    follow: true,
+    googleBot: { index: true, follow: true },
+  },
+  openGraph: {
+    type: "website",
+    locale: "en_IN",
+    url: SITE_URL,
+    siteName: SITE_NAME,
+    title: `${SITE_NAME} — India's Digital Newsroom`,
+    description:
+      "Breaking news, analysis, and stories from India and the world.",
+    images: [{ url: "/og-default.png", width: 1200, height: 630, alt: `${SITE_NAME} News` }],
+  },
+  twitter: {
+    card: "summary_large_image",
+    title: `${SITE_NAME} — India's Digital Newsroom`,
+    description: "Breaking news, analysis, and stories from India and the world.",
+    images: ["/og-default.png"],
+  },
+  alternates: {
+    canonical: SITE_URL,
+  },
+};
+
+export default function RootLayout({
+  children,
+}: Readonly<{
+  children: React.ReactNode;
+}>) {
+  return (
+    <html
+      lang="en"
+      className={`${inter.variable} ${poppins.variable} h-full antialiased`}
+      suppressHydrationWarning
+    >
+      <body className="min-h-full flex flex-col font-sans text-neutral-900 bg-[#FAFAFA]">
+        <Ticker />
+        <Header />
+        <main className="flex-1">
+          {children}
+        </main>
+        <Footer />
+      </body>
+    </html>
+  );
+}
