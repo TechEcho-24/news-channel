@@ -7,10 +7,7 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
       {/* Sidebar */}
       <aside className="w-64 bg-white border-r border-gray-200 hidden md:block">
         <div className="p-6 border-b border-gray-200">
-          <Link href="/admin" className="text-2xl font-bold tracking-tight">
-            THE <span className="text-blue-600">ECHO</span>
-          </Link>
-          <div className="text-xs text-gray-400 mt-1 uppercase tracking-widest">Admin Panel</div>
+          <div className="text-sm font-bold text-gray-600 uppercase tracking-widest">Admin Panel</div>
         </div>
         <nav className="p-4 space-y-2">
           <Link href="/admin" className="flex items-center px-4 py-3 text-gray-700 hover:bg-blue-50 hover:text-blue-600 rounded-lg transition-colors font-medium">

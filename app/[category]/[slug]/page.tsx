@@ -78,14 +78,9 @@ export default async function ArticlePage({ params }: { params: Promise<{ catego
             {article.category}
           </Link>
         </div>
-        <h1 className="text-[32px] font-medium leading-tight mb-4">
+        <h1 className="text-[32px] font-bold leading-tight mb-6">
           {article.title}
         </h1>
-        {article.subheadline && (
-          <p className="text-[22px] font-medium text-gray-600 mb-8 leading-relaxed">
-            {article.subheadline}
-          </p>
-        )}
 
         {/* Meta info */}
         <div className="flex flex-col md:flex-row items-start md:items-center justify-between space-y-4 md:space-y-0 border-y border-gray-100 py-6 mb-8">
@@ -129,8 +124,14 @@ export default async function ArticlePage({ params }: { params: Promise<{ catego
 
           {/* Main Content */}
           <div className="flex-1 max-w-2xl mx-auto lg:mx-0">
+            {article.subheadline && (
+              <p className="text-xl font-semibold italic text-gray-700 mb-8 leading-relaxed border-l-4 border-blue-600 pl-4">
+                {article.subheadline}
+              </p>
+            )}
+
             <div 
-              className="prose prose-lg prose-blue max-w-none mb-12 [&_h3]:font-bold [&_h3]:text-[22px] [&_h3]:mt-10 [&_h3]:mb-4 [&_h3]:text-gray-900 [&_blockquote]:border-l-4 [&_blockquote]:border-blue-600 [&_blockquote]:pl-6 [&_blockquote]:italic [&_blockquote]:text-gray-700 [&_blockquote]:my-8 [&_p]:mb-6 [&_p]:text-gray-800 [&_p]:leading-relaxed"
+              className="prose prose-lg prose-blue max-w-none mb-12 [&_h3]:font-bold [&_h3]:text-[22px] [&_h3]:mt-10 [&_h3]:mb-4 [&_h3]:text-gray-900 [&_blockquote]:border-l-4 [&_blockquote]:border-gray-300 [&_blockquote]:pl-6 [&_blockquote]:italic [&_blockquote]:text-gray-600 [&_blockquote]:my-8 [&_p]:mb-6 [&_p]:text-gray-800 [&_p]:leading-relaxed"
               dangerouslySetInnerHTML={{ __html: article.content || "" }}
             />
 
@@ -138,13 +139,6 @@ export default async function ArticlePage({ params }: { params: Promise<{ catego
             <div className="my-10 text-center">
               <AdSlot slot="in_article" />
             </div>
-
-            {/* SEO Description as a callout if present */}
-            {article.seo_description && (
-              <blockquote className="border-l-4 border-blue-600 pl-6 my-8 italic text-xl text-gray-600">
-                {article.seo_description}
-              </blockquote>
-            )}
 
             {/* Comments Section */}
             <CommentSection articleId={article.id} />

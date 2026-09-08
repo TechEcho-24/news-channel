@@ -3,6 +3,7 @@ import Image from "next/image";
 import { MessageSquare, Clock, ArrowRight } from "lucide-react";
 import { getLatestArticles, getArticlesByCategory, generateSlug } from "@/lib/api";
 import { formatDistanceToNow } from "date-fns";
+import MarketTrendsClient from "@/components/articles/MarketTrendsClient";
 
 export const revalidate = 0;
 
@@ -78,22 +79,23 @@ export default async function Home() {
           {/* Sidebar Area */}
           <div className="flex flex-col space-y-10">
             {/* Market Trend & Analytics */}
-            <div>
-              <h3 className="font-bold capitalize tracking-wider text-sm border-b-2 border-black pb-2 mb-6 font-inter">Market Trend</h3>
-              <div className="grid grid-cols-2 gap-4">
-                <div className="bg-gray-50 p-3 rounded border border-gray-100 flex flex-col">
-                  <span className="text-[10px] text-gray-500 font-semibold mb-1 tracking-wider font-inter">SENSEX</span>
-                  <span className="font-bold text-lg leading-none mb-1">73,421.50</span>
-                  <span className="text-green-600 text-[11px] font-semibold flex items-center">
-                    ▲ +342.10 (0.47%)
-                  </span>
-                </div>
-                <div className="bg-gray-50 p-3 rounded border border-gray-100 flex flex-col">
-                  <span className="text-[10px] text-gray-500 font-semibold mb-1 tracking-wider font-inter">NIFTY 50</span>
-                  <span className="font-bold text-lg leading-none mb-1">22,145.20</span>
-                  <span className="text-green-600 text-[11px] font-semibold flex items-center">
-                    ▲ +112.45 (0.51%)
-                  </span>
+            <div className="flex flex-col space-y-6">
+              <MarketTrendsClient />
+              
+              {/* Commodities (Static) */}
+              <div>
+                <h3 className="font-bold capitalize tracking-wider text-sm border-b-2 border-black pb-2 mb-4 font-inter">Commodities</h3>
+                <div className="grid grid-cols-2 gap-4">
+                  <div className="bg-amber-50 p-3 rounded border border-amber-100 flex flex-col">
+                    <span className="text-[10px] text-amber-700 font-semibold mb-1 tracking-wider font-inter">GOLD (24K, 10g)</span>
+                    <span className="font-bold text-lg leading-none mb-1 text-amber-900">₹72,450</span>
+                    <span className="text-gray-500 text-[10px] font-medium">Standard rate</span>
+                  </div>
+                  <div className="bg-slate-50 p-3 rounded border border-slate-200 flex flex-col">
+                    <span className="text-[10px] text-slate-600 font-semibold mb-1 tracking-wider font-inter">SILVER (1kg)</span>
+                    <span className="font-bold text-lg leading-none mb-1 text-slate-800">₹91,200</span>
+                    <span className="text-gray-500 text-[10px] font-medium">Standard rate</span>
+                  </div>
                 </div>
               </div>
             </div>

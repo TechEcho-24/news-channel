@@ -5,13 +5,14 @@ import { useEditor, EditorContent } from "@tiptap/react";
 import StarterKit from "@tiptap/starter-kit";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
-import { ArrowLeft, Save, Image as ImageIcon, Sparkles, Loader2, X } from "lucide-react";
-import { supabase } from "@/lib/supabase";
+import { ArrowLeft, Save, Image as ImageIcon, Sparkles, Loader2, X, Bot, Wand2 } from "lucide-react";
+import { createClient } from "@/utils/supabase/client";
 
 const PREDEFINED_CATEGORIES = ["business", "technology", "economy", "india", "world", "sports", "entertainment", "startups", "lifestyle"];
 
 export default function NewArticlePage() {
   const router = useRouter();
+  const supabase = createClient();
   const [title, setTitle] = useState("");
   const [subheadline, setSubheadline] = useState("");
   const [isSubmitting, setIsSubmitting] = useState(false);
@@ -25,6 +26,10 @@ export default function NewArticlePage() {
   const [selectedCategories, setSelectedCategories] = useState<string[]>([]);
   const [categoryInput, setCategoryInput] = useState("");
   const [categorySuggestions, setCategorySuggestions] = useState<string[]>([]);
+
+  // AI Assistant state
+  const [aiUrl, setAiUrl] = useState("");
+  const [isAiGenerating, setIsAiGenerating] = useState(false);
 
   // Image Upload state
   const [imageFile, setImageFile] = useState<File | null>(null);
@@ -113,6 +118,57 @@ export default function NewArticlePage() {
     });
   };
 
+  const handleGenerateAI = async () => {
+    if (!aiUrl) {
+      alert("Please enter a valid news URL.");
+      return;
+    }
+    
+    setIsAiGenerating(true);
+    try {
+      const res = await fetch("/api/ai/generate-article", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ url: aiUrl })
+      });
+      
+      const data = await res.json();
+      
+      if (!res.ok) {
+        throw new Error(data.error || "Failed to generate article");
+      }
+      
+      // Auto-populate fields
+      setTitle(data.title || "");
+      setSubheadline(data.subheadline || "");
+      
+      if (data.content) {
+        editor?.commands.setContent(data.content);
+      }
+      
+      setSeoTitle(data.title || "");
+      setSeoDescription(data.subheadline || "");
+      if (data.seo_keywords) setSeoKeywords(data.seo_keywords);
+      
+      // Handle categories
+      const newCats = new Set([...selectedCategories]);
+      if (data.category) newCats.add(data.category.toLowerCase().trim());
+      if (data.categories && Array.isArray(data.categories)) {
+        data.categories.forEach((c: string) => newCats.add(c.toLowerCase().trim()));
+      }
+      setSelectedCategories(Array.from(newCats));
+      
+      setAiUrl("");
+      alert("AI Generation complete! Please review the content before publishing.");
+      
+    } catch (error: any) {
+      console.error(error);
+      alert(error.message);
+    } finally {
+      setIsAiGenerating(false);
+    }
+  };
+
   const handleImageSelect = (e: React.ChangeEvent<HTMLInputElement>) => {
     if (e.target.files && e.target.files[0]) {
       const file = e.target.files[0];
@@ -197,6 +253,34 @@ export default function NewArticlePage() {
           <ArrowLeft size={18} />
         </Link>
         <h1 className="text-xl font-bold">Write New Article</h1>
+      </div>
+
+      {/* AI ASSISTANT BLOCK */}
+      <div className="bg-gradient-to-r from-blue-50 to-indigo-50 p-5 rounded-lg border border-blue-100 mb-6 shadow-sm">
+        <div className="flex items-center gap-2 mb-3">
+          <Bot size={20} className="text-blue-600" />
+          <h2 className="text-sm font-bold text-blue-900">AI News Assistant</h2>
+        </div>
+        <p className="text-xs text-blue-800 mb-3">Paste a link to any news article, and our AI will automatically rewrite it into a ready-to-publish format for The Echo.</p>
+        <div className="flex gap-2">
+          <input 
+            type="url" 
+            value={aiUrl}
+            onChange={(e) => setAiUrl(e.target.value)}
+            placeholder="https://example.com/news-article..."
+            className="flex-1 border border-blue-200 rounded-md px-3 py-2 text-sm focus:outline-none focus:border-blue-500 bg-white"
+            disabled={isAiGenerating}
+          />
+          <button 
+            type="button"
+            onClick={handleGenerateAI}
+            disabled={isAiGenerating || !aiUrl}
+            className="bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-md text-sm font-medium flex items-center gap-2 disabled:opacity-50 transition-colors"
+          >
+            {isAiGenerating ? <Loader2 size={16} className="animate-spin" /> : <Wand2 size={16} />}
+            {isAiGenerating ? "Generating..." : "Auto-Generate"}
+          </button>
+        </div>
       </div>
 
       <form onSubmit={handlePublish} className="space-y-5">
