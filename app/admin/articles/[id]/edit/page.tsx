@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useRef, useEffect, KeyboardEvent } from "react";
+import { useState, useRef, useEffect, KeyboardEvent, use } from "react";
 import { useEditor, EditorContent } from "@tiptap/react";
 import StarterKit from "@tiptap/starter-kit";
 import Link from "next/link";
@@ -10,23 +10,14 @@ import { createClient } from "@/utils/supabase/client";
 
 const PREDEFINED_CATEGORIES = ["business", "technology", "economy", "india", "world", "sports", "entertainment", "startups", "lifestyle"];
 
-export default function NewArticlePage() {
+export default function EditArticlePage({ params }: { params: Promise<{ id: string }> }) {
+  const resolvedParams = use(params);
   const router = useRouter();
   const supabase = createClient();
   const [title, setTitle] = useState("");
   const [subheadline, setSubheadline] = useState("");
   const [authorName, setAuthorName] = useState("");
   const [isSubmitting, setIsSubmitting] = useState(false);
-
-  // Fetch logged in user's name as default author
-  useEffect(() => {
-    supabase.auth.getUser().then(({ data: { user } }) => {
-      if (user) {
-        const name = user.user_metadata?.full_name || user.user_metadata?.name || "Anuj Sachan";
-        setAuthorName(name);
-      }
-    });
-  }, [supabase]);
   
   // SEO state
   const [seoTitle, setSeoTitle] = useState("");
@@ -57,6 +48,39 @@ export default function NewArticlePage() {
       },
     },
   });
+
+  // Fetch existing article
+  useEffect(() => {
+    const fetchArticle = async () => {
+      const { data, error } = await supabase
+        .from('articles')
+        .select('*')
+        .eq('id', resolvedParams.id)
+        .single();
+        
+      if (data) {
+        setTitle(data.title || "");
+        setSubheadline(data.subheadline || "");
+        if (data.content && editor) {
+           editor.commands.setContent(data.content);
+        }
+        setAuthorName(data.author_name || "");
+        setSeoTitle(data.seo_title || "");
+        setSeoDescription(data.seo_description || "");
+        setSeoKeywords(data.seo_keywords || "");
+        setImagePreview(data.cover_image || null);
+        
+        const cats = [];
+        if (data.category) cats.push(data.category);
+        if (data.categories) cats.push(...data.categories);
+        setSelectedCategories(Array.from(new Set(cats)));
+      }
+    };
+    
+    if (editor) {
+       fetchArticle();
+    }
+  }, [resolvedParams.id, editor]);
 
   // Handle Category Autocomplete
   useEffect(() => {
@@ -230,24 +254,23 @@ export default function NewArticlePage() {
       
       const { error } = await supabase
         .from('articles')
-        .insert([
-          {
+        .update({
             title,
             subheadline,
-            author_name: authorName || "Anuj Sachan",
+            author_name: authorName,
             category: primaryCategory,
             categories: selectedCategories,
             seo_title: finalSeoTitle,
             seo_description: finalSeoDesc,
             seo_keywords: seoKeywords,
             content: contentHtml,
-            cover_image: finalImageUrl
-          }
-        ]);
+            ...(finalImageUrl ? { cover_image: finalImageUrl } : {})
+        })
+        .eq('id', resolvedParams.id);
         
       if (error) throw error;
       
-      alert("Article Published Successfully!");
+      alert("Article Updated Successfully!");
       router.push("/admin");
     } catch (error: any) {
       console.error("Error publishing article:", error);
@@ -264,7 +287,7 @@ export default function NewArticlePage() {
         <Link href="/admin" className="p-1.5 border border-gray-300 rounded hover:bg-gray-50 transition-colors bg-white">
           <ArrowLeft size={18} />
         </Link>
-        <h1 className="text-xl font-bold">Write New Article</h1>
+        <h1 className="text-xl font-bold">Edit Article</h1>
       </div>
 
       {/* AI ASSISTANT BLOCK */}
@@ -469,9 +492,9 @@ export default function NewArticlePage() {
         <div className="fixed bottom-0 left-0 md:left-64 right-0 flex justify-end space-x-3 p-3 border-t border-gray-200 bg-white z-10 shadow-[0_-4px_6px_-1px_rgba(0,0,0,0.05)]">
           <button type="submit" disabled={isSubmitting || isUploadingImage} className="flex items-center px-6 py-2.5 text-sm font-semibold text-white bg-blue-600 hover:bg-blue-700 rounded-md transition-colors shadow-sm disabled:opacity-50">
             {(isSubmitting || isUploadingImage) ? (
-              <><Loader2 size={16} className="mr-2 animate-spin" /> {isUploadingImage ? "Uploading Image..." : "Publishing..."}</>
+              <><Loader2 size={16} className="mr-2 animate-spin" /> {isUploadingImage ? "Uploading Image..." : "Updating..."}</>
             ) : (
-              <><Save size={16} className="mr-2" /> Publish Article</>
+              <><Save size={16} className="mr-2" /> Update Article</>
             )}
           </button>
         </div>

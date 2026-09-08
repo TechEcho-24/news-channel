@@ -3,6 +3,8 @@ import Image from "next/image";
 import { MessageSquare, Clock, ArrowRight } from "lucide-react";
 import { getLatestArticles, getArticlesByCategory, generateSlug } from "@/lib/api";
 import { formatDistanceToNow } from "date-fns";
+import MarketTrendsClient from "@/components/articles/MarketTrendsClient";
+import NewsletterClient from "@/components/articles/NewsletterClient";
 
 export const revalidate = 0;
 
@@ -26,8 +28,13 @@ export default async function Home() {
   const heroArticle = latestArticles[0];
   const heroSlug = generateSlug(heroArticle.title);
 
-  // Sidebar Articles
-  const sidebarArticles = latestArticles.slice(1, 6);
+  // Sidebar Articles (Latest News) - strictly last 24 hours, max 7 items
+  const twentyFourHoursAgo = new Date();
+  twentyFourHoursAgo.setHours(twentyFourHoursAgo.getHours() - 24);
+
+  const sidebarArticles = latestArticles
+    .filter(article => new Date(article.published_at) >= twentyFourHoursAgo)
+    .slice(0, 7);
 
   // Fetch articles for specific categories for the blocks
   const categoryNames = ["business", "technology", "india", "world"];
@@ -78,22 +85,23 @@ export default async function Home() {
           {/* Sidebar Area */}
           <div className="flex flex-col space-y-10">
             {/* Market Trend & Analytics */}
-            <div>
-              <h3 className="font-bold capitalize tracking-wider text-sm border-b-2 border-black pb-2 mb-6 font-inter">Market Trend</h3>
-              <div className="grid grid-cols-2 gap-4">
-                <div className="bg-gray-50 p-3 rounded border border-gray-100 flex flex-col">
-                  <span className="text-[10px] text-gray-500 font-semibold mb-1 tracking-wider font-inter">SENSEX</span>
-                  <span className="font-bold text-lg leading-none mb-1">73,421.50</span>
-                  <span className="text-green-600 text-[11px] font-semibold flex items-center">
-                    ▲ +342.10 (0.47%)
-                  </span>
-                </div>
-                <div className="bg-gray-50 p-3 rounded border border-gray-100 flex flex-col">
-                  <span className="text-[10px] text-gray-500 font-semibold mb-1 tracking-wider font-inter">NIFTY 50</span>
-                  <span className="font-bold text-lg leading-none mb-1">22,145.20</span>
-                  <span className="text-green-600 text-[11px] font-semibold flex items-center">
-                    ▲ +112.45 (0.51%)
-                  </span>
+            <div className="flex flex-col space-y-6">
+              <MarketTrendsClient />
+              
+              {/* Commodities (Static) */}
+              <div>
+                <h3 className="font-bold capitalize tracking-wider text-sm border-b-2 border-black pb-2 mb-4 font-inter">Commodities</h3>
+                <div className="grid grid-cols-2 gap-4">
+                  <div className="bg-amber-50 p-3 rounded border border-amber-100 flex flex-col">
+                    <span className="text-[10px] text-amber-700 font-semibold mb-1 tracking-wider font-inter">GOLD (24K, 10g)</span>
+                    <span className="font-bold text-lg leading-none mb-1 text-amber-900">₹72,450</span>
+                    <span className="text-gray-500 text-[10px] font-medium">Standard rate</span>
+                  </div>
+                  <div className="bg-slate-50 p-3 rounded border border-slate-200 flex flex-col">
+                    <span className="text-[10px] text-slate-600 font-semibold mb-1 tracking-wider font-inter">SILVER (1kg)</span>
+                    <span className="font-bold text-lg leading-none mb-1 text-slate-800">₹91,200</span>
+                    <span className="text-gray-500 text-[10px] font-medium">Standard rate</span>
+                  </div>
                 </div>
               </div>
             </div>
@@ -103,7 +111,7 @@ export default async function Home() {
               <h3 className="font-bold capitalize tracking-wider text-sm border-b-2 border-black pb-2 mb-6 font-inter">Latest News</h3>
               
               <div className="flex flex-col space-y-4">
-                {sidebarArticles.map((news: any, idx: number) => {
+                {sidebarArticles.length > 0 ? sidebarArticles.map((news: any, idx: number) => {
                   const slug = generateSlug(news.title);
                   return (
                     <div key={idx} className="group cursor-pointer border-b border-gray-100 pb-4 last:border-0 last:pb-0">
@@ -118,7 +126,9 @@ export default async function Home() {
                       </Link>
                     </div>
                   );
-                })}
+                }) : (
+                  <p className="text-sm text-gray-500 italic">No breaking news in the last 24 hours.</p>
+                )}
               </div>
             </div>
 
@@ -270,43 +280,7 @@ export default async function Home() {
 
       {/* SECTION 8 — NEWSLETTER / SUBSCRIBE */}
       <section className="bg-[#111111] text-white py-16">
-        <div className="container mx-auto px-4 max-w-4xl text-center">
-          <h2 className="text-3xl font-serif font-bold mb-4">Stay Ahead of the News</h2>
-          <p className="text-gray-400 mb-8 max-w-2xl mx-auto">
-            Get important stories, breaking updates, and editor's picks delivered directly to you.
-          </p>
-          
-          <form className="max-w-xl mx-auto bg-white p-1 flex">
-            <input 
-              type="email" 
-              placeholder="Enter your email address" 
-              className="flex-1 text-black px-4 py-3 outline-none"
-              required
-            />
-            <button type="submit" className="bg-blue-600 hover:bg-blue-700 text-white font-semibold px-8 py-3 transition-colors">
-              Subscribe
-            </button>
-          </form>
-
-          <div className="mt-6 flex flex-wrap justify-center gap-4 text-sm text-gray-400">
-             <label className="flex items-center space-x-2 cursor-pointer">
-               <input type="checkbox" defaultChecked className="accent-blue-600" />
-               <span>Breaking News</span>
-             </label>
-             <label className="flex items-center space-x-2 cursor-pointer">
-               <input type="checkbox" defaultChecked className="accent-blue-600" />
-               <span>Daily News Digest</span>
-             </label>
-             <label className="flex items-center space-x-2 cursor-pointer">
-               <input type="checkbox" className="accent-blue-600" />
-               <span>Technology</span>
-             </label>
-             <label className="flex items-center space-x-2 cursor-pointer">
-               <input type="checkbox" className="accent-blue-600" />
-               <span>Business</span>
-             </label>
-          </div>
-        </div>
+        <NewsletterClient />
       </section>
     </div>
   );

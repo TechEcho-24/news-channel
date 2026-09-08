@@ -1,9 +1,11 @@
 "use client";
 
 import Link from "next/link";
-import { Search, Menu, X, ChevronDown, User } from "lucide-react";
-import { useState, useEffect } from "react";
+import { Search, Menu, X, ChevronDown, User, Loader2 } from "lucide-react";
+import { useState, useEffect, useRef } from "react";
 import { createClient } from "@/utils/supabase/client";
+import Image from "next/image";
+import { generateSlug } from "@/lib/api";
 
 export default function Header() {
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
@@ -11,6 +13,45 @@ export default function Header() {
   const [user, setUser] = useState<any>(null);
   const [loading, setLoading] = useState(false);
   const supabase = createClient();
+
+  // Search State
+  const [isSearchOpen, setIsSearchOpen] = useState(false);
+  const [searchQuery, setSearchQuery] = useState("");
+  const [searchResults, setSearchResults] = useState<any[]>([]);
+  const [isSearching, setIsSearching] = useState(false);
+  const searchContainerRef = useRef<HTMLDivElement>(null);
+
+  // Handle Search Fetching
+  useEffect(() => {
+    if (!searchQuery.trim()) {
+      setSearchResults([]);
+      return;
+    }
+    const fetchSearch = async () => {
+      setIsSearching(true);
+      const { data } = await supabase
+        .from('articles')
+        .select('id, title, subheadline, cover_image, category, published_at')
+        .ilike('title', `%${searchQuery}%`)
+        .order('published_at', { ascending: false })
+        .limit(4);
+      if (data) setSearchResults(data);
+      setIsSearching(false);
+    };
+    const timer = setTimeout(fetchSearch, 300);
+    return () => clearTimeout(timer);
+  }, [searchQuery, supabase]);
+
+  // Click outside to close search
+  useEffect(() => {
+    function handleClickOutside(event: MouseEvent) {
+      if (searchContainerRef.current && !searchContainerRef.current.contains(event.target as Node)) {
+        setIsSearchOpen(false);
+      }
+    }
+    document.addEventListener("mousedown", handleClickOutside);
+    return () => document.removeEventListener("mousedown", handleClickOutside);
+  }, []);
 
   useEffect(() => {
     async function checkAuthAndSub() {
@@ -63,7 +104,7 @@ export default function Header() {
 
   return (
     <header className="border-b border-gray-200 sticky top-0 bg-[#FAFAFA] z-50">
-      <div className="container mx-auto px-4">
+      <div className="w-full px-8">
         {/* Top Header */}
         <div className="flex justify-between items-center py-4">
           {/* Mobile Menu Icon */}
@@ -77,9 +118,9 @@ export default function Header() {
           </div>
 
           {/* Logo */}
-          <div className="text-3xl font-serif font-bold tracking-tight text-center lg:text-left flex-1 lg:flex-none">
-            <Link href="/">
-              THE <span className="text-blue-600">ECHO</span>
+          <div className="text-4xl font-serif font-extrabold italic tracking-tighter text-center lg:text-left flex-1 lg:flex-none">
+            <Link href="/" className="hover:opacity-90 transition-opacity">
+              <span className="text-black">I</span><span className="text-red-600">N</span><span className="text-black">B</span>
             </Link>
           </div>
 
@@ -117,9 +158,73 @@ export default function Header() {
 
           {/* Actions */}
           <div className="flex items-center space-x-2 md:space-x-4">
-            <button className="p-2 text-gray-700 hover:text-black hidden sm:block">
-              <Search size={20} />
-            </button>
+            {/* Search Bar Container */}
+            <div className="relative hidden sm:block" ref={searchContainerRef}>
+              {isSearchOpen ? (
+                <div className="flex items-center border border-blue-600 rounded-full px-3 py-1.5 bg-white w-[250px] transition-all">
+                  <Search size={16} className="text-gray-400 mr-2" />
+                  <input 
+                    type="text" 
+                    value={searchQuery}
+                    onChange={(e) => setSearchQuery(e.target.value)}
+                    placeholder="Search news..." 
+                    className="w-full bg-transparent outline-none text-sm font-inter"
+                    autoFocus
+                  />
+                  <button onClick={() => { setIsSearchOpen(false); setSearchQuery(""); }} className="text-gray-400 hover:text-gray-600 ml-1">
+                    <X size={16} />
+                  </button>
+                </div>
+              ) : (
+                <button 
+                  onClick={() => setIsSearchOpen(true)}
+                  className="p-2 text-gray-700 hover:text-black transition-colors"
+                >
+                  <Search size={20} />
+                </button>
+              )}
+
+              {/* Search Results Dropdown */}
+              {isSearchOpen && searchQuery.trim() !== "" && (
+                <div className="absolute top-full right-0 mt-3 w-[350px] bg-white border border-gray-200 shadow-xl rounded-lg overflow-hidden z-[100] font-inter">
+                  <div className="p-3 bg-gray-50 border-b border-gray-100 text-xs font-semibold text-gray-500 flex justify-between items-center">
+                    <span>SEARCH RESULTS</span>
+                    {isSearching && <Loader2 size={14} className="animate-spin text-blue-600" />}
+                  </div>
+                  <div className="max-h-[400px] overflow-y-auto">
+                    {searchResults.length > 0 ? (
+                      searchResults.map((article) => (
+                        <Link 
+                          key={article.id} 
+                          href={`/${article.category.toLowerCase()}/${generateSlug(article.title)}`}
+                          onClick={() => { setIsSearchOpen(false); setSearchQuery(""); }}
+                          className="flex items-start p-3 border-b border-gray-100 hover:bg-gray-50 transition-colors gap-3"
+                        >
+                          <div className="w-16 h-12 relative flex-shrink-0 bg-gray-200 rounded overflow-hidden">
+                            {article.cover_image ? (
+                               <Image src={article.cover_image} alt={article.title} fill className="object-cover" />
+                            ) : (
+                               <div className="absolute inset-0 flex items-center justify-center text-[8px] text-gray-400">No Img</div>
+                            )}
+                          </div>
+                          <div className="flex-1 min-w-0">
+                            <h4 className="text-sm font-bold text-gray-900 leading-tight mb-1 truncate">{article.title}</h4>
+                            <p className="text-xs text-gray-500 line-clamp-1">{article.subheadline}</p>
+                          </div>
+                        </Link>
+                      ))
+                    ) : (
+                      !isSearching && (
+                        <div className="p-6 text-center text-sm text-gray-500">
+                          No articles found matching "{searchQuery}"
+                        </div>
+                      )
+                    )}
+                  </div>
+                </div>
+              )}
+            </div>
+
             <Link
               href={user ? "#" : "/login"}
               onClick={handleSubscribeClick}
@@ -144,8 +249,8 @@ export default function Header() {
       {isMobileMenuOpen && (
         <div className="fixed inset-0 bg-white z-[100] lg:hidden overflow-y-auto font-inter">
           <div className="p-4 border-b border-gray-200 flex justify-between items-center bg-[#FAFAFA]">
-            <Link href="/" className="text-2xl font-serif font-bold tracking-tight" onClick={() => setIsMobileMenuOpen(false)}>
-              THE <span className="text-blue-600">ECHO</span>
+            <Link href="/" className="text-3xl font-serif font-extrabold italic tracking-tighter" onClick={() => setIsMobileMenuOpen(false)}>
+              <span className="text-black">I</span><span className="text-red-600">N</span><span className="text-black">B</span>
             </Link>
             <button 
               className="p-2 text-gray-700 hover:text-black"
