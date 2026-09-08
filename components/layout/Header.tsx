@@ -167,10 +167,10 @@ export default function Header() {
                 </div>
               </li>
               
-              {/* Advertise Link in Center Nav */}
+              {/* Contact Link in Center Nav */}
               <li>
-                <Link href="/advertise" className="hover:text-blue-600 transition-colors">
-                  Advertise With Us
+                <Link href="/contact" className="hover:text-blue-600 transition-colors">
+                  Contact
                 </Link>
               </li>
             </ul>

@@ -61,17 +61,17 @@ function TickerBox({ title, data }: { title: string; data: MarketData | null }) 
 
   return (
     <div className={`p-3 rounded border border-gray-100 flex flex-col ${flashClass}`}>
-      <div className="flex justify-between items-start">
-         <span className="text-[10px] text-gray-500 font-semibold mb-1 tracking-wider font-inter">{title}</span>
+      <div className="flex justify-between items-start mb-1">
+         <span className="text-xs text-gray-500 font-bold tracking-widest font-inter uppercase">{title}</span>
          <span className="relative flex h-2 w-2 mt-1">
            <span className={`${isPositive ? 'bg-green-400' : 'bg-red-400'} animate-ping absolute inline-flex h-full w-full rounded-full opacity-75`}></span>
            <span className={`relative inline-flex rounded-full h-2 w-2 ${isPositive ? 'bg-green-500' : 'bg-red-500'}`}></span>
          </span>
       </div>
-      <span className="font-bold text-lg leading-none mb-1">
+      <span className="font-black text-xl leading-none mb-1.5 text-gray-900">
         {data.price.toLocaleString('en-IN', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}
       </span>
-      <span className={`${colorClass} text-[11px] font-semibold flex items-center`}>
+      <span className={`${colorClass} text-xs font-semibold flex items-center`}>
         {arrow} {sign}{data.change.toLocaleString('en-IN', { minimumFractionDigits: 2, maximumFractionDigits: 2 })} ({sign}{data.changePercent.toFixed(2)}%)
       </span>
     </div>
@@ -111,8 +111,8 @@ export default function MarketTrendsClient() {
 
   return (
     <div>
-      <h3 className="font-bold capitalize tracking-wider text-sm border-b-2 border-black pb-2 mb-6 font-inter">Live Market</h3>
-      <div className="grid grid-cols-2 gap-4">
+      <h3 className="font-black uppercase tracking-widest text-xs border-b-2 border-black pb-2 mb-3 font-inter text-gray-900">Live Market</h3>
+      <div className="grid grid-cols-2 gap-3">
         <TickerBox title="SENSEX" data={marketData?.sensex || null} />
         <TickerBox title="NIFTY 50" data={marketData?.nifty || null} />
       </div>
