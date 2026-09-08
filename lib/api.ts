@@ -13,6 +13,7 @@ export type Article = {
   author_name: string;
   cover_image: string | null;
   views: number;
+  impressions: number;
   published_at: string;
   updated_at: string;
 };

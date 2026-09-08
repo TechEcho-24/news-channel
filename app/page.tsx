@@ -1,6 +1,6 @@
 import Link from "next/link";
 import Image from "next/image";
-import { MessageSquare, Clock, ArrowRight } from "lucide-react";
+import { MessageSquare, Clock, ArrowRight, BarChart2 } from "lucide-react";
 import { getLatestArticles, getArticlesByCategory, generateSlug } from "@/lib/api";
 import { formatDistanceToNow } from "date-fns";
 import MarketTrendsClient from "@/components/articles/MarketTrendsClient";
@@ -28,12 +28,12 @@ export default async function Home() {
   const heroArticle = latestArticles[0];
   const heroSlug = generateSlug(heroArticle.title);
 
-  // Sidebar Articles (Latest News) - strictly last 24 hours, max 7 items
-  const twentyFourHoursAgo = new Date();
-  twentyFourHoursAgo.setHours(twentyFourHoursAgo.getHours() - 24);
+  // Sidebar Articles (Latest News) - strictly last 3 hours, max 7 items
+  const threeHoursAgo = new Date();
+  threeHoursAgo.setHours(threeHoursAgo.getHours() - 3);
 
   const sidebarArticles = latestArticles
-    .filter(article => new Date(article.published_at) >= twentyFourHoursAgo)
+    .filter(article => new Date(article.published_at) >= threeHoursAgo)
     .slice(0, 7);
 
   // Fetch articles for specific categories for the blocks
@@ -67,6 +67,8 @@ export default async function Home() {
               </Link>
               <span className="text-gray-500 flex items-center text-xs">
                 <Clock size={12} className="mr-1" /> {formatDistanceToNow(new Date(heroArticle.published_at), { addSuffix: true })}
+                <span className="mx-2">•</span>
+                <BarChart2 size={12} className="mr-1" /> {heroArticle.impressions || 0}
               </span>
             </div>
             <Link href={`/${heroArticle.category.toLowerCase()}/${heroSlug}`}>
@@ -117,7 +119,11 @@ export default async function Home() {
                     <div key={idx} className="group cursor-pointer border-b border-gray-100 pb-4 last:border-0 last:pb-0">
                       <div className="flex justify-between items-start mb-1">
                         <Link href={`/${news.category.toLowerCase()}`} className="text-blue-600 font-bold text-[10px] capitalize tracking-wider font-inter hover:underline">{news.category}</Link>
-                        <span className="text-gray-400 text-[10px]">{formatDistanceToNow(new Date(news.published_at), { addSuffix: true })}</span>
+                        <div className="text-gray-400 text-[10px] flex items-center">
+                          <Clock size={10} className="mr-1" /> {formatDistanceToNow(new Date(news.published_at), { addSuffix: true })}
+                          <span className="mx-1.5">•</span>
+                          <BarChart2 size={10} className="mr-1" /> {news.impressions || 0}
+                        </div>
                       </div>
                       <Link href={`/${news.category.toLowerCase()}/${slug}`}>
                         <h4 className="text-[15px] font-serif font-bold leading-snug group-hover:text-blue-600 transition-colors">
@@ -127,7 +133,7 @@ export default async function Home() {
                     </div>
                   );
                 }) : (
-                  <p className="text-sm text-gray-500 italic">No breaking news in the last 24 hours.</p>
+                  <p className="text-sm text-gray-500 italic">No breaking news in the last 3 hours.</p>
                 )}
               </div>
             </div>
@@ -197,6 +203,8 @@ export default async function Home() {
                     </p>
                     <div className="text-gray-500 text-xs flex items-center font-medium">
                       <Clock size={12} className="mr-1" /> {formatDistanceToNow(new Date(featuredArticle.published_at), { addSuffix: true })}
+                      <span className="mx-2">•</span>
+                      <BarChart2 size={12} className="mr-1" /> {featuredArticle.impressions || 0}
                     </div>
                   </div>
                   <div className="flex flex-col space-y-6">
@@ -215,6 +223,8 @@ export default async function Home() {
                           </h4>
                           <div className="text-gray-400 text-[10px] flex items-center">
                             <Clock size={10} className="mr-1" /> {formatDistanceToNow(new Date(item.published_at), { addSuffix: true })}
+                            <span className="mx-1.5">•</span>
+                            <BarChart2 size={10} className="mr-1" /> {item.impressions || 0}
                           </div>
                         </div>
                       </Link>
@@ -242,6 +252,8 @@ export default async function Home() {
                           </h4>
                           <div className="text-gray-400 text-[10px] flex items-center">
                             <Clock size={10} className="mr-1" /> {formatDistanceToNow(new Date(item.published_at), { addSuffix: true })}
+                            <span className="mx-1.5">•</span>
+                            <BarChart2 size={10} className="mr-1" /> {item.impressions || 0}
                           </div>
                         </div>
                       </Link>
@@ -267,6 +279,8 @@ export default async function Home() {
                     </p>
                     <div className="text-gray-500 text-xs flex items-center font-medium">
                       <Clock size={12} className="mr-1" /> {formatDistanceToNow(new Date(featuredArticle.published_at), { addSuffix: true })}
+                      <span className="mx-2">•</span>
+                      <BarChart2 size={12} className="mr-1" /> {featuredArticle.impressions || 0}
                     </div>
                   </div>
                 </div>

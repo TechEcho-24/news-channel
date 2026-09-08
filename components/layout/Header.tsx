@@ -6,11 +6,13 @@ import { useState, useEffect, useRef } from "react";
 import { createClient } from "@/utils/supabase/client";
 import Image from "next/image";
 import { generateSlug } from "@/lib/api";
+import LanguageSelector from "./LanguageSelector";
 
 export default function Header() {
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
   const [isSubscribed, setIsSubscribed] = useState(false);
   const [user, setUser] = useState<any>(null);
+  const [userInitials, setUserInitials] = useState<string | null>(null);
   const [loading, setLoading] = useState(false);
   const supabase = createClient();
 
@@ -58,9 +60,20 @@ export default function Header() {
       const { data: { user } } = await supabase.auth.getUser();
       if (user) {
         setUser(user);
-        const { data } = await supabase.from('profiles').select('is_subscribed').eq('id', user.id).single();
+        const { data } = await supabase.from('profiles').select('*').eq('id', user.id).single();
         if (data?.is_subscribed) {
           setIsSubscribed(true);
+        }
+        
+        let nameToUse = data?.full_name || data?.username || user.user_metadata?.full_name || user.user_metadata?.name || user.email;
+        if (nameToUse) {
+           // Basic logic to get "AS" from "Anuj Sachan"
+           const parts = nameToUse.split(/[\s_@.-]+/).filter(Boolean);
+           if (parts.length >= 2) {
+             setUserInitials((parts[0][0] + parts[parts.length - 1][0]).toUpperCase());
+           } else if (parts.length === 1) {
+             setUserInitials(parts[0].substring(0, 2).toUpperCase());
+           }
         }
       }
     }
@@ -103,7 +116,7 @@ export default function Header() {
   ];
 
   return (
-    <header className="border-b border-gray-200 sticky top-0 bg-[#FAFAFA] z-50">
+    <header className="border-b border-gray-200 sticky top-0 bg-white/70 backdrop-blur-md z-50">
       <div className="w-full px-8">
         {/* Top Header */}
         <div className="flex justify-between items-center py-4">
@@ -152,6 +165,13 @@ export default function Header() {
                     ))}
                   </ul>
                 </div>
+              </li>
+              
+              {/* Advertise Link in Center Nav */}
+              <li>
+                <Link href="/advertise" className="hover:text-blue-600 transition-colors">
+                  Advertise With Us
+                </Link>
               </li>
             </ul>
           </nav>
@@ -224,7 +244,7 @@ export default function Header() {
                 </div>
               )}
             </div>
-
+            
             <Link
               href={user ? "#" : "/login"}
               onClick={handleSubscribeClick}
@@ -238,9 +258,14 @@ export default function Header() {
             >
               {isSubscribed ? "Subscribed" : loading ? "Wait..." : "Subscribe"}
             </Link>
-            <Link href="/profile" className="w-8 h-8 md:w-10 md:h-10 flex items-center justify-center text-gray-700 hover:text-blue-600 transition-colors border-2 border-gray-300 rounded-full hover:border-blue-600">
-              <User size={16} className="md:w-5 md:h-5" />
+            <Link href="/profile" className="w-8 h-8 md:w-10 md:h-10 flex items-center justify-center text-gray-700 hover:text-blue-600 transition-colors border-2 border-gray-300 rounded-full hover:border-blue-600 bg-gray-50 overflow-hidden font-bold text-xs md:text-sm">
+              {userInitials ? (
+                userInitials
+              ) : (
+                <User size={16} className="md:w-5 md:h-5" />
+              )}
             </Link>
+            <LanguageSelector />
           </div>
         </div>
       </div>

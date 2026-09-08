@@ -5,7 +5,7 @@ import { format } from "date-fns";
 import { Link as LinkIcon, Share2, Globe, Rss } from "lucide-react";
 import type { Metadata } from "next";
 import { getArticleBySlug } from "@/lib/api";
-import CommentSection from "@/components/articles/CommentSection";
+import ArticleActionsClient from "@/components/articles/ArticleActionsClient";
 import AdSlot from "@/components/ads/AdSlot";
 
 const SITE_NAME = "The Echo";
@@ -127,8 +127,8 @@ export default async function ArticlePage({ params }: { params: Promise<{ catego
               <AdSlot slot="in_article" />
             </div>
 
-            {/* Comments Section */}
-            <CommentSection articleId={article.id} />
+            {/* Impressions & Comments Toggle */}
+            <ArticleActionsClient key={article.id} articleId={article.id} initialImpressions={article.impressions || 0} />
           </div>
 
           {/* Sidebar */}

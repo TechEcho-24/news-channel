@@ -1,6 +1,6 @@
 import Link from "next/link";
 import Image from "next/image";
-import { Clock, ChevronRight } from "lucide-react";
+import { Clock, ChevronRight, BarChart2 } from "lucide-react";
 import { getLatestArticles, getArticlesByCategory, generateSlug } from "@/lib/api";
 import { formatDistanceToNow } from "date-fns";
 import type { Metadata } from "next";
@@ -30,9 +30,9 @@ export default async function CategoryPage({ params }: { params: Promise<{ categ
   let articles = [];
   if (categoryStr.toLowerCase() === 'latest') {
     const allLatest = await getLatestArticles(50);
-    const twentyFourHoursAgo = new Date();
-    twentyFourHoursAgo.setHours(twentyFourHoursAgo.getHours() - 24);
-    articles = allLatest.filter((a: any) => new Date(a.published_at) >= twentyFourHoursAgo);
+    const threeHoursAgo = new Date();
+    threeHoursAgo.setHours(threeHoursAgo.getHours() - 3);
+    articles = allLatest.filter((a: any) => new Date(a.published_at) >= threeHoursAgo);
   } else {
     articles = await getArticlesByCategory(categoryStr, 50);
   }
@@ -78,6 +78,8 @@ export default async function CategoryPage({ params }: { params: Promise<{ categ
                   </p>
                   <div className="text-gray-500 text-xs flex items-center font-medium">
                     <Clock size={12} className="mr-1" /> {formatDistanceToNow(new Date(featuredArticle.published_at), { addSuffix: true })}
+                    <span className="mx-2">•</span>
+                    <BarChart2 size={12} className="mr-1" /> {featuredArticle.impressions || 0}
                   </div>
                 </Link>
               </div>
@@ -101,6 +103,8 @@ export default async function CategoryPage({ params }: { params: Promise<{ categ
                   </h3>
                   <div className="text-gray-500 text-[11px] flex items-center font-medium">
                     <Clock size={12} className="mr-1" /> {formatDistanceToNow(new Date(item.published_at), { addSuffix: true })}
+                    <span className="mx-2">•</span>
+                    <BarChart2 size={12} className="mr-1" /> {item.impressions || 0}
                   </div>
                 </Link>
               ))}

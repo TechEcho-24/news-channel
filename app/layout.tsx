@@ -4,6 +4,7 @@ import "./globals.css";
 import Header from "@/components/layout/Header";
 import Footer from "@/components/layout/Footer";
 import Ticker from "@/components/layout/Ticker";
+import Script from "next/script";
 
 const inter = Inter({
   variable: "--font-inter",
@@ -69,6 +70,21 @@ export default function RootLayout({
       suppressHydrationWarning
     >
       <body className="min-h-full flex flex-col font-sans text-neutral-900 bg-[#FAFAFA]">
+        <Script 
+          src="https://translate.google.com/translate_a/element.js?cb=googleTranslateElementInit"
+          strategy="afterInteractive"
+        />
+        <Script id="google-translate-init" strategy="afterInteractive">
+          {`
+            function googleTranslateElementInit() {
+              new google.translate.TranslateElement({
+                pageLanguage: 'en',
+                includedLanguages: 'hi,en',
+                autoDisplay: false
+              }, 'google_translate_element');
+            }
+          `}
+        </Script>
         <Ticker />
         <Header />
         <main className="flex-1">
