@@ -27,8 +27,13 @@ export default async function Home() {
   const heroArticle = latestArticles[0];
   const heroSlug = generateSlug(heroArticle.title);
 
-  // Sidebar Articles
-  const sidebarArticles = latestArticles.slice(1, 6);
+  // Sidebar Articles (Latest News) - strictly last 24 hours, max 7 items
+  const twentyFourHoursAgo = new Date();
+  twentyFourHoursAgo.setHours(twentyFourHoursAgo.getHours() - 24);
+
+  const sidebarArticles = latestArticles
+    .filter(article => new Date(article.published_at) >= twentyFourHoursAgo)
+    .slice(0, 7);
 
   // Fetch articles for specific categories for the blocks
   const categoryNames = ["business", "technology", "india", "world"];
@@ -105,7 +110,7 @@ export default async function Home() {
               <h3 className="font-bold capitalize tracking-wider text-sm border-b-2 border-black pb-2 mb-6 font-inter">Latest News</h3>
               
               <div className="flex flex-col space-y-4">
-                {sidebarArticles.map((news: any, idx: number) => {
+                {sidebarArticles.length > 0 ? sidebarArticles.map((news: any, idx: number) => {
                   const slug = generateSlug(news.title);
                   return (
                     <div key={idx} className="group cursor-pointer border-b border-gray-100 pb-4 last:border-0 last:pb-0">
@@ -120,7 +125,9 @@ export default async function Home() {
                       </Link>
                     </div>
                   );
-                })}
+                }) : (
+                  <p className="text-sm text-gray-500 italic">No breaking news in the last 24 hours.</p>
+                )}
               </div>
             </div>
 

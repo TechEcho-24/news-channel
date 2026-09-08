@@ -81,27 +81,6 @@ export default async function ArticlePage({ params }: { params: Promise<{ catego
         <h1 className="text-[32px] font-bold leading-tight mb-6">
           {article.title}
         </h1>
-
-        {/* Meta info */}
-        <div className="flex flex-col md:flex-row items-start md:items-center justify-between space-y-4 md:space-y-0 border-y border-gray-100 py-6 mb-8">
-          <div className="flex items-center">
-            <div className="w-12 h-12 bg-blue-100 rounded-full mr-3 flex items-center justify-center font-bold text-xl text-blue-600">
-              {(article.author_name || "A").charAt(0).toUpperCase()}
-            </div>
-            <div className="text-left">
-              <div className="font-bold text-sm">By {article.author_name || "The Echo Staff"}</div>
-              <div className="text-xs text-gray-500 mt-1">
-                {format(publishedDate, "MMMM d, yyyy · h:mm a")}
-              </div>
-            </div>
-          </div>
-          <div className="flex space-x-3 text-gray-500">
-            <button className="p-2 border border-gray-200 rounded-full hover:bg-gray-50 transition-colors"><Globe size={18} /></button>
-            <button className="p-2 border border-gray-200 rounded-full hover:bg-gray-50 transition-colors"><Share2 size={18} /></button>
-            <button className="p-2 border border-gray-200 rounded-full hover:bg-gray-50 transition-colors"><Rss size={18} /></button>
-            <button className="p-2 border border-gray-200 rounded-full hover:bg-gray-50 transition-colors"><LinkIcon size={18} /></button>
-          </div>
-        </div>
       </div>
 
       {/* Hero Image */}
@@ -134,6 +113,14 @@ export default async function ArticlePage({ params }: { params: Promise<{ catego
               className="prose prose-lg prose-blue max-w-none mb-12 [&_h3]:font-bold [&_h3]:text-[22px] [&_h3]:mt-10 [&_h3]:mb-4 [&_h3]:text-gray-900 [&_blockquote]:border-l-4 [&_blockquote]:border-gray-300 [&_blockquote]:pl-6 [&_blockquote]:italic [&_blockquote]:text-gray-600 [&_blockquote]:my-8 [&_p]:mb-6 [&_p]:text-gray-800 [&_p]:leading-relaxed"
               dangerouslySetInnerHTML={{ __html: article.content || "" }}
             />
+
+            {/* Author Meta at Bottom */}
+            <div className="border-t border-gray-100 py-6 mb-8 text-left">
+              <div className="font-bold text-sm text-gray-900">Author: {article.author_name || "The Echo Staff"}</div>
+              <div className="text-xs text-gray-500 mt-1">
+                Published on {format(publishedDate, "MMMM d, yyyy")}
+              </div>
+            </div>
 
             {/* In-Article Ad */}
             <div className="my-10 text-center">

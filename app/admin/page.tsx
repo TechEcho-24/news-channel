@@ -1,7 +1,12 @@
 import Link from "next/link";
-import { Users, FileText, Eye, TrendingUp } from "lucide-react";
+import { Users, FileText, Eye, TrendingUp, Edit } from "lucide-react";
+import { getLatestArticles } from "@/lib/api";
+import { formatDistanceToNow } from "date-fns";
 
-export default function AdminDashboard() {
+export const revalidate = 0;
+
+export default async function AdminDashboard() {
+  const latestArticles = await getLatestArticles(10);
   return (
     <div className="p-8">
       <div className="flex justify-between items-center mb-8">
@@ -60,22 +65,29 @@ export default function AdminDashboard() {
           <Link href="/admin/articles" className="text-sm text-blue-600 font-medium hover:underline">View All</Link>
         </div>
         <div className="divide-y divide-gray-200">
-          {[1, 2, 3, 4, 5].map((item) => (
-            <div key={item} className="px-6 py-4 flex items-center justify-between hover:bg-gray-50 transition-colors">
+          {latestArticles.map((article) => (
+            <div key={article.id} className="px-6 py-4 flex flex-col md:flex-row md:items-center justify-between hover:bg-gray-50 transition-colors gap-4">
               <div>
-                <h4 className="font-semibold text-gray-900">Global Markets Rally as Tech Sector Posts Record Earnings</h4>
+                <h4 className="font-semibold text-gray-900 line-clamp-1">{article.title}</h4>
                 <div className="text-sm text-gray-500 mt-1 flex space-x-3">
-                  <span>Business</span>
+                  <span className="capitalize">{article.category}</span>
                   <span>•</span>
-                  <span>Published {item} hours ago</span>
+                  <span>Published {formatDistanceToNow(new Date(article.published_at), { addSuffix: true })}</span>
                 </div>
               </div>
               <div className="flex items-center space-x-3">
-                <span className="px-3 py-1 bg-green-100 text-green-800 text-xs font-semibold rounded-full">Published</span>
-                <button className="text-blue-600 hover:underline text-sm font-medium">Edit</button>
+                <span className="px-3 py-1 bg-green-100 text-green-800 text-[10px] font-semibold rounded-full uppercase tracking-wider">Published</span>
+                <Link href={`/admin/articles/${article.id}/edit`} className="flex items-center text-blue-600 hover:text-blue-800 text-sm font-medium transition-colors bg-blue-50 hover:bg-blue-100 px-3 py-1.5 rounded-md">
+                  <Edit size={14} className="mr-1.5" /> Edit
+                </Link>
               </div>
             </div>
           ))}
+          {latestArticles.length === 0 && (
+            <div className="px-6 py-8 text-center text-gray-500">
+              No articles published yet.
+            </div>
+          )}
         </div>
       </div>
     </div>
