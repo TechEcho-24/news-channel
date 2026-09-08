@@ -4,6 +4,7 @@ import { MessageSquare, Clock, ArrowRight } from "lucide-react";
 import { getLatestArticles, getArticlesByCategory, generateSlug } from "@/lib/api";
 import { formatDistanceToNow } from "date-fns";
 import MarketTrendsClient from "@/components/articles/MarketTrendsClient";
+import NewsletterClient from "@/components/articles/NewsletterClient";
 
 export const revalidate = 0;
 
@@ -279,43 +280,7 @@ export default async function Home() {
 
       {/* SECTION 8 — NEWSLETTER / SUBSCRIBE */}
       <section className="bg-[#111111] text-white py-16">
-        <div className="container mx-auto px-4 max-w-4xl text-center">
-          <h2 className="text-3xl font-serif font-bold mb-4">Stay Ahead of the News</h2>
-          <p className="text-gray-400 mb-8 max-w-2xl mx-auto">
-            Get important stories, breaking updates, and editor's picks delivered directly to you.
-          </p>
-          
-          <form className="max-w-xl mx-auto bg-white p-1 flex">
-            <input 
-              type="email" 
-              placeholder="Enter your email address" 
-              className="flex-1 text-black px-4 py-3 outline-none"
-              required
-            />
-            <button type="submit" className="bg-blue-600 hover:bg-blue-700 text-white font-semibold px-8 py-3 transition-colors">
-              Subscribe
-            </button>
-          </form>
-
-          <div className="mt-6 flex flex-wrap justify-center gap-4 text-sm text-gray-400">
-             <label className="flex items-center space-x-2 cursor-pointer">
-               <input type="checkbox" defaultChecked className="accent-blue-600" />
-               <span>Breaking News</span>
-             </label>
-             <label className="flex items-center space-x-2 cursor-pointer">
-               <input type="checkbox" defaultChecked className="accent-blue-600" />
-               <span>Daily News Digest</span>
-             </label>
-             <label className="flex items-center space-x-2 cursor-pointer">
-               <input type="checkbox" className="accent-blue-600" />
-               <span>Technology</span>
-             </label>
-             <label className="flex items-center space-x-2 cursor-pointer">
-               <input type="checkbox" className="accent-blue-600" />
-               <span>Business</span>
-             </label>
-          </div>
-        </div>
+        <NewsletterClient />
       </section>
     </div>
   );
