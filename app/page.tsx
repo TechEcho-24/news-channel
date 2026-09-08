@@ -5,6 +5,7 @@ import { getLatestArticles, getArticlesByCategory, generateSlug } from "@/lib/ap
 import { formatDistanceToNow } from "date-fns";
 import MarketTrendsClient from "@/components/articles/MarketTrendsClient";
 import NewsletterClient from "@/components/articles/NewsletterClient";
+import AdSlot from "@/components/ads/AdSlot";
 
 export const revalidate = 0;
 
@@ -47,6 +48,11 @@ export default async function Home() {
 
   return (
     <div className="bg-[#FAFAFA]">
+      {/* HOMEPAGE HERO TOP AD BANNER */}
+      <div className="container mx-auto px-4 pt-6">
+        <AdSlot slot="homepage_hero" />
+      </div>
+
       {/* SECTION — HERO NEWS */}
       <section className="container mx-auto px-4 pt-10 pb-16">
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-10">
@@ -140,12 +146,7 @@ export default async function Home() {
             </div>
 
             {/* Sidebar Ad */}
-            <div className="bg-gray-50 p-3 text-center border border-gray-200">
-              <span className="text-[10px] text-gray-400 uppercase tracking-widest block mb-2 font-inter">Advertisement</span>
-              <div className="w-full aspect-square bg-gray-200 flex items-center justify-center text-gray-500 text-sm font-medium">
-                Sidebar Banner (300x250)
-              </div>
-            </div>
+            <AdSlot slot="sidebar" className="my-2" />
           </div>
         </div>
       </section>
@@ -154,23 +155,20 @@ export default async function Home() {
       <section className="bg-white py-14 border-t border-gray-100">
         <div className="container mx-auto px-4">
           
-          {categoryBlocks.map((block, idx) => {
-            if (block.articles.length === 0) return null;
-            
-            const layoutStyle = idx % 2;
-            const featuredArticle = block.articles[0];
-            const listArticles = block.articles.slice(1, 5);
+          {(() => {
+            const visibleBlocks = categoryBlocks.filter(b => b.articles.length > 0);
+            return visibleBlocks.map((block, idx) => {
+              const layoutStyle = idx % 2;
+              const featuredArticle = block.articles[0];
+              const listArticles = block.articles.slice(1, 5);
 
-            return (
-            <div key={idx}>
-              {idx > 0 && idx % 2 === 0 && (
-                <div className="w-full py-10 my-6 bg-gray-50 text-center border-y border-gray-100">
-                  <span className="text-[10px] text-gray-400 uppercase tracking-widest block mb-3">Advertisement</span>
-                  <div className="w-full max-w-[728px] h-[90px] bg-gray-200 mx-auto flex items-center justify-center text-gray-500 font-medium text-sm">
-                    Leaderboard Ad (728x90)
-                  </div>
-                </div>
-              )}
+              return (
+                <div key={idx}>
+                  {idx > 0 && (
+                    <div className="w-full py-6 my-6 border-y border-gray-100 flex justify-center">
+                      <AdSlot slot="leaderboard" />
+                    </div>
+                  )}
 
               <div className="mb-16 last:mb-0 pt-2">
                 <div className="flex justify-between items-end mb-6 border-b-2 border-black pb-2">
@@ -279,8 +277,9 @@ export default async function Home() {
               )}
               </div>
             </div>
-          )})}
-
+          );
+        });
+      })()}
         </div>
       </section>
 
