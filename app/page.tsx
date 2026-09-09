@@ -56,8 +56,22 @@ export default async function Home() {
     })
   );
 
+  const SITE_URL = process.env.NEXT_PUBLIC_SITE_URL || "https://bharatnewsbulletin.com";
+  const SITE_NAME = "Bharat News Bulletin";
+  
+  const websiteSchema = {
+    "@context": "https://schema.org",
+    "@type": "WebSite",
+    "name": SITE_NAME,
+    "url": SITE_URL
+  };
+
   return (
     <div className="bg-[#FAFAFA]">
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(websiteSchema) }}
+      />
       {/* HOMEPAGE HERO TOP AD BANNER */}
       <div className="container mx-auto px-4 pt-6">
         <AdSlot slot="homepage_hero" />

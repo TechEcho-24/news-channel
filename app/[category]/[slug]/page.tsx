@@ -86,9 +86,8 @@ export default async function ArticlePage({ params }: { params: Promise<{ catego
     "datePublished": article.published_at,
     "dateModified": article.updated_at || article.published_at,
     "author": {
-      "@type": "Organization",
-      "name": article.author_name || SITE_NAME,
-      "url": SITE_URL
+      "@type": "Person",
+      "name": article.author_name || "BNB Staff"
     },
     "publisher": {
       "@type": "Organization",

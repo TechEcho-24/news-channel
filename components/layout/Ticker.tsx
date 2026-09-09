@@ -31,7 +31,7 @@ export default async function Ticker() {
             ))}
             {/* Duplicate for seamless continuous loop */}
             {latestNews.map((news) => (
-              <Link key={`dup-${news.id}`} href={news.link} aria-hidden="true" tabIndex={-1} className="mx-8 hover:text-[#3B82F6] hover:underline transition-colors cursor-pointer flex items-center gap-2">
+              <Link key={`dup-${news.id}`} href={news.link} aria-hidden="true" tabIndex={-1} rel="nofollow" className="mx-8 hover:text-[#3B82F6] hover:underline transition-colors cursor-pointer flex items-center gap-2">
                 <span className="w-1.5 h-1.5 bg-red-500 rounded-full animate-ping"></span>
                 <span>{news.text}</span>
               </Link>
