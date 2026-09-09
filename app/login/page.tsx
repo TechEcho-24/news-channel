@@ -42,7 +42,7 @@ export default function LoginPage() {
   return (
     <div className="bg-gray-50 flex flex-col justify-center py-16 sm:px-6 lg:px-8">
       <div className="sm:mx-auto sm:w-full sm:max-w-md flex flex-col items-center">
-        <Image src="/logo-header.png" alt="BNB Logo" width={140} height={56} className="object-contain h-14 w-auto mb-4" />
+        <Image src="/bnblogo.png" alt="BNB Logo" width={140} height={56} className="object-contain h-14 w-auto mb-4" />
         <h2 className="text-center text-3xl font-extrabold text-gray-900 font-poppins">
           Sign in to your account
         </h2>

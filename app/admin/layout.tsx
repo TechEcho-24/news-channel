@@ -9,7 +9,7 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
       <aside className="w-64 bg-white border-r border-gray-200 hidden md:block">
         <div className="p-6 border-b border-gray-200">
           <Link href="/">
-            <Image src="/logo-header.png" alt="BNB Logo" width={120} height={48} className="object-contain h-8 w-auto mb-2" />
+            <Image src="/bnblogo.png" alt="BNB Logo" width={120} height={48} className="object-contain h-8 w-auto mb-2" />
             <div className="text-xs font-bold text-gray-500 uppercase tracking-widest">Admin Panel</div>
           </Link>
         </div>

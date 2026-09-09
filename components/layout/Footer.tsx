@@ -11,7 +11,7 @@ export default function Footer() {
           {/* Brand & Newsletter */}
           <div className="lg:col-span-2">
             <Link href="/" className="inline-flex items-center gap-3 mb-4 group">
-              <Image src="/logo-header.png" alt="BNB Logo" width={100} height={40} className="object-contain h-10 w-auto" />
+              <Image src="/bnblogo.png" alt="BNB Logo" width={100} height={40} className="object-contain h-10 w-auto" />
               <span className="border-l border-gray-700 pl-3 text-xs font-bold tracking-widest uppercase text-gray-300 group-hover:text-white transition-colors leading-tight">
                 Bharat News Bulletin
               </span>

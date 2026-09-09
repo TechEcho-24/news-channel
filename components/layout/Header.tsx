@@ -141,7 +141,7 @@ export default function Header() {
           {/* Logo */}
           <div className="flex-1 lg:flex-none flex justify-center lg:justify-start">
             <Link href="/" className="hover:opacity-90 transition-opacity flex items-center">
-              <Image src="/logo-header.png" alt="BNB Logo" width={100} height={40} className="object-contain h-10 w-auto" priority />
+              <Image src="/bnblogo.png" alt="BNB Logo" width={100} height={40} className="object-contain h-10 w-auto" priority />
             </Link>
           </div>
 
@@ -283,7 +283,7 @@ export default function Header() {
         <div className="fixed inset-0 bg-white z-[100] lg:hidden overflow-y-auto font-inter">
           <div className="p-4 border-b border-gray-200 flex justify-between items-center bg-[#FAFAFA]">
             <Link href="/" onClick={() => setIsMobileMenuOpen(false)}>
-              <Image src="/logo-header.png" alt="BNB Logo" width={90} height={36} className="object-contain h-9 w-auto" />
+              <Image src="/bnblogo.png" alt="BNB Logo" width={90} height={36} className="object-contain h-9 w-auto" />
             </Link>
             <button 
               className="p-2 text-gray-700 hover:text-black"
