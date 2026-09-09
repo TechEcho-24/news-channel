@@ -296,7 +296,7 @@ export default function EditArticlePage({ params }: { params: Promise<{ id: stri
           <Bot size={20} className="text-blue-600" />
           <h2 className="text-sm font-bold text-blue-900">AI News Assistant</h2>
         </div>
-        <p className="text-xs text-blue-800 mb-3">Paste a link to any news article, and our AI will automatically rewrite it into a ready-to-publish format for The Echo.</p>
+        <p className="text-xs text-blue-800 mb-3">Paste a link to any news article, and our AI will automatically rewrite it into a ready-to-publish format for Bharat News Bulletin (BNB).</p>
         <div className="flex gap-2">
           <input 
             type="url" 

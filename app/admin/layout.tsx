@@ -1,5 +1,5 @@
 import Link from "next/link";
-import { LayoutDashboard, FileText, Settings, LogOut, Users, Megaphone, Inbox } from "lucide-react";
+import { LayoutDashboard, FileText, Settings, LogOut, Users, Megaphone, Inbox, BarChart2 } from "lucide-react";
 
 export default function AdminLayout({ children }: { children: React.ReactNode }) {
   return (
@@ -12,6 +12,9 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
         <nav className="p-4 space-y-2">
           <Link href="/admin" className="flex items-center px-4 py-3 text-gray-700 hover:bg-blue-50 hover:text-blue-600 rounded-lg transition-colors font-medium">
             <LayoutDashboard size={18} className="mr-3" /> Dashboard
+          </Link>
+          <Link href="/admin/insights" className="flex items-center px-4 py-3 text-gray-700 hover:bg-blue-50 hover:text-blue-600 rounded-lg transition-colors font-medium">
+            <BarChart2 size={18} className="mr-3" /> Insights
           </Link>
           <Link href="/admin/articles/new" className="flex items-center px-4 py-3 text-gray-700 hover:bg-blue-50 hover:text-blue-600 rounded-lg transition-colors font-medium">
             <FileText size={18} className="mr-3" /> Post News

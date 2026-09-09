@@ -1,6 +1,6 @@
 import { supabase } from "@/lib/supabase";
 
-export type AdSlotType = "leaderboard" | "sidebar" | "in_article" | "homepage_hero";
+export type AdSlotType = "leaderboard" | "sidebar" | "in_article" | "homepage_hero" | "category_banner" | "footer" | "nav_top" | "half_page";
 
 export type Ad = {
   id: string;
@@ -8,6 +8,7 @@ export type Ad = {
   image_url: string;
   link_url: string;
   slot: AdSlotType;
+  cta_text?: string | null;
   is_active: boolean;
   starts_at: string | null;
   ends_at: string | null;
@@ -25,7 +26,7 @@ export async function getActiveAd(slot: AdSlotType): Promise<Ad | null> {
     .or(`ends_at.is.null,ends_at.gte.${now}`)
     .order("created_at", { ascending: false })
     .limit(1)
-    .single();
+    .maybeSingle();
 
   if (error || !data) return null;
   return data as Ad;

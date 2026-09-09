@@ -2,7 +2,7 @@ import { MetadataRoute } from "next";
 import { supabase } from "@/lib/supabase";
 import { generateSlug } from "@/lib/api";
 
-const SITE_URL = process.env.NEXT_PUBLIC_SITE_URL || "https://theecho.in";
+const SITE_URL = process.env.NEXT_PUBLIC_SITE_URL || "https://bnbnews.in";
 
 const staticCategories = [
   "latest", "india", "world", "business", "technology",

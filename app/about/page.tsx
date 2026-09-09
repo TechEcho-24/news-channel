@@ -2,8 +2,8 @@ import type { Metadata } from "next";
 import Link from "next/link";
 
 export const metadata: Metadata = {
-  title: "About Us | The Echo",
-  description: "The Echo is an independent digital newsroom committed to honest, fearless journalism for India.",
+  title: "About Us | Bharat News Bulletin (BNB)",
+  description: "Bharat News Bulletin (BNB) is an independent digital newsroom committed to honest, fearless journalism for India.",
 };
 
 export default function AboutPage() {
@@ -19,7 +19,7 @@ export default function AboutPage() {
               We report the stories<br />that need to be told.
             </h1>
             <p className="text-gray-600 text-lg leading-relaxed">
-              The Echo is an independent digital newsroom built on one belief: that people deserve honest, clear, and fearless journalism — free from corporate or political pressure.
+              Bharat News Bulletin (BNB) is an independent digital newsroom built on one belief: that people deserve honest, clear, and fearless journalism — free from corporate or political pressure.
             </p>
           </div>
           <div className="space-y-6">

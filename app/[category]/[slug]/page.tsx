@@ -5,11 +5,11 @@ import { format } from "date-fns";
 import { Link as LinkIcon, Share2, Globe, Rss } from "lucide-react";
 import type { Metadata } from "next";
 import { getArticleBySlug } from "@/lib/api";
-import CommentSection from "@/components/articles/CommentSection";
+import ArticleActionsClient from "@/components/articles/ArticleActionsClient";
 import AdSlot from "@/components/ads/AdSlot";
 
-const SITE_NAME = "The Echo";
-const SITE_URL = process.env.NEXT_PUBLIC_SITE_URL || "https://theecho.in";
+const SITE_NAME = "Bharat News Bulletin";
+const SITE_URL = process.env.NEXT_PUBLIC_SITE_URL || "https://bnbnews.in";
 
 export async function generateMetadata(
   { params }: { params: Promise<{ category: string; slug: string }> }
@@ -116,7 +116,7 @@ export default async function ArticlePage({ params }: { params: Promise<{ catego
 
             {/* Author Meta at Bottom */}
             <div className="border-t border-gray-100 py-6 mb-8 text-left">
-              <div className="font-bold text-sm text-gray-900">Author: {article.author_name || "The Echo Staff"}</div>
+              <div className="font-bold text-sm text-gray-900">Author: {article.author_name || "Bharat News Bulletin Staff"}</div>
               <div className="text-xs text-gray-500 mt-1">
                 Published on {format(publishedDate, "MMMM d, yyyy")}
               </div>
@@ -127,8 +127,8 @@ export default async function ArticlePage({ params }: { params: Promise<{ catego
               <AdSlot slot="in_article" />
             </div>
 
-            {/* Comments Section */}
-            <CommentSection articleId={article.id} />
+            {/* Impressions & Comments Toggle */}
+            <ArticleActionsClient key={article.id} articleId={article.id} initialImpressions={article.impressions || 0} />
           </div>
 
           {/* Sidebar */}
@@ -145,11 +145,8 @@ export default async function ArticlePage({ params }: { params: Promise<{ catego
             </div>
 
             {/* Sidebar Sticky Ad */}
-            <div className="sticky top-24 bg-gray-50 p-4 text-center border border-gray-200">
-              <span className="text-[10px] text-gray-400 uppercase tracking-widest block mb-2">Advertisement</span>
-              <div className="w-full h-[600px] bg-gray-200 flex items-center justify-center text-gray-500 font-medium text-sm">
-                Half Page Ad (300x600)
-              </div>
+            <div className="sticky top-24">
+              <AdSlot slot="half_page" />
             </div>
           </div>
         </div>

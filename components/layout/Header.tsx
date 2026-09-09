@@ -6,11 +6,13 @@ import { useState, useEffect, useRef } from "react";
 import { createClient } from "@/utils/supabase/client";
 import Image from "next/image";
 import { generateSlug } from "@/lib/api";
+import LanguageSelector from "./LanguageSelector";
 
 export default function Header() {
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
   const [isSubscribed, setIsSubscribed] = useState(false);
   const [user, setUser] = useState<any>(null);
+  const [userInitials, setUserInitials] = useState<string | null>(null);
   const [loading, setLoading] = useState(false);
   const supabase = createClient();
 
@@ -58,9 +60,20 @@ export default function Header() {
       const { data: { user } } = await supabase.auth.getUser();
       if (user) {
         setUser(user);
-        const { data } = await supabase.from('profiles').select('is_subscribed').eq('id', user.id).single();
+        const { data } = await supabase.from('profiles').select('*').eq('id', user.id).single();
         if (data?.is_subscribed) {
           setIsSubscribed(true);
+        }
+        
+        let nameToUse = data?.full_name || data?.username || user.user_metadata?.full_name || user.user_metadata?.name || user.email;
+        if (nameToUse) {
+           // Basic logic to get "AS" from "Anuj Sachan"
+           const parts = nameToUse.split(/[\s_@.-]+/).filter(Boolean);
+           if (parts.length >= 2) {
+             setUserInitials((parts[0][0] + parts[parts.length - 1][0]).toUpperCase());
+           } else if (parts.length === 1) {
+             setUserInitials(parts[0].substring(0, 2).toUpperCase());
+           }
         }
       }
     }
@@ -103,7 +116,7 @@ export default function Header() {
   ];
 
   return (
-    <header className="border-b border-gray-200 sticky top-0 bg-[#FAFAFA] z-50">
+    <header className="border-b border-gray-200 sticky top-0 bg-white/70 backdrop-blur-md z-50">
       <div className="w-full px-8">
         {/* Top Header */}
         <div className="flex justify-between items-center py-4">
@@ -120,7 +133,7 @@ export default function Header() {
           {/* Logo */}
           <div className="text-4xl font-serif font-extrabold italic tracking-tighter text-center lg:text-left flex-1 lg:flex-none">
             <Link href="/" className="hover:opacity-90 transition-opacity">
-              <span className="text-black">I</span><span className="text-red-600">N</span><span className="text-black">B</span>
+              <span className="text-black">B</span><span className="text-red-600">N</span><span className="text-black">B</span>
             </Link>
           </div>
 
@@ -152,6 +165,13 @@ export default function Header() {
                     ))}
                   </ul>
                 </div>
+              </li>
+              
+              {/* Contact Link in Center Nav */}
+              <li>
+                <Link href="/contact" className="hover:text-blue-600 transition-colors">
+                  Contact
+                </Link>
               </li>
             </ul>
           </nav>
@@ -224,7 +244,7 @@ export default function Header() {
                 </div>
               )}
             </div>
-
+            
             <Link
               href={user ? "#" : "/login"}
               onClick={handleSubscribeClick}
@@ -238,9 +258,14 @@ export default function Header() {
             >
               {isSubscribed ? "Subscribed" : loading ? "Wait..." : "Subscribe"}
             </Link>
-            <Link href="/profile" className="w-8 h-8 md:w-10 md:h-10 flex items-center justify-center text-gray-700 hover:text-blue-600 transition-colors border-2 border-gray-300 rounded-full hover:border-blue-600">
-              <User size={16} className="md:w-5 md:h-5" />
+            <Link href="/profile" className="w-8 h-8 md:w-10 md:h-10 flex items-center justify-center text-gray-700 hover:text-blue-600 transition-colors border-2 border-gray-300 rounded-full hover:border-blue-600 bg-gray-50 overflow-hidden font-bold text-xs md:text-sm">
+              {userInitials ? (
+                userInitials
+              ) : (
+                <User size={16} className="md:w-5 md:h-5" />
+              )}
             </Link>
+            <LanguageSelector />
           </div>
         </div>
       </div>
@@ -250,7 +275,7 @@ export default function Header() {
         <div className="fixed inset-0 bg-white z-[100] lg:hidden overflow-y-auto font-inter">
           <div className="p-4 border-b border-gray-200 flex justify-between items-center bg-[#FAFAFA]">
             <Link href="/" className="text-3xl font-serif font-extrabold italic tracking-tighter" onClick={() => setIsMobileMenuOpen(false)}>
-              <span className="text-black">I</span><span className="text-red-600">N</span><span className="text-black">B</span>
+              <span className="text-black">B</span><span className="text-red-600">N</span><span className="text-black">B</span>
             </Link>
             <button 
               className="p-2 text-gray-700 hover:text-black"

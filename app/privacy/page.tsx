@@ -3,12 +3,12 @@ import Link from "next/link";
 
 export const metadata: Metadata = {
   title: "Privacy Policy",
-  description: "Read The Echo's Privacy Policy to understand how we collect, use, and protect your personal information.",
+  description: "Read Bharat News Bulletin (BNB)'s Privacy Policy to understand how we collect, use, and protect your personal information.",
 };
 
 const LAST_UPDATED = "September 8, 2026";
-const SITE_NAME = "The Echo";
-const CONTACT_EMAIL = "privacy@theecho.in";
+const SITE_NAME = "Bharat News Bulletin";
+const CONTACT_EMAIL = "privacy@bnbnews.in";
 
 export default function PrivacyPolicyPage() {
   return (
