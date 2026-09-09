@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect } from "react";
+import { useEffect, useRef } from "react";
 import Link from "next/link";
 
 interface AdSlotClientTrackerProps {
@@ -20,18 +20,56 @@ export default function AdSlotClientTracker({
   ctaText,
   className,
 }: AdSlotClientTrackerProps) {
+  const containerRef = useRef<HTMLAnchorElement>(null);
+
   useEffect(() => {
-    // Record view impression on mount
-    fetch("/api/ads/impression", {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ adId }),
-    }).catch(() => {});
+    if (!containerRef.current) return;
+
+    const observer = new IntersectionObserver(
+      (entries) => {
+        const entry = entries[0];
+        if (entry.isIntersecting) {
+          // Track viewport entry count: 4 viewport views = 1 impression
+          const key = `ad_view_count_${adId}`;
+          const currentCount = parseInt(sessionStorage.getItem(key) || "0", 10) + 1;
+          
+          if (currentCount >= 4) {
+            // Reached 4 viewport entries -> trigger +1 impression
+            sessionStorage.setItem(key, "0");
+            fetch("/api/ads/impression", {
+              method: "POST",
+              headers: { "Content-Type": "application/json" },
+              body: JSON.stringify({ adId }),
+            }).catch(() => {});
+          } else {
+            sessionStorage.setItem(key, currentCount.toString());
+          }
+
+          // Unobserve temporarily to avoid instant re-trigger in same view state
+          observer.unobserve(entry.target);
+          setTimeout(() => {
+            if (containerRef.current) observer.observe(containerRef.current);
+          }, 1500);
+        }
+      },
+      { threshold: 0.3 }
+    );
+
+    observer.observe(containerRef.current);
+
+    return () => observer.disconnect();
   }, [adId]);
 
   function handleClick() {
-    // Record click reliably using keepalive fetch
+    // Direct click = 1 click (+1 click & +1 impression immediately)
     fetch("/api/ads/click", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ adId }),
+      keepalive: true,
+    }).catch(() => {});
+
+    fetch("/api/ads/impression", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({ adId }),
@@ -41,6 +79,7 @@ export default function AdSlotClientTracker({
 
   return (
     <Link
+      ref={containerRef}
       href={href}
       target="_blank"
       rel="noopener noreferrer sponsored"

@@ -6,7 +6,7 @@ export async function POST(request: Request) {
     const { adId } = await request.json();
     if (!adId) return NextResponse.json({ error: "Missing adId" }, { status: 400 });
 
-    // 1. Increment total impressions on ads table
+    // 1. Increment total impressions by +1 on ads table
     const { error: rpcError } = await supabaseAdmin.rpc("increment_ad_impression", { ad_id: adId });
     if (rpcError) {
       const { data: ad } = await supabaseAdmin.from("ads").select("impressions").eq("id", adId).single();
@@ -16,7 +16,7 @@ export async function POST(request: Request) {
       }
     }
 
-    // 2. Track in ad_daily_stats for daily chart
+    // 2. Track in ad_daily_stats for daily chart (+1)
     const today = new Date().toISOString().split("T")[0];
     const { error: dailyRpcError } = await supabaseAdmin.rpc("record_daily_ad_impression", { 
       p_ad_id: adId,
@@ -24,7 +24,6 @@ export async function POST(request: Request) {
     });
 
     if (dailyRpcError) {
-      // Fallback manual upsert into ad_daily_stats
       const { data: existing } = await supabaseAdmin
         .from("ad_daily_stats")
         .select("id, impressions")
@@ -44,7 +43,7 @@ export async function POST(request: Request) {
       }
     }
 
-    return NextResponse.json({ success: true });
+    return NextResponse.json({ success: true, added: 1 });
   } catch (err: any) {
     return NextResponse.json({ error: err.message }, { status: 500 });
   }

@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
 import { BarChart2, MessageSquare, Send } from "lucide-react";
 import { createClient } from "@/utils/supabase/client";
 
@@ -13,38 +13,45 @@ export default function ArticleActionsClient({ articleId, initialImpressions }: 
   const [impressions, setImpressions] = useState(initialImpressions || 0);
   const [showComments, setShowComments] = useState(false);
   const [commentText, setCommentText] = useState("");
+  const hasRecorded = useRef(false);
   const supabase = createClient();
 
   useEffect(() => {
+    if (hasRecorded.current) return;
+    hasRecorded.current = true;
+
     const recordImpression = async () => {
-      const storageKey = `viewed_${articleId}`;
-      const lastViewed = localStorage.getItem(storageKey);
-      const now = new Date().getTime();
-      
-      // 3 hours cooldown = 3 * 60 * 60 * 1000 = 10800000 ms
-      const COOLDOWN = 3 * 60 * 60 * 1000;
-      
-      if (!lastViewed || (now - parseInt(lastViewed)) > COOLDOWN) {
-        // Increment locally first for immediate UI update
-        setImpressions(prev => prev + 1);
-        
-        // Update local storage
-        localStorage.setItem(storageKey, now.toString());
-        
-        // Fire API call via Supabase RPC
-        await supabase.rpc('increment_impressions', { row_id: articleId });
+      // Immediate UI update on view
+      setImpressions(prev => prev + 1);
+
+      // Record view in database instantly without 3-hour timer delay
+      const { error: rpcError } = await supabase.rpc('increment_impressions', { row_id: articleId });
+      if (rpcError) {
+        const { data: art } = await supabase
+          .from('articles')
+          .select('impressions')
+          .eq('id', articleId)
+          .single();
+
+        if (art) {
+          const current = (art as any).impressions || 0;
+          await supabase
+            .from('articles')
+            .update({ impressions: current + 1 })
+            .eq('id', articleId);
+        }
       }
     };
-    
+
     recordImpression();
   }, [articleId, supabase]);
 
   return (
     <div className="mt-8 mb-12">
       {/* Action Bar */}
-      <div className="flex items-center space-x-6 border-y border-gray-200 py-3 mb-6">
+      <div className="flex items-center space-x-6 border-y border-gray-200 py-3 mb-6 font-inter">
         <div className="flex items-center text-gray-600 space-x-2">
-          <BarChart2 size={20} className="text-gray-400" />
+          <BarChart2 size={20} className="text-blue-600" />
           <span className="font-semibold text-sm">{impressions.toLocaleString()} Impressions</span>
         </div>
         
@@ -79,7 +86,6 @@ export default function ArticleActionsClient({ articleId, initialImpressions }: 
             </div>
           </div>
           
-          {/* Example of showing existing comments if they exist */}
           <div className="mt-6 space-y-4">
              <p className="text-sm text-gray-500 italic text-center py-4">No comments yet. Be the first to share your thoughts!</p>
           </div>

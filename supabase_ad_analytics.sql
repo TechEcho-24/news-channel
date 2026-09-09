@@ -5,7 +5,7 @@ ALTER TABLE public.ads ADD COLUMN IF NOT EXISTS impressions INT DEFAULT 0;
 ALTER TABLE public.ads ADD COLUMN IF NOT EXISTS clicks INT DEFAULT 0;
 ALTER TABLE public.ads ADD COLUMN IF NOT EXISTS cta_text TEXT;
 
--- 2. RPC function to increment ad impressions atomically
+-- 2. RPC function to increment ad impressions atomically (+1 per trigger)
 CREATE OR REPLACE FUNCTION increment_ad_impression(ad_id UUID)
 RETURNS void AS $$
 BEGIN
@@ -15,7 +15,7 @@ BEGIN
 END;
 $$ LANGUAGE plpgsql SECURITY DEFINER;
 
--- 3. RPC function to increment ad clicks atomically
+-- 3. RPC function to increment ad clicks atomically (+1 per click)
 CREATE OR REPLACE FUNCTION increment_ad_click(ad_id UUID)
 RETURNS void AS $$
 BEGIN
