@@ -38,10 +38,20 @@ export default async function Home() {
     .slice(0, 7);
 
   // Fetch articles for specific categories for the blocks
-  const categoryNames = ["business", "technology", "india", "world"];
+  const categoryNames = ["business", "technology", "economy", "india", "world", "entertainment", "startups", "lifestyle"];
   const categoryBlocks = await Promise.all(
     categoryNames.map(async (cat) => {
-      const articles = await getArticlesByCategory(cat, 5);
+      const limit = cat === "economy" ? 4 : 5;
+      const articles = await getArticlesByCategory(cat, limit);
+      return { name: cat, articles };
+    })
+  );
+
+  // New row for Health, Markets, Sports (max 3 each)
+  const hmsCategories = ["health", "markets", "sports"];
+  const hmsBlocks = await Promise.all(
+    hmsCategories.map(async (cat) => {
+      const articles = await getArticlesByCategory(cat, 3);
       return { name: cat, articles };
     })
   );
@@ -58,9 +68,9 @@ export default async function Home() {
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-10">
           {/* Main Lead Story */}
           <div className="lg:col-span-2">
-            <Link href={`/${heroArticle.category.toLowerCase()}/${heroSlug}`} className="block relative aspect-[16/9] w-full bg-gray-200 mb-5 overflow-hidden group rounded-sm">
+            <Link href={`/${heroArticle.category.toLowerCase()}/${heroSlug}`} className="block relative aspect-[16/9] w-full bg-gray-200 mb-5 overflow-hidden group rounded-sm max-h-[500px] lg:max-h-[600px]">
               {heroArticle.cover_image ? (
-                <Image src={heroArticle.cover_image} alt={heroArticle.title} fill className="object-cover group-hover:scale-105 transition-transform duration-500" />
+                <Image src={heroArticle.cover_image} alt={heroArticle.title} fill sizes="100vw" className="object-cover group-hover:scale-105 transition-transform duration-500" />
               ) : (
                 <div className="absolute inset-0 bg-blue-100 flex items-center justify-center text-gray-500 group-hover:scale-105 transition-transform duration-500">
                   No Image Available
@@ -161,122 +171,194 @@ export default async function Home() {
                   </Link>
                 </div>
 
-              {/* Layout 0: Large Left, List Right */}
-              {layoutStyle === 0 && (
-                <div className="grid grid-cols-1 lg:grid-cols-3 gap-8 items-start">
-                  <div className="lg:col-span-2 group">
-                    <Link href={`/${featuredArticle.category.toLowerCase()}/${generateSlug(featuredArticle.title)}`} className="block aspect-[16/9] w-full bg-gray-100 mb-4 relative overflow-hidden rounded-md shadow-sm">
-                       {featuredArticle.cover_image ? (
-                          <Image src={featuredArticle.cover_image} alt={featuredArticle.title} fill className="object-cover group-hover:scale-105 transition-transform duration-500" />
-                       ) : (
-                          <div className="absolute inset-0 flex items-center justify-center text-gray-400 bg-gray-200">No Image</div>
-                       )}
-                    </Link>
-                    <Link href={`/${featuredArticle.category.toLowerCase()}/${generateSlug(featuredArticle.title)}`}>
-                      <h3 className="text-2xl font-bold leading-snug mb-2 group-hover:text-blue-600 transition-colors tracking-tight text-gray-900 font-poppins">
-                        {featuredArticle.title}
-                      </h3>
-                    </Link>
-                    <p className="text-gray-600 text-sm leading-relaxed line-clamp-2 mb-3">
-                      {featuredArticle.subheadline}
-                    </p>
-                    <div className="text-gray-400 text-xs flex items-center gap-2 font-inter">
-                      <span className="flex items-center gap-1"><Clock size={12} /> {formatDistanceToNow(new Date(featuredArticle.published_at), { addSuffix: true })}</span>
-                      <span>•</span>
-                      <span className="flex items-center gap-1"><BarChart2 size={12} /> {featuredArticle.impressions || 0} views</span>
-                    </div>
-                  </div>
-                  <div className="flex flex-col divide-y divide-gray-100">
-                    {listArticles.map((item) => (
-                      <Link key={item.id} href={`/${item.category.toLowerCase()}/${generateSlug(item.title)}`} className="flex space-x-3.5 group py-4 first:pt-0 last:pb-0 items-start">
-                        <div className="w-24 h-20 sm:w-28 sm:h-20 bg-gray-100 flex-shrink-0 relative overflow-hidden rounded-md shadow-xs">
+              {/* Layout 4-Card Grid for Economy */}
+              {block.name === "economy" ? (
+                <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
+                  {block.articles.slice(0, 4).map((item) => (
+                    <div key={item.id} className="group bg-white border border-gray-200/80 rounded-lg overflow-hidden shadow-xs hover:shadow-md transition-all flex flex-col justify-between">
+                      <div>
+                        <Link href={`/${item.category.toLowerCase()}/${generateSlug(item.title)}`} className="block aspect-[16/10] w-full relative bg-gray-100 overflow-hidden">
                           {item.cover_image ? (
-                             <Image src={item.cover_image} alt={item.title} fill className="object-cover group-hover:scale-105 transition-transform duration-300" />
+                            <Image src={item.cover_image} alt={item.title} fill sizes="100vw" className="object-cover group-hover:scale-105 transition-transform duration-300" />
                           ) : (
-                             <div className="absolute inset-0 flex items-center justify-center text-[10px] text-gray-400">No img</div>
+                            <div className="absolute inset-0 flex items-center justify-center text-xs text-gray-400">No Image</div>
                           )}
-                        </div>
-                        <div className="flex-1 min-w-0">
-                          <h4 className="text-sm md:text-[15px] font-bold leading-snug group-hover:text-blue-600 transition-colors mb-1 text-gray-900 line-clamp-2">
-                            {item.title}
-                          </h4>
+                        </Link>
+                        <div className="p-4">
+                          <div className="text-gray-400 text-[11px] flex items-center gap-1.5 font-inter mb-2">
+                            <Clock size={11} /> {formatDistanceToNow(new Date(item.published_at), { addSuffix: true })}
+                          </div>
+                          <Link href={`/${item.category.toLowerCase()}/${generateSlug(item.title)}`}>
+                            <h4 className="text-base font-bold leading-snug group-hover:text-blue-600 transition-colors mb-2 text-gray-900 line-clamp-2">
+                              {item.title}
+                            </h4>
+                          </Link>
                           {item.subheadline && (
-                            <p className="text-gray-500 text-xs leading-relaxed line-clamp-2 mb-1.5">
+                            <p className="text-gray-500 text-xs leading-relaxed line-clamp-2 mb-3">
                               {item.subheadline}
                             </p>
                           )}
-                          <div className="text-gray-400 text-[11px] flex items-center gap-1.5 font-inter">
-                            <span className="flex items-center gap-1"><Clock size={10} /> {formatDistanceToNow(new Date(item.published_at), { addSuffix: true })}</span>
-                            <span>•</span>
-                            <span className="flex items-center gap-1"><BarChart2 size={10} /> {item.impressions || 0}</span>
-                          </div>
                         </div>
-                      </Link>
-                    ))}
-                  </div>
+                      </div>
+                      <div className="px-4 pb-3 pt-2 text-gray-400 text-[11px] flex items-center justify-between font-inter border-t border-gray-100 bg-gray-50/50">
+                        <span className="flex items-center gap-1"><BarChart2 size={11} /> {item.impressions || 0} views</span>
+                        <span className="text-blue-600 font-semibold group-hover:underline text-[11px]">Read Story &rarr;</span>
+                      </div>
+                    </div>
+                  ))}
                 </div>
-              )}
+              ) : (
+                <>
+                  {/* Layout 0: Large Left, List Right */}
+                  {layoutStyle === 0 && (
+                    <div className="grid grid-cols-1 lg:grid-cols-3 gap-8 items-start">
+                      <div className="lg:col-span-2 group">
+                        <Link href={`/${featuredArticle.category.toLowerCase()}/${generateSlug(featuredArticle.title)}`} className="block aspect-[16/9] w-full bg-gray-100 mb-4 relative overflow-hidden rounded-md shadow-sm">
+                           {featuredArticle.cover_image ? (
+                              <Image src={featuredArticle.cover_image} alt={featuredArticle.title} fill sizes="100vw" className="object-cover group-hover:scale-105 transition-transform duration-500" />
+                           ) : (
+                              <div className="absolute inset-0 flex items-center justify-center text-gray-400 bg-gray-200">No Image</div>
+                           )}
+                        </Link>
+                        <Link href={`/${featuredArticle.category.toLowerCase()}/${generateSlug(featuredArticle.title)}`}>
+                          <h3 className="text-2xl font-bold leading-snug mb-2 group-hover:text-blue-600 transition-colors tracking-tight text-gray-900 font-poppins">
+                            {featuredArticle.title}
+                          </h3>
+                        </Link>
+                        <p className="text-gray-600 text-sm leading-relaxed line-clamp-2 mb-3">
+                          {featuredArticle.subheadline}
+                        </p>
+                        <div className="text-gray-400 text-xs flex items-center gap-2 font-inter">
+                          <span className="flex items-center gap-1"><Clock size={12} /> {formatDistanceToNow(new Date(featuredArticle.published_at), { addSuffix: true })}</span>
+                          <span>•</span>
+                          <span className="flex items-center gap-1"><BarChart2 size={12} /> {featuredArticle.impressions || 0} views</span>
+                        </div>
+                      </div>
+                      <div className="flex flex-col divide-y divide-gray-100">
+                        {listArticles.map((item) => (
+                          <Link key={item.id} href={`/${item.category.toLowerCase()}/${generateSlug(item.title)}`} className="flex space-x-3.5 group py-4 first:pt-0 last:pb-0 items-start">
+                            <div className="w-24 h-20 sm:w-28 sm:h-20 bg-gray-100 flex-shrink-0 relative overflow-hidden rounded-md shadow-xs">
+                              {item.cover_image ? (
+                                 <Image src={item.cover_image} alt={item.title} fill sizes="100vw" className="object-cover group-hover:scale-105 transition-transform duration-300" />
+                              ) : (
+                                 <div className="absolute inset-0 flex items-center justify-center text-[10px] text-gray-400">No img</div>
+                              )}
+                            </div>
+                            <div className="flex-1 min-w-0">
+                              <h4 className="text-sm md:text-[15px] font-bold leading-snug group-hover:text-blue-600 transition-colors mb-1 text-gray-900 line-clamp-2">
+                                {item.title}
+                              </h4>
+                              {item.subheadline && (
+                                <p className="text-gray-500 text-xs leading-relaxed line-clamp-2 mb-1.5">
+                                  {item.subheadline}
+                                </p>
+                              )}
+                              <div className="text-gray-400 text-[11px] flex items-center gap-1.5 font-inter">
+                                <span className="flex items-center gap-1"><Clock size={10} /> {formatDistanceToNow(new Date(item.published_at), { addSuffix: true })}</span>
+                                <span>•</span>
+                                <span className="flex items-center gap-1"><BarChart2 size={10} /> {item.impressions || 0}</span>
+                              </div>
+                            </div>
+                          </Link>
+                        ))}
+                      </div>
+                    </div>
+                  )}
 
-              {/* Layout 1: List Left, Large Right */}
-              {layoutStyle === 1 && (
-                <div className="grid grid-cols-1 lg:grid-cols-3 gap-8 items-start">
-                  <div className="flex flex-col divide-y divide-gray-100 order-2 lg:order-1">
-                    {listArticles.map((item) => (
-                      <Link key={item.id} href={`/${item.category.toLowerCase()}/${generateSlug(item.title)}`} className="flex space-x-3.5 group py-4 first:pt-0 last:pb-0 items-start">
-                        <div className="w-24 h-20 sm:w-28 sm:h-20 bg-gray-100 flex-shrink-0 relative overflow-hidden rounded-md shadow-xs">
-                          {item.cover_image ? (
-                             <Image src={item.cover_image} alt={item.title} fill className="object-cover group-hover:scale-105 transition-transform duration-300" />
-                          ) : (
-                             <div className="absolute inset-0 flex items-center justify-center text-[10px] text-gray-400">No img</div>
-                          )}
+                  {/* Layout 1: List Left, Large Right */}
+                  {layoutStyle === 1 && (
+                    <div className="grid grid-cols-1 lg:grid-cols-3 gap-8 items-start">
+                      <div className="flex flex-col divide-y divide-gray-100 order-2 lg:order-1">
+                        {listArticles.map((item) => (
+                          <Link key={item.id} href={`/${item.category.toLowerCase()}/${generateSlug(item.title)}`} className="flex space-x-3.5 group py-4 first:pt-0 last:pb-0 items-start">
+                            <div className="w-24 h-20 sm:w-28 sm:h-20 bg-gray-100 flex-shrink-0 relative overflow-hidden rounded-md shadow-xs">
+                              {item.cover_image ? (
+                                 <Image src={item.cover_image} alt={item.title} fill sizes="100vw" className="object-cover group-hover:scale-105 transition-transform duration-300" />
+                              ) : (
+                                 <div className="absolute inset-0 flex items-center justify-center text-[10px] text-gray-400">No img</div>
+                              )}
+                            </div>
+                            <div className="flex-1 min-w-0">
+                              <h4 className="text-sm md:text-[15px] font-bold leading-snug group-hover:text-blue-600 transition-colors mb-1 text-gray-900 line-clamp-2">
+                                {item.title}
+                              </h4>
+                              {item.subheadline && (
+                                <p className="text-gray-500 text-xs leading-relaxed line-clamp-2 mb-1.5">
+                                  {item.subheadline}
+                                </p>
+                              )}
+                              <div className="text-gray-400 text-[11px] flex items-center gap-1.5 font-inter">
+                                <span className="flex items-center gap-1"><Clock size={10} /> {formatDistanceToNow(new Date(item.published_at), { addSuffix: true })}</span>
+                                <span>•</span>
+                                <span className="flex items-center gap-1"><BarChart2 size={10} /> {item.impressions || 0}</span>
+                              </div>
+                            </div>
+                          </Link>
+                        ))}
+                      </div>
+                      <div className="lg:col-span-2 group order-1 lg:order-2">
+                        <Link href={`/${featuredArticle.category.toLowerCase()}/${generateSlug(featuredArticle.title)}`} className="block aspect-[16/9] w-full bg-gray-100 mb-4 relative overflow-hidden rounded-md shadow-sm">
+                           {featuredArticle.cover_image ? (
+                              <Image src={featuredArticle.cover_image} alt={featuredArticle.title} fill sizes="100vw" className="object-cover group-hover:scale-105 transition-transform duration-500" />
+                           ) : (
+                              <div className="absolute inset-0 flex items-center justify-center text-gray-400 bg-gray-200">No Image</div>
+                           )}
+                        </Link>
+                        <Link href={`/${featuredArticle.category.toLowerCase()}/${generateSlug(featuredArticle.title)}`}>
+                          <h3 className="text-2xl font-bold leading-snug mb-2 group-hover:text-blue-600 transition-colors tracking-tight text-gray-900 font-poppins">
+                            {featuredArticle.title}
+                          </h3>
+                        </Link>
+                        <p className="text-gray-600 text-sm leading-relaxed line-clamp-2 mb-3">
+                          {featuredArticle.subheadline}
+                        </p>
+                        <div className="text-gray-400 text-xs flex items-center gap-2 font-inter">
+                          <span className="flex items-center gap-1"><Clock size={12} /> {formatDistanceToNow(new Date(featuredArticle.published_at), { addSuffix: true })}</span>
+                          <span>•</span>
+                          <span className="flex items-center gap-1"><BarChart2 size={12} /> {featuredArticle.impressions || 0} views</span>
                         </div>
-                        <div className="flex-1 min-w-0">
-                          <h4 className="text-sm md:text-[15px] font-bold leading-snug group-hover:text-blue-600 transition-colors mb-1 text-gray-900 line-clamp-2">
-                            {item.title}
-                          </h4>
-                          {item.subheadline && (
-                            <p className="text-gray-500 text-xs leading-relaxed line-clamp-2 mb-1.5">
-                              {item.subheadline}
-                            </p>
-                          )}
-                          <div className="text-gray-400 text-[11px] flex items-center gap-1.5 font-inter">
-                            <span className="flex items-center gap-1"><Clock size={10} /> {formatDistanceToNow(new Date(item.published_at), { addSuffix: true })}</span>
-                            <span>•</span>
-                            <span className="flex items-center gap-1"><BarChart2 size={10} /> {item.impressions || 0}</span>
-                          </div>
-                        </div>
-                      </Link>
-                    ))}
-                  </div>
-                  <div className="lg:col-span-2 group order-1 lg:order-2">
-                    <Link href={`/${featuredArticle.category.toLowerCase()}/${generateSlug(featuredArticle.title)}`} className="block aspect-[16/9] w-full bg-gray-100 mb-4 relative overflow-hidden rounded-md shadow-sm">
-                       {featuredArticle.cover_image ? (
-                          <Image src={featuredArticle.cover_image} alt={featuredArticle.title} fill className="object-cover group-hover:scale-105 transition-transform duration-500" />
-                       ) : (
-                          <div className="absolute inset-0 flex items-center justify-center text-gray-400 bg-gray-200">No Image</div>
-                       )}
-                    </Link>
-                    <Link href={`/${featuredArticle.category.toLowerCase()}/${generateSlug(featuredArticle.title)}`}>
-                      <h3 className="text-2xl font-bold leading-snug mb-2 group-hover:text-blue-600 transition-colors tracking-tight text-gray-900 font-poppins">
-                        {featuredArticle.title}
-                      </h3>
-                    </Link>
-                    <p className="text-gray-600 text-sm leading-relaxed line-clamp-2 mb-3">
-                      {featuredArticle.subheadline}
-                    </p>
-                    <div className="text-gray-400 text-xs flex items-center gap-2 font-inter">
-                      <span className="flex items-center gap-1"><Clock size={12} /> {formatDistanceToNow(new Date(featuredArticle.published_at), { addSuffix: true })}</span>
-                      <span>•</span>
-                      <span className="flex items-center gap-1"><BarChart2 size={12} /> {featuredArticle.impressions || 0} views</span>
+                      </div>
                     </div>
-                  </div>
-                </div>
+                  )}
+                </>
               )}
               </div>
             </div>
           );
         });
       })()}
+        </div>
+      </section>
+
+      {/* SECTION — HEALTH / MARKETS / SPORTS ROW */}
+      <section className="bg-white py-12 border-t border-gray-100">
+        <div className="container mx-auto px-4">
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+            {hmsBlocks.map((block) => (
+              <div key={block.name} className="space-y-4">
+                <h2 className="text-lg font-bold capitalize text-gray-900 font-inter">{block.name}</h2>
+                <div className="grid gap-4">
+                  {block.articles.map((item) => (
+                    <Link key={item.id} href={`/${item.category.toLowerCase()}/${generateSlug(item.title)}`} className="block group">
+                      <div className="relative aspect-[16/9] w-full bg-gray-100 overflow-hidden rounded-md shadow-sm mb-2">
+                        {item.cover_image ? (
+                          <Image src={item.cover_image} alt={item.title} fill sizes="100vw" className="object-cover group-hover:scale-105 transition-transform duration-300" />
+                        ) : (
+                          <div className="absolute inset-0 flex items-center justify-center text-xs text-gray-400">No Image</div>
+                        )}
+                      </div>
+                      <h4 className="text-base font-medium text-gray-800 line-clamp-2 group-hover:text-blue-600 transition-colors">
+                        {item.title}
+                      </h4>
+                      {item.subheadline && (
+                        <p className="text-sm text-gray-500 line-clamp-2">{item.subheadline}</p>
+                      )}
+                    </Link>
+                  ))}
+                </div>
+              </div>
+            ))}
+          </div>
         </div>
       </section>
 

@@ -36,6 +36,7 @@ INSERT INTO categories (name, slug) VALUES
 ('Entertainment', 'entertainment'),
 ('Sports', 'sports'),
 ('Lifestyle', 'lifestyle'),
+('Health', 'health'),
 ('Reviews', 'reviews')
 ON CONFLICT (slug) DO NOTHING;
 

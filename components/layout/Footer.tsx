@@ -1,5 +1,6 @@
 import Link from "next/link";
 import { Globe, Link as LinkIcon, Rss, Share2 } from "lucide-react";
+import Image from "next/image";
 
 export default function Footer() {
   return (
@@ -10,9 +11,7 @@ export default function Footer() {
           {/* Brand & Newsletter */}
           <div className="lg:col-span-2">
             <Link href="/" className="inline-flex items-center gap-3 mb-4 group">
-              <span className="text-4xl font-serif font-extrabold italic tracking-tighter leading-none">
-                <span className="text-white">B</span><span className="text-red-600">N</span><span className="text-white">B</span>
-              </span>
+              <Image src="/logo-header.png" alt="BNB Logo" width={100} height={40} className="object-contain h-10 w-auto" />
               <span className="border-l border-gray-700 pl-3 text-xs font-bold tracking-widest uppercase text-gray-300 group-hover:text-white transition-colors leading-tight">
                 Bharat News Bulletin
               </span>
@@ -40,6 +39,7 @@ export default function Footer() {
               <li><Link href="/world" className="hover:text-white transition-colors">World</Link></li>
               <li><Link href="/business" className="hover:text-white transition-colors">Business</Link></li>
               <li><Link href="/technology" className="hover:text-white transition-colors">Technology</Link></li>
+              <li><Link href="/health" className="hover:text-white transition-colors">Health</Link></li>
               <li><Link href="/markets" className="hover:text-white transition-colors">Markets</Link></li>
               <li><Link href="/startups" className="hover:text-white transition-colors">Startups</Link></li>
             </ul>

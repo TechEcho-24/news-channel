@@ -1,5 +1,6 @@
 import Link from "next/link";
 import { LayoutDashboard, FileText, Settings, LogOut, Users, Megaphone, Inbox, BarChart2 } from "lucide-react";
+import Image from "next/image";
 
 export default function AdminLayout({ children }: { children: React.ReactNode }) {
   return (
@@ -7,7 +8,10 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
       {/* Sidebar */}
       <aside className="w-64 bg-white border-r border-gray-200 hidden md:block">
         <div className="p-6 border-b border-gray-200">
-          <div className="text-sm font-bold text-gray-600 uppercase tracking-widest">Admin Panel</div>
+          <Link href="/">
+            <Image src="/logo-header.png" alt="BNB Logo" width={120} height={48} className="object-contain h-8 w-auto mb-2" />
+            <div className="text-xs font-bold text-gray-500 uppercase tracking-widest">Admin Panel</div>
+          </Link>
         </div>
         <nav className="p-4 space-y-2">
           <Link href="/admin" className="flex items-center px-4 py-3 text-gray-700 hover:bg-blue-50 hover:text-blue-600 rounded-lg transition-colors font-medium">

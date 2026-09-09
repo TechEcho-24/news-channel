@@ -8,7 +8,7 @@ import { useRouter } from "next/navigation";
 import { ArrowLeft, Save, Image as ImageIcon, Sparkles, Loader2, X, Bot, Wand2 } from "lucide-react";
 import { createClient } from "@/utils/supabase/client";
 
-const PREDEFINED_CATEGORIES = ["business", "technology", "economy", "india", "world", "sports", "entertainment", "startups", "lifestyle"];
+const PREDEFINED_CATEGORIES = ["business", "technology", "economy", "india", "world", "sports", "entertainment", "startups", "lifestyle", "health"];
 
 export default function EditArticlePage({ params }: { params: Promise<{ id: string }> }) {
   const resolvedParams = use(params);
@@ -30,7 +30,8 @@ export default function EditArticlePage({ params }: { params: Promise<{ id: stri
   const [categorySuggestions, setCategorySuggestions] = useState<string[]>([]);
 
   // AI Assistant state
-  const [aiUrl, setAiUrl] = useState("");
+  const [aiMode, setAiMode] = useState<"url" | "text">("url");
+  const [aiInput, setAiInput] = useState("");
   const [isAiGenerating, setIsAiGenerating] = useState(false);
 
   // Image Upload state
@@ -44,7 +45,7 @@ export default function EditArticlePage({ params }: { params: Promise<{ id: stri
     content: "<p>Write the news article content here...</p>",
     editorProps: {
       attributes: {
-        class: "focus:outline-none min-h-[300px] p-4 bg-white border border-gray-300 rounded-b-lg text-sm leading-relaxed [&_h3]:text-lg [&_h3]:font-bold [&_h3]:mt-4 [&_h3]:mb-2 [&_blockquote]:border-l-4 [&_blockquote]:border-gray-300 [&_blockquote]:pl-4 [&_blockquote]:italic [&_blockquote]:text-gray-600 [&_blockquote]:my-4 [&_p]:mb-3",
+        class: "focus:outline-none min-h-[300px] p-4 bg-white border border-gray-300 rounded-b-lg text-sm leading-relaxed [&_h3]:text-lg [&_h3]:font-bold [&_h3]:mt-4 [&_h3]:mb-2 [&_blockquote]:border-l-4 [&_blockquote]:border-blue-600 [&_blockquote]:bg-blue-50/70 [&_blockquote]:py-3 [&_blockquote]:px-4 [&_blockquote]:rounded-r-md [&_blockquote]:font-medium [&_blockquote]:text-gray-900 [&_blockquote]:my-4 [&_p]:mb-3",
       },
     },
   });
@@ -154,17 +155,18 @@ export default function EditArticlePage({ params }: { params: Promise<{ id: stri
   };
 
   const handleGenerateAI = async () => {
-    if (!aiUrl) {
-      alert("Please enter a valid news URL.");
+    if (!aiInput.trim()) {
+      alert(aiMode === "url" ? "Please enter a valid news URL." : "Please paste the news article content.");
       return;
     }
     
     setIsAiGenerating(true);
     try {
+      const payload = aiMode === "url" ? { url: aiInput.trim() } : { text: aiInput.trim() };
       const res = await fetch("/api/ai/generate-article", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ url: aiUrl })
+        body: JSON.stringify(payload)
       });
       
       const data = await res.json();
@@ -193,7 +195,7 @@ export default function EditArticlePage({ params }: { params: Promise<{ id: stri
       }
       setSelectedCategories(Array.from(newCats));
       
-      setAiUrl("");
+      setAiInput("");
       alert("AI Generation complete! Please review the content before publishing.");
       
     } catch (error: any) {
@@ -292,29 +294,67 @@ export default function EditArticlePage({ params }: { params: Promise<{ id: stri
 
       {/* AI ASSISTANT BLOCK */}
       <div className="bg-gradient-to-r from-blue-50 to-indigo-50 p-5 rounded-lg border border-blue-100 mb-6 shadow-sm">
-        <div className="flex items-center gap-2 mb-3">
-          <Bot size={20} className="text-blue-600" />
-          <h2 className="text-sm font-bold text-blue-900">AI News Assistant</h2>
+        <div className="flex items-center justify-between mb-3">
+          <div className="flex items-center gap-2">
+            <Bot size={20} className="text-blue-600" />
+            <h2 className="text-sm font-bold text-blue-900">AI News Assistant</h2>
+          </div>
+          <div className="flex bg-blue-100/70 p-1 rounded-md text-xs font-semibold text-blue-900">
+            <button
+              type="button"
+              onClick={() => { setAiMode("url"); setAiInput(""); }}
+              className={`px-3 py-1 rounded transition-colors ${aiMode === "url" ? "bg-white shadow text-blue-700 font-bold" : "text-blue-700 hover:text-blue-900"}`}
+            >
+              Paste Link (URL)
+            </button>
+            <button
+              type="button"
+              onClick={() => { setAiMode("text"); setAiInput(""); }}
+              className={`px-3 py-1 rounded transition-colors ${aiMode === "text" ? "bg-white shadow text-blue-700 font-bold" : "text-blue-700 hover:text-blue-900"}`}
+            >
+              Paste News Text
+            </button>
+          </div>
         </div>
-        <p className="text-xs text-blue-800 mb-3">Paste a link to any news article, and our AI will automatically rewrite it into a ready-to-publish format for Bharat News Bulletin (BNB).</p>
-        <div className="flex gap-2">
-          <input 
-            type="url" 
-            value={aiUrl}
-            onChange={(e) => setAiUrl(e.target.value)}
-            placeholder="https://example.com/news-article..."
-            className="flex-1 border border-blue-200 rounded-md px-3 py-2 text-sm focus:outline-none focus:border-blue-500 bg-white"
-            disabled={isAiGenerating}
-          />
-          <button 
-            type="button"
-            onClick={handleGenerateAI}
-            disabled={isAiGenerating || !aiUrl}
-            className="bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-md text-sm font-medium flex items-center gap-2 disabled:opacity-50 transition-colors"
-          >
-            {isAiGenerating ? <Loader2 size={16} className="animate-spin" /> : <Wand2 size={16} />}
-            {isAiGenerating ? "Generating..." : "Auto-Generate"}
-          </button>
+        
+        <p className="text-xs text-blue-800 mb-3">
+          {aiMode === "url" 
+            ? "Paste a URL of any news article, and AI will rewrite it for Bharat News Bulletin (BNB)." 
+            : "Copy & paste raw news story text below, and AI will automatically generate headline, brief, & styled content."}
+        </p>
+        
+        <div className="space-y-3">
+          {aiMode === "url" ? (
+            <input 
+              type="url" 
+              value={aiInput}
+              onChange={(e) => setAiInput(e.target.value)}
+              placeholder="https://example.com/news-article..."
+              className="w-full border border-blue-200 rounded-md px-3 py-2 text-sm focus:outline-none focus:border-blue-500 bg-white"
+              disabled={isAiGenerating}
+            />
+          ) : (
+            <textarea 
+              rows={5}
+              value={aiInput}
+              onChange={(e) => setAiInput(e.target.value)}
+              placeholder="Paste raw news text here..."
+              className="w-full border border-blue-200 rounded-md px-3 py-2 text-sm focus:outline-none focus:border-blue-500 bg-white"
+              disabled={isAiGenerating}
+            />
+          )}
+
+          <div className="flex justify-end">
+            <button 
+              type="button"
+              onClick={handleGenerateAI}
+              disabled={isAiGenerating || !aiInput.trim()}
+              className="bg-blue-600 hover:bg-blue-700 text-white px-5 py-2.5 rounded-md text-sm font-medium flex items-center gap-2 disabled:opacity-50 transition-colors shadow-sm"
+            >
+              {isAiGenerating ? <Loader2 size={16} className="animate-spin" /> : <Wand2 size={16} />}
+              {isAiGenerating ? "Generating..." : "Auto-Generate Story"}
+            </button>
+          </div>
         </div>
       </div>
 

@@ -47,6 +47,7 @@ const CAT_COLORS: Record<string, { bar: string; bg: string; text: string }> = {
   india:         { bar: "bg-orange-500", bg: "bg-orange-50", text: "text-orange-700" },
   world:         { bar: "bg-purple-500", bg: "bg-purple-50", text: "text-purple-700" },
   technology:    { bar: "bg-cyan-500",   bg: "bg-cyan-50",   text: "text-cyan-700" },
+  health:        { bar: "bg-emerald-500",bg: "bg-emerald-50",text: "text-emerald-700" },
   markets:       { bar: "bg-green-500",  bg: "bg-green-50",  text: "text-green-700" },
   startups:      { bar: "bg-pink-500",   bg: "bg-pink-50",   text: "text-pink-700" },
   sports:        { bar: "bg-yellow-500", bg: "bg-yellow-50", text: "text-yellow-700" },

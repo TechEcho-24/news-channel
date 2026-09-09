@@ -7,6 +7,7 @@ import { createClient } from "@/utils/supabase/client";
 import Image from "next/image";
 import { generateSlug } from "@/lib/api";
 import LanguageSelector from "./LanguageSelector";
+import { usePathname } from "next/navigation";
 
 export default function Header() {
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
@@ -22,6 +23,8 @@ export default function Header() {
   const [searchResults, setSearchResults] = useState<any[]>([]);
   const [isSearching, setIsSearching] = useState(false);
   const searchContainerRef = useRef<HTMLDivElement>(null);
+  
+  const pathname = usePathname();
 
   // Handle Search Fetching
   useEffect(() => {
@@ -106,6 +109,7 @@ export default function Header() {
   const dropdownCategories = [
     "Business",
     "Technology",
+    "Health",
     "Startups",
     "Markets",
     "Automobile",
@@ -114,6 +118,10 @@ export default function Header() {
     "Lifestyle",
     "Reviews",
   ];
+
+  if (pathname?.startsWith('/admin')) {
+    return null;
+  }
 
   return (
     <header className="border-b border-gray-200 sticky top-0 bg-white/70 backdrop-blur-md z-50">
@@ -131,9 +139,9 @@ export default function Header() {
           </div>
 
           {/* Logo */}
-          <div className="text-4xl font-serif font-extrabold italic tracking-tighter text-center lg:text-left flex-1 lg:flex-none">
-            <Link href="/" className="hover:opacity-90 transition-opacity">
-              <span className="text-black">B</span><span className="text-red-600">N</span><span className="text-black">B</span>
+          <div className="flex-1 lg:flex-none flex justify-center lg:justify-start">
+            <Link href="/" className="hover:opacity-90 transition-opacity flex items-center">
+              <Image src="/logo-header.png" alt="BNB Logo" width={100} height={40} className="object-contain h-10 w-auto" priority />
             </Link>
           </div>
 
@@ -274,8 +282,8 @@ export default function Header() {
       {isMobileMenuOpen && (
         <div className="fixed inset-0 bg-white z-[100] lg:hidden overflow-y-auto font-inter">
           <div className="p-4 border-b border-gray-200 flex justify-between items-center bg-[#FAFAFA]">
-            <Link href="/" className="text-3xl font-serif font-extrabold italic tracking-tighter" onClick={() => setIsMobileMenuOpen(false)}>
-              <span className="text-black">B</span><span className="text-red-600">N</span><span className="text-black">B</span>
+            <Link href="/" onClick={() => setIsMobileMenuOpen(false)}>
+              <Image src="/logo-header.png" alt="BNB Logo" width={90} height={36} className="object-contain h-9 w-auto" />
             </Link>
             <button 
               className="p-2 text-gray-700 hover:text-black"

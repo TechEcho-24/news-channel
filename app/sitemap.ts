@@ -5,7 +5,7 @@ import { generateSlug } from "@/lib/api";
 const SITE_URL = process.env.NEXT_PUBLIC_SITE_URL || "https://bnbnews.in";
 
 const staticCategories = [
-  "latest", "india", "world", "business", "technology",
+  "latest", "india", "world", "business", "technology", "health",
   "startups", "markets", "automobile", "entertainment",
   "sports", "lifestyle", "reviews",
 ];

@@ -26,9 +26,12 @@ export async function generateMetadata(
   return {
     title: article.seo_title || article.title,
     description: article.seo_description || article.subheadline || "",
-    keywords: article.seo_keywords 
-      ? article.seo_keywords.split(",").map(k => k.trim()) 
-      : [article.category, ...(article.categories || []), "news", "india"],
+    keywords: Array.from(new Set([
+      article.category,
+      ...(article.categories || []),
+      ...(article.seo_keywords ? article.seo_keywords.split(",").map(k => k.trim()) : []),
+      "news", "india", SITE_NAME
+    ])).filter(Boolean),
     authors: [{ name: article.author_name || SITE_NAME }],
     alternates: { canonical: articleUrl },
     openGraph: {
@@ -64,8 +67,44 @@ export default async function ArticlePage({ params }: { params: Promise<{ catego
 
   const publishedDate = article.published_at ? new Date(article.published_at) : new Date();
 
+  // Combine primary category and extra categories
+  const allCategories = Array.from(new Set([
+    article.category,
+    ...(article.categories || [])
+  ])).filter(Boolean);
+
+  const jsonLd = {
+    "@context": "https://schema.org",
+    "@type": "NewsArticle",
+    "headline": article.title,
+    "description": article.subheadline || article.seo_description || "",
+    "image": article.cover_image ? [article.cover_image] : [],
+    "datePublished": article.published_at,
+    "dateModified": article.updated_at || article.published_at,
+    "author": {
+      "@type": "Person",
+      "name": article.author_name || SITE_NAME
+    },
+    "publisher": {
+      "@type": "Organization",
+      "name": SITE_NAME,
+      "logo": {
+        "@type": "ImageObject",
+        "url": `${SITE_URL}/logo.png`
+      }
+    },
+    "articleSection": article.category,
+    "keywords": allCategories.join(", ")
+  };
+
   return (
     <article className="bg-white min-h-screen">
+      {/* Schema.org JSON-LD for Google SEO */}
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
+      />
+
       {/* Top Ad */}
       <div className="container mx-auto px-4 py-6 max-w-5xl flex justify-center border-b border-gray-100">
         <AdSlot slot="leaderboard" />
@@ -110,9 +149,27 @@ export default async function ArticlePage({ params }: { params: Promise<{ catego
             )}
 
             <div 
-              className="prose prose-lg prose-blue max-w-none mb-12 [&_h3]:font-bold [&_h3]:text-[22px] [&_h3]:mt-10 [&_h3]:mb-4 [&_h3]:text-gray-900 [&_blockquote]:border-l-4 [&_blockquote]:border-gray-300 [&_blockquote]:pl-6 [&_blockquote]:italic [&_blockquote]:text-gray-600 [&_blockquote]:my-8 [&_p]:mb-6 [&_p]:text-gray-800 [&_p]:leading-relaxed"
+              className="prose prose-lg prose-blue max-w-none mb-12 [&_h3]:font-bold [&_h3]:text-[22px] [&_h3]:mt-10 [&_h3]:mb-4 [&_h3]:text-gray-900 [&_blockquote]:border-l-4 [&_blockquote]:border-blue-600 [&_blockquote]:bg-blue-50/70 [&_blockquote]:py-3.5 [&_blockquote]:px-5 [&_blockquote]:rounded-r-md [&_blockquote]:font-medium [&_blockquote]:text-gray-900 [&_blockquote]:my-8 [&_blockquote_p]:m-0 [&_p]:mb-6 [&_p]:text-gray-800 [&_p]:leading-relaxed"
               dangerouslySetInnerHTML={{ __html: article.content || "" }}
             />
+
+            {/* Topic Category Tags Badges for SEO & Navigation */}
+            {allCategories.length > 0 && (
+              <div className="my-8 pt-4 border-t border-gray-100">
+                <span className="text-xs font-bold text-gray-400 uppercase tracking-wider block mb-2.5">Related Topics:</span>
+                <div className="flex flex-wrap gap-2">
+                  {allCategories.map((cat) => (
+                    <Link
+                      key={cat}
+                      href={`/${cat.toLowerCase().trim()}`}
+                      className="text-xs font-semibold px-3 py-1.5 rounded-full bg-gray-100 hover:bg-blue-50 hover:text-blue-600 text-gray-700 transition-colors"
+                    >
+                      #{cat}
+                    </Link>
+                  ))}
+                </div>
+              </div>
+            )}
 
             {/* Author Meta at Bottom */}
             <div className="border-t border-gray-100 py-6 mb-8 text-left">
