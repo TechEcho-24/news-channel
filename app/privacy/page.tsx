@@ -8,7 +8,7 @@ export const metadata: Metadata = {
 
 const LAST_UPDATED = "September 8, 2026";
 const SITE_NAME = "Bharat News Bulletin";
-const CONTACT_EMAIL = "privacy@bnbnews.in";
+const CONTACT_EMAIL = "privacy@bharatnewsbulletin.com";
 
 export default function PrivacyPolicyPage() {
   return (

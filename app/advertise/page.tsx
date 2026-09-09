@@ -29,8 +29,8 @@ export default function AdvertisePage() {
             <p className="text-gray-500 mt-4 leading-relaxed">
               That makes our audience unusually valuable for local businesses and brands who want real engagement, not just impressions.
             </p>
-            <a href="mailto:ads@bnbnews.in" className="inline-block mt-8 bg-blue-600 text-white font-semibold px-7 py-3 text-sm hover:bg-blue-700 transition-colors">
-              Email us to start → ads@bnbnews.in
+            <a href="mailto:ads@bharatnewsbulletin.com" className="inline-block mt-8 bg-blue-600 text-white font-semibold px-7 py-3 text-sm hover:bg-blue-700 transition-colors">
+              Email us to start → ads@bharatnewsbulletin.com
             </a>
           </div>
           <div className="border border-gray-200 p-7 space-y-5">
@@ -122,7 +122,7 @@ export default function AdvertisePage() {
                   ))}
                 </ul>
                 <a
-                  href={`mailto:ads@bnbnews.in?subject=${encodeURIComponent(cta)}`}
+                  href={`mailto:ads@bharatnewsbulletin.com?subject=${encodeURIComponent(cta)}`}
                   className={`w-full py-3 rounded-lg font-semibold text-center text-sm transition-colors ${
                     highlight
                       ? "bg-blue-600 text-white hover:bg-blue-700"
@@ -163,9 +163,10 @@ export default function AdvertisePage() {
             <div className="text-xl font-bold mb-1">Ready? Let's talk.</div>
             <div className="text-gray-400 text-sm">No pressure, no long contracts to start.</div>
           </div>
-          <a href="mailto:ads@bnbnews.in"
-            className="flex-shrink-0 bg-white text-black font-bold px-8 py-3 text-sm hover:bg-gray-100 transition-colors">
-            ads@bnbnews.in
+          <a href="mailto:ads@bharatnewsbulletin.com"
+            className="inline-block border-2 border-gray-900 text-gray-900 font-semibold px-8 py-3 text-sm hover:bg-gray-900 hover:text-white transition-colors"
+          >
+            ads@bharatnewsbulletin.com
           </a>
         </div>
 

@@ -24,8 +24,28 @@ export async function generateMetadata(
 
 export default async function CategoryPage({ params }: { params: Promise<{ category: string }> }) {
   const resolvedParams = await params;
-  const categoryStr = resolvedParams.category || "";
+  const categoryStr = resolvedParams.category;
   const categoryName = categoryStr.charAt(0).toUpperCase() + categoryStr.slice(1);
+  const SITE_URL = process.env.NEXT_PUBLIC_SITE_URL || "https://bharatnewsbulletin.com";
+
+  const breadcrumbLd = {
+    "@context": "https://schema.org",
+    "@type": "BreadcrumbList",
+    "itemListElement": [
+      {
+        "@type": "ListItem",
+        "position": 1,
+        "name": "Home",
+        "item": SITE_URL
+      },
+      {
+        "@type": "ListItem",
+        "position": 2,
+        "name": categoryName,
+        "item": `${SITE_URL}/${categoryStr}`
+      }
+    ]
+  };
 
   let articles = [];
   if (categoryStr.toLowerCase() === 'latest') {
@@ -42,14 +62,20 @@ export default async function CategoryPage({ params }: { params: Promise<{ categ
 
   return (
     <div className="bg-[#FAFAFA] min-h-screen">
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(breadcrumbLd) }}
+      />
       <div className="container mx-auto px-4 py-10 max-w-6xl">
         
         {/* Breadcrumb Header */}
-        <div className="flex items-center space-x-2 text-sm font-medium mb-8 border-b border-gray-200 pb-4">
+        <div className="flex items-center space-x-2 text-sm font-medium mb-4 border-b border-gray-200 pb-4">
           <Link href="/" className="text-gray-400 hover:text-black transition-colors font-inter">Home</Link>
           <ChevronRight size={14} className="text-gray-300" />
           <span className="text-red-600 font-bold uppercase tracking-widest text-xs font-inter">{categoryName}</span>
         </div>
+
+        <h1 className="text-4xl font-black text-gray-900 mb-8 uppercase tracking-tight">{categoryName} News</h1>
 
         {articles.length === 0 ? (
           <div className="text-center py-20 text-gray-400">
@@ -63,7 +89,7 @@ export default async function CategoryPage({ params }: { params: Promise<{ categ
                 <Link href={`/${featuredArticle.category.toLowerCase()}/${generateSlug(featuredArticle.title)}`} className="group block">
                   <div className="relative aspect-[21/9] w-full bg-gray-200 mb-5 overflow-hidden rounded-md shadow-xs">
                      {featuredArticle.cover_image ? (
-                        <Image src={featuredArticle.cover_image} alt={featuredArticle.title} fill className="object-cover group-hover:scale-105 transition-transform duration-500" />
+                        <Image src={featuredArticle.cover_image} alt={featuredArticle.title} fill sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw" className="object-cover group-hover:scale-105 transition-transform duration-500" priority />
                      ) : (
                         <div className="absolute inset-0 flex items-center justify-center text-gray-400 bg-gray-200 group-hover:scale-105 transition-transform duration-500">
                           No Image
@@ -94,7 +120,7 @@ export default async function CategoryPage({ params }: { params: Promise<{ categ
                 <Link key={item.id} href={`/${item.category.toLowerCase()}/${generateSlug(item.title)}`} className="group flex flex-col">
                   <div className="aspect-[16/9] w-full bg-gray-200 mb-3.5 relative overflow-hidden rounded-md shadow-xs">
                      {item.cover_image ? (
-                        <Image src={item.cover_image} alt={item.title} fill className="object-cover group-hover:scale-105 transition-transform duration-500" />
+                        <Image src={item.cover_image} alt={item.title} fill sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw" quality={75} className="object-cover group-hover:scale-105 transition-transform duration-500" />
                      ) : (
                         <div className="absolute inset-0 flex items-center justify-center text-gray-400 bg-gray-200">No Image</div>
                      )}
