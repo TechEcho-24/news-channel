@@ -32,7 +32,7 @@ export default function ContactPage() {
       {/* Header — editorial strip style */}
       <div className="border-b-4 border-black">
         <div className="max-w-5xl mx-auto px-4 py-10">
-          <p className="text-xs font-bold uppercase tracking-widest text-gray-500 mb-2">The Echo · Contact</p>
+          <p className="text-xs font-bold uppercase tracking-widest text-gray-500 mb-2">Bharat News Bulletin (BNB) · Contact</p>
           <h1 className="text-5xl font-serif font-bold text-gray-900">Get in Touch</h1>
         </div>
       </div>
@@ -50,14 +50,14 @@ export default function ContactPage() {
           <div className="space-y-6">
             <div className="border-t border-gray-200 pt-6">
               <div className="text-xs font-bold uppercase tracking-widest text-gray-400 mb-1">General</div>
-              <a href="mailto:hello@theecho.in" className="text-gray-900 font-medium hover:text-blue-600 transition-colors">
-                hello@theecho.in
+              <a href="mailto:hello@bnbnews.in" className="text-gray-900 font-medium hover:text-blue-600 transition-colors">
+                hello@bnbnews.in
               </a>
             </div>
             <div className="border-t border-gray-200 pt-6">
               <div className="text-xs font-bold uppercase tracking-widest text-gray-400 mb-1">Advertising</div>
-              <a href="mailto:ads@theecho.in" className="text-gray-900 font-medium hover:text-blue-600 transition-colors">
-                ads@theecho.in
+              <a href="mailto:ads@bnbnews.in" className="text-gray-900 font-medium hover:text-blue-600 transition-colors">
+                ads@bnbnews.in
               </a>
             </div>
             <div className="border-t border-gray-200 pt-6">
@@ -90,7 +90,7 @@ export default function ContactPage() {
             <form onSubmit={handleSubmit} className="space-y-5">
               {status === "error" && (
                 <div className="bg-red-50 border-l-4 border-red-500 px-4 py-3 text-red-700 text-sm">
-                  Something went wrong. Email us directly at hello@theecho.in
+                  Something went wrong. Email us directly at hello@bnbnews.in
                 </div>
               )}
 

@@ -34,15 +34,22 @@ export async function GET(request: Request) {
       { count: totalUsers },
       { count: totalSubscribers },
       { count: totalMessages },
+      { data: adsData },
     ] = await Promise.all([
       supabase.from("articles").select("*", { count: "exact", head: true }),
       supabase.from("articles").select("impressions, title, category, published_at, id"),
       supabase.from("profiles").select("*", { count: "exact", head: true }),
       supabase.from("subscribers").select("*", { count: "exact", head: true }),
       supabase.from("contact_messages").select("*", { count: "exact", head: true }),
+      supabase.from("ads").select("*"),
     ]);
 
     const totalImpressionsAll = allImpressionData?.reduce((a, b) => a + (b.impressions || 0), 0) ?? 0;
+
+    const adsList = (adsData as any[]) || [];
+    const totalAdImpressions = adsList.reduce((a, b) => a + (b.impressions || 0), 0);
+    const totalAdClicks = adsList.reduce((a, b) => a + (b.clicks || 0), 0);
+    const avgCtr = totalAdImpressions > 0 ? ((totalAdClicks / totalAdImpressions) * 100).toFixed(1) : "0.0";
 
     // ── Range-filtered data ───────────────────────────────────────────
     const [
@@ -156,6 +163,14 @@ export async function GET(request: Request) {
       timeSeriesData,
       topArticles,
       categoryBreakdown,
+      adAnalytics: {
+        totalAds: adsList.length,
+        activeAds: adsList.filter(a => a.is_active).length,
+        totalImpressions: totalAdImpressions,
+        totalClicks: totalAdClicks,
+        avgCtr,
+        adsList,
+      },
     });
   } catch (error) {
     console.error("Analytics error:", error);

@@ -17,21 +17,21 @@ const poppins = Poppins({
   weight: ["400", "500", "600", "700"],
 });
 
-const SITE_URL = process.env.NEXT_PUBLIC_SITE_URL || "https://theecho.in";
-const SITE_NAME = "The Echo";
+const SITE_URL = process.env.NEXT_PUBLIC_SITE_URL || "https://bnbnews.in";
+const SITE_NAME = "Bharat News Bulletin";
 
 export const metadata: Metadata = {
   metadataBase: new URL(SITE_URL),
   title: {
-    default: `${SITE_NAME} — India's Digital Newsroom`,
+    default: `${SITE_NAME} (BNB) — India's Digital Newsroom`,
     template: `%s | ${SITE_NAME}`,
   },
   description:
-    "The Echo brings you breaking news, in-depth analysis, and stories from India and the world. Business, Technology, Politics, Sports, and more.",
-  keywords: ["news", "india news", "breaking news", "business", "technology", "politics", "sports"],
-  authors: [{ name: "The Echo" }],
-  creator: "The Echo",
-  publisher: "The Echo",
+    "Bharat News Bulletin (BNB) brings you breaking news, in-depth analysis, and stories from India and the world. Business, Technology, Politics, Sports, and more.",
+  keywords: ["news", "india news", "breaking news", "business", "technology", "politics", "sports", "BNB", "Bharat News Bulletin"],
+  authors: [{ name: "Bharat News Bulletin" }],
+  creator: "Bharat News Bulletin",
+  publisher: "Bharat News Bulletin",
   robots: {
     index: true,
     follow: true,

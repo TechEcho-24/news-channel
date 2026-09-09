@@ -133,7 +133,7 @@ export default function Header() {
           {/* Logo */}
           <div className="text-4xl font-serif font-extrabold italic tracking-tighter text-center lg:text-left flex-1 lg:flex-none">
             <Link href="/" className="hover:opacity-90 transition-opacity">
-              <span className="text-black">I</span><span className="text-red-600">N</span><span className="text-black">B</span>
+              <span className="text-black">B</span><span className="text-red-600">N</span><span className="text-black">B</span>
             </Link>
           </div>
 
@@ -275,7 +275,7 @@ export default function Header() {
         <div className="fixed inset-0 bg-white z-[100] lg:hidden overflow-y-auto font-inter">
           <div className="p-4 border-b border-gray-200 flex justify-between items-center bg-[#FAFAFA]">
             <Link href="/" className="text-3xl font-serif font-extrabold italic tracking-tighter" onClick={() => setIsMobileMenuOpen(false)}>
-              <span className="text-black">I</span><span className="text-red-600">N</span><span className="text-black">B</span>
+              <span className="text-black">B</span><span className="text-red-600">N</span><span className="text-black">B</span>
             </Link>
             <button 
               className="p-2 text-gray-700 hover:text-black"

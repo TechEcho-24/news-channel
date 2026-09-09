@@ -2,8 +2,8 @@ import type { Metadata } from "next";
 import Link from "next/link";
 
 export const metadata: Metadata = {
-  title: "Advertise with The Echo",
-  description: "Put your brand in front of thousands of engaged readers. Direct, transparent advertising with The Echo.",
+  title: "Advertise with Bharat News Bulletin (BNB)",
+  description: "Put your brand in front of thousands of engaged readers. Direct, transparent advertising with Bharat News Bulletin (BNB).",
 };
 
 export default function AdvertisePage() {
@@ -13,7 +13,7 @@ export default function AdvertisePage() {
       {/* Header */}
       <div className="border-b-4 border-black">
         <div className="max-w-5xl mx-auto px-4 py-10">
-          <p className="text-xs font-bold uppercase tracking-widest text-gray-500 mb-2">The Echo · Advertising</p>
+          <p className="text-xs font-bold uppercase tracking-widest text-gray-500 mb-2">Bharat News Bulletin (BNB) · Advertising</p>
           <h1 className="text-5xl font-serif font-bold text-gray-900">Work with Us</h1>
         </div>
       </div>
@@ -24,13 +24,13 @@ export default function AdvertisePage() {
         <section className="grid md:grid-cols-2 gap-12 items-start">
           <div>
             <p className="text-xl text-gray-700 leading-relaxed">
-              The Echo reaches readers who care about what they read. No doomscrolling, no clickbait — just people who come here specifically for news.
+              Bharat News Bulletin (BNB) reaches readers who care about what they read. No doomscrolling, no clickbait — just people who come here specifically for news.
             </p>
             <p className="text-gray-500 mt-4 leading-relaxed">
               That makes our audience unusually valuable for local businesses and brands who want real engagement, not just impressions.
             </p>
-            <a href="mailto:ads@theecho.in" className="inline-block mt-8 bg-blue-600 text-white font-semibold px-7 py-3 text-sm hover:bg-blue-700 transition-colors">
-              Email us to start → ads@theecho.in
+            <a href="mailto:ads@bnbnews.in" className="inline-block mt-8 bg-blue-600 text-white font-semibold px-7 py-3 text-sm hover:bg-blue-700 transition-colors">
+              Email us to start → ads@bnbnews.in
             </a>
           </div>
           <div className="border border-gray-200 p-7 space-y-5">
@@ -122,7 +122,7 @@ export default function AdvertisePage() {
                   ))}
                 </ul>
                 <a
-                  href={`mailto:ads@theecho.in?subject=${encodeURIComponent(cta)}`}
+                  href={`mailto:ads@bnbnews.in?subject=${encodeURIComponent(cta)}`}
                   className={`w-full py-3 rounded-lg font-semibold text-center text-sm transition-colors ${
                     highlight
                       ? "bg-blue-600 text-white hover:bg-blue-700"
@@ -163,9 +163,9 @@ export default function AdvertisePage() {
             <div className="text-xl font-bold mb-1">Ready? Let's talk.</div>
             <div className="text-gray-400 text-sm">No pressure, no long contracts to start.</div>
           </div>
-          <a href="mailto:ads@theecho.in"
+          <a href="mailto:ads@bnbnews.in"
             className="flex-shrink-0 bg-white text-black font-bold px-8 py-3 text-sm hover:bg-gray-100 transition-colors">
-            ads@theecho.in
+            ads@bnbnews.in
           </a>
         </div>
 

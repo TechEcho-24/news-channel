@@ -5,7 +5,7 @@ import { getLatestArticles, getArticlesByCategory, generateSlug } from "@/lib/ap
 import { formatDistanceToNow } from "date-fns";
 import type { Metadata } from "next";
 
-const SITE_NAME = "The Echo";
+const SITE_NAME = "Bharat News Bulletin (BNB)";
 
 export async function generateMetadata(
   { params }: { params: Promise<{ category: string }> }
@@ -61,7 +61,7 @@ export default async function CategoryPage({ params }: { params: Promise<{ categ
             {featuredArticle && (
               <div className="mb-12">
                 <Link href={`/${featuredArticle.category.toLowerCase()}/${generateSlug(featuredArticle.title)}`} className="group block">
-                  <div className="relative aspect-[21/9] w-full bg-gray-200 mb-5 overflow-hidden rounded-sm">
+                  <div className="relative aspect-[21/9] w-full bg-gray-200 mb-5 overflow-hidden rounded-md shadow-xs">
                      {featuredArticle.cover_image ? (
                         <Image src={featuredArticle.cover_image} alt={featuredArticle.title} fill className="object-cover group-hover:scale-105 transition-transform duration-500" />
                      ) : (
@@ -70,18 +70,18 @@ export default async function CategoryPage({ params }: { params: Promise<{ categ
                         </div>
                      )}
                   </div>
-                  <div className="flex items-center gap-3 mb-3">
-                    <span className="bg-blue-600 text-white text-xs font-bold uppercase tracking-wider px-2 py-0.5">{featuredArticle.category}</span>
-                    <span className="text-gray-400 text-xs flex items-center gap-1">
-                      <Clock size={12} /> {formatDistanceToNow(new Date(featuredArticle.published_at), { addSuffix: true })}
+                  <div className="flex items-center gap-3 mb-3 font-inter">
+                    <span className="bg-blue-600 text-white text-xs font-bold uppercase tracking-wider px-2.5 py-1 rounded-xs">{featuredArticle.category}</span>
+                    <span className="text-gray-400 text-xs flex items-center gap-1.5">
+                      <span className="flex items-center gap-1"><Clock size={12} /> {formatDistanceToNow(new Date(featuredArticle.published_at), { addSuffix: true })}</span>
                       <span className="mx-1">•</span>
-                      <BarChart2 size={12} /> {featuredArticle.impressions || 0} views
+                      <span className="flex items-center gap-1"><BarChart2 size={12} /> {featuredArticle.impressions || 0} views</span>
                     </span>
                   </div>
-                  <h2 className="text-3xl md:text-4xl font-bold leading-tight mb-3 group-hover:text-blue-600 transition-colors font-poppins tracking-tight max-w-4xl">
+                  <h2 className="text-3xl md:text-4xl font-bold leading-tight mb-3 group-hover:text-blue-600 transition-colors font-poppins tracking-tight max-w-4xl text-gray-900">
                     {featuredArticle.title}
                   </h2>
-                  <p className="text-base text-gray-500 mb-4 leading-relaxed line-clamp-2 max-w-3xl">
+                  <p className="text-base text-gray-600 mb-4 leading-relaxed line-clamp-2 max-w-3xl">
                     {featuredArticle.subheadline}
                   </p>
                 </Link>
@@ -91,22 +91,22 @@ export default async function CategoryPage({ params }: { params: Promise<{ categ
             {/* Article Grid */}
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
               {listArticles.map((item: any) => (
-                <Link key={item.id} href={`/${item.category.toLowerCase()}/${generateSlug(item.title)}`} className="group block">
-                  <div className="aspect-[16/9] w-full bg-gray-200 mb-3 relative overflow-hidden rounded-sm">
+                <Link key={item.id} href={`/${item.category.toLowerCase()}/${generateSlug(item.title)}`} className="group flex flex-col">
+                  <div className="aspect-[16/9] w-full bg-gray-200 mb-3.5 relative overflow-hidden rounded-md shadow-xs">
                      {item.cover_image ? (
                         <Image src={item.cover_image} alt={item.title} fill className="object-cover group-hover:scale-105 transition-transform duration-500" />
                      ) : (
                         <div className="absolute inset-0 flex items-center justify-center text-gray-400 bg-gray-200">No Image</div>
                      )}
                   </div>
-                  <h3 className="text-[16px] font-bold leading-snug mb-2 group-hover:text-blue-600 transition-colors text-gray-900 tracking-tight">
+                  <h3 className="text-base md:text-lg font-bold leading-snug mb-1.5 group-hover:text-blue-600 transition-colors text-gray-900 tracking-tight font-poppins line-clamp-2">
                     {item.title}
                   </h3>
-                  <p className="text-sm text-gray-500 line-clamp-2 mb-2 leading-relaxed">{item.subheadline}</p>
-                  <div className="text-gray-400 text-[11px] flex items-center gap-1.5">
-                    <Clock size={11} /> {formatDistanceToNow(new Date(item.published_at), { addSuffix: true })}
+                  <p className="text-xs md:text-sm text-gray-600 line-clamp-2 mb-3 leading-relaxed flex-1">{item.subheadline}</p>
+                  <div className="text-gray-400 text-[11px] flex items-center gap-1.5 font-inter mt-auto pt-1">
+                    <span className="flex items-center gap-1"><Clock size={11} /> {formatDistanceToNow(new Date(item.published_at), { addSuffix: true })}</span>
                     <span>•</span>
-                    <BarChart2 size={11} /> {item.impressions || 0}
+                    <span className="flex items-center gap-1"><BarChart2 size={11} /> {item.impressions || 0} views</span>
                   </div>
                 </Link>
               ))}

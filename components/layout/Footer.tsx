@@ -9,12 +9,12 @@ export default function Footer() {
           
           {/* Brand & Newsletter */}
           <div className="lg:col-span-2">
-            <Link href="/" className="flex flex-col mb-4 inline-block">
-              <span className="text-4xl font-serif font-extrabold italic tracking-tighter">
-                <span className="text-white">I</span><span className="text-red-600">N</span><span className="text-white">B</span>
+            <Link href="/" className="inline-flex items-center gap-3 mb-4 group">
+              <span className="text-4xl font-serif font-extrabold italic tracking-tighter leading-none">
+                <span className="text-white">B</span><span className="text-red-600">N</span><span className="text-white">B</span>
               </span>
-              <span className="text-sm font-bold tracking-widest uppercase mt-1 text-gray-300">
-                India News Bulletin
+              <span className="border-l border-gray-700 pl-3 text-xs font-bold tracking-widest uppercase text-gray-300 group-hover:text-white transition-colors leading-tight">
+                Bharat News Bulletin
               </span>
             </Link>
             <p className="text-gray-400 mb-6 max-w-sm text-sm leading-relaxed">
@@ -67,7 +67,7 @@ export default function Footer() {
 
         {/* Bottom Footer */}
         <div className="pt-8 border-t border-gray-800 flex flex-col md:flex-row justify-between items-center text-sm text-gray-500">
-          <p>&copy; {new Date().getFullYear()} India News Bulletin (INB). All rights reserved.</p>
+          <p>&copy; {new Date().getFullYear()} Bharat News Bulletin (BNB). All rights reserved.</p>
           <div className="flex space-x-4 mt-4 md:mt-0">
             <Link href="#" className="hover:text-white transition-colors"><Globe size={20} /></Link>
             <Link href="#" className="hover:text-white transition-colors"><Share2 size={20} /></Link>

@@ -52,7 +52,7 @@ export async function POST(request: Request) {
 
     // 3. Process with Gemini
     const prompt = `
-You are an expert, independent journalist for "The Echo", a premium Indian digital news publication.
+You are an expert, independent journalist for "Bharat News Bulletin (BNB)", a premium Indian digital news publication.
 Your task is to read the following raw scraped text from a news article and rewrite it completely into a new, high-quality, professional news report. 
 Do not plagiarize. Rewrite in a neutral, objective, and clear editorial tone. 
 Keep sentences engaging.

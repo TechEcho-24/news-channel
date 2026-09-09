@@ -2,8 +2,8 @@ import type { Metadata } from "next";
 import Link from "next/link";
 
 export const metadata: Metadata = {
-  title: "Media Kit | The Echo",
-  description: "Audience data, ad specifications, and partnership information for The Echo — India's independent digital newsroom.",
+  title: "Media Kit | Bharat News Bulletin (BNB)",
+  description: "Audience data, ad specifications, and partnership information for Bharat News Bulletin (BNB) — India's independent digital newsroom.",
 };
 
 export default function MediaKitPage() {
@@ -13,7 +13,7 @@ export default function MediaKitPage() {
       {/* Header */}
       <div className="border-b-4 border-black">
         <div className="max-w-5xl mx-auto px-4 py-10">
-          <p className="text-xs font-bold uppercase tracking-widest text-gray-500 mb-2">The Echo · Media Kit 2026</p>
+          <p className="text-xs font-bold uppercase tracking-widest text-gray-500 mb-2">Bharat News Bulletin (BNB) · Media Kit 2026</p>
           <h1 className="text-5xl font-serif font-bold text-gray-900">Media Kit</h1>
           <p className="text-gray-600 mt-3 text-lg">For brands, agencies, and media buyers.</p>
         </div>
@@ -35,7 +35,7 @@ export default function MediaKitPage() {
           <div className="grid md:grid-cols-2 gap-12">
             <div className="space-y-4 text-gray-700 leading-relaxed">
               <p>
-                <strong>The Echo</strong> is an independent English-language news publication based in India. We cover Business, Technology, Markets, Politics, Sports, and Lifestyle with original reporting and analysis.
+                <strong>Bharat News Bulletin (BNB)</strong> is an independent English-language news publication based in India. We cover Business, Technology, Markets, Politics, Sports, and Lifestyle with original reporting and analysis.
               </p>
               <p>
                 We are reader-funded through advertising and do not answer to any political group, corporate house, or investor. This independence is the reason our audience trusts us.
@@ -139,8 +139,8 @@ export default function MediaKitPage() {
             <div className="text-sm text-gray-500">Email our advertising team for a personalised package.</div>
           </div>
           <div className="flex gap-4">
-            <a href="mailto:ads@theecho.in" className="bg-blue-600 text-white font-semibold px-6 py-2.5 text-sm hover:bg-blue-700 transition-colors">
-              ads@theecho.in
+            <a href="mailto:ads@bnbnews.in" className="bg-blue-600 text-white font-semibold px-6 py-2.5 text-sm hover:bg-blue-700 transition-colors">
+              ads@bnbnews.in
             </a>
             <Link href="/advertise" className="border border-gray-300 text-gray-700 font-semibold px-6 py-2.5 text-sm hover:bg-gray-50 transition-colors">
               View Packages

@@ -16,7 +16,7 @@ export default async function Home() {
   if (latestArticles.length === 0) {
     return (
       <div className="bg-[#FAFAFA] min-h-[70vh] flex flex-col items-center justify-center p-4">
-        <h1 className="text-3xl font-serif font-bold text-gray-900 mb-4">Welcome to The Echo</h1>
+        <h1 className="text-3xl font-serif font-bold text-gray-900 mb-4">Welcome to Bharat News Bulletin (BNB)</h1>
         <p className="text-gray-500 mb-8 max-w-md text-center">There are no articles published yet. Head over to the admin panel to publish your first news story.</p>
         <Link href="/admin/articles/new" className="bg-blue-600 text-white px-6 py-3 font-semibold text-sm hover:bg-blue-700 transition-colors">
           Publish First Article
@@ -95,25 +95,8 @@ export default async function Home() {
           {/* Sidebar Area */}
           <div className="flex flex-col space-y-5">
             {/* Market Trend & Analytics */}
-            <div className="flex flex-col space-y-4">
+            <div>
               <MarketTrendsClient />
-              
-              {/* Commodities (Static) */}
-              <div>
-                <h3 className="font-black uppercase tracking-widest text-xs border-b-2 border-black pb-2 mb-3 font-inter text-gray-900">Commodities</h3>
-                <div className="grid grid-cols-2 gap-3">
-                  <div className="bg-amber-50 p-3 rounded-sm border border-amber-100 flex flex-col">
-                    <span className="text-xs text-amber-700 font-bold mb-1 tracking-wider font-inter uppercase">Gold (24K)</span>
-                    <span className="font-black text-xl leading-none mb-1 text-amber-900">₹72,450</span>
-                    <span className="text-gray-500 text-xs font-medium">per 10g</span>
-                  </div>
-                  <div className="bg-slate-50 p-3 rounded-sm border border-slate-200 flex flex-col">
-                    <span className="text-xs text-slate-600 font-bold mb-1 tracking-wider font-inter uppercase">Silver</span>
-                    <span className="font-black text-xl leading-none mb-1 text-slate-800">₹91,200</span>
-                    <span className="text-gray-500 text-xs font-medium">per kg</span>
-                  </div>
-                </div>
-              </div>
             </div>
 
             {/* Secondary Stories - Latest News */}
@@ -165,8 +148,8 @@ export default async function Home() {
               return (
                 <div key={idx}>
                   {idx > 0 && (
-                    <div className="w-full py-6 my-6 border-y border-gray-100 flex justify-center">
-                      <AdSlot slot="leaderboard" />
+                    <div className="w-full py-8 my-8 border-y border-gray-200/80 flex justify-center bg-gray-50/40 rounded-lg">
+                      <AdSlot slot="category_banner" />
                     </div>
                   )}
 
@@ -180,9 +163,9 @@ export default async function Home() {
 
               {/* Layout 0: Large Left, List Right */}
               {layoutStyle === 0 && (
-                <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
+                <div className="grid grid-cols-1 lg:grid-cols-3 gap-8 items-start">
                   <div className="lg:col-span-2 group">
-                    <Link href={`/${featuredArticle.category.toLowerCase()}/${generateSlug(featuredArticle.title)}`} className="block aspect-[16/9] w-full bg-gray-100 mb-4 relative overflow-hidden rounded-sm">
+                    <Link href={`/${featuredArticle.category.toLowerCase()}/${generateSlug(featuredArticle.title)}`} className="block aspect-[16/9] w-full bg-gray-100 mb-4 relative overflow-hidden rounded-md shadow-sm">
                        {featuredArticle.cover_image ? (
                           <Image src={featuredArticle.cover_image} alt={featuredArticle.title} fill className="object-cover group-hover:scale-105 transition-transform duration-500" />
                        ) : (
@@ -190,35 +173,42 @@ export default async function Home() {
                        )}
                     </Link>
                     <Link href={`/${featuredArticle.category.toLowerCase()}/${generateSlug(featuredArticle.title)}`}>
-                      <h3 className="text-xl font-bold leading-snug mb-2 group-hover:text-blue-600 transition-colors tracking-tight text-gray-900">
+                      <h3 className="text-2xl font-bold leading-snug mb-2 group-hover:text-blue-600 transition-colors tracking-tight text-gray-900 font-poppins">
                         {featuredArticle.title}
                       </h3>
                     </Link>
-                    <p className="text-gray-500 text-sm leading-relaxed line-clamp-2 mb-3">
+                    <p className="text-gray-600 text-sm leading-relaxed line-clamp-2 mb-3">
                       {featuredArticle.subheadline}
                     </p>
-                    <div className="text-gray-400 text-xs flex items-center gap-1.5">
-                      <Clock size={11} /> {formatDistanceToNow(new Date(featuredArticle.published_at), { addSuffix: true })}
+                    <div className="text-gray-400 text-xs flex items-center gap-2 font-inter">
+                      <span className="flex items-center gap-1"><Clock size={12} /> {formatDistanceToNow(new Date(featuredArticle.published_at), { addSuffix: true })}</span>
                       <span>•</span>
-                      <BarChart2 size={11} /> {featuredArticle.impressions || 0}
+                      <span className="flex items-center gap-1"><BarChart2 size={12} /> {featuredArticle.impressions || 0} views</span>
                     </div>
                   </div>
                   <div className="flex flex-col divide-y divide-gray-100">
                     {listArticles.map((item) => (
-                      <Link key={item.id} href={`/${item.category.toLowerCase()}/${generateSlug(item.title)}`} className="flex space-x-3 group py-4 first:pt-0 last:pb-0">
-                        <div className="w-20 h-16 bg-gray-100 flex-shrink-0 relative overflow-hidden rounded-sm">
+                      <Link key={item.id} href={`/${item.category.toLowerCase()}/${generateSlug(item.title)}`} className="flex space-x-3.5 group py-4 first:pt-0 last:pb-0 items-start">
+                        <div className="w-24 h-20 sm:w-28 sm:h-20 bg-gray-100 flex-shrink-0 relative overflow-hidden rounded-md shadow-xs">
                           {item.cover_image ? (
-                             <Image src={item.cover_image} alt={item.title} fill className="object-cover" />
+                             <Image src={item.cover_image} alt={item.title} fill className="object-cover group-hover:scale-105 transition-transform duration-300" />
                           ) : (
                              <div className="absolute inset-0 flex items-center justify-center text-[10px] text-gray-400">No img</div>
                           )}
                         </div>
-                        <div className="flex-1">
-                          <h4 className="text-[13px] font-bold leading-snug group-hover:text-blue-600 transition-colors mb-1.5 text-gray-900">
+                        <div className="flex-1 min-w-0">
+                          <h4 className="text-sm md:text-[15px] font-bold leading-snug group-hover:text-blue-600 transition-colors mb-1 text-gray-900 line-clamp-2">
                             {item.title}
                           </h4>
-                          <div className="text-gray-400 text-[11px] flex items-center gap-1">
-                            <Clock size={10} /> {formatDistanceToNow(new Date(item.published_at), { addSuffix: true })}
+                          {item.subheadline && (
+                            <p className="text-gray-500 text-xs leading-relaxed line-clamp-2 mb-1.5">
+                              {item.subheadline}
+                            </p>
+                          )}
+                          <div className="text-gray-400 text-[11px] flex items-center gap-1.5 font-inter">
+                            <span className="flex items-center gap-1"><Clock size={10} /> {formatDistanceToNow(new Date(item.published_at), { addSuffix: true })}</span>
+                            <span>•</span>
+                            <span className="flex items-center gap-1"><BarChart2 size={10} /> {item.impressions || 0}</span>
                           </div>
                         </div>
                       </Link>
@@ -229,30 +219,37 @@ export default async function Home() {
 
               {/* Layout 1: List Left, Large Right */}
               {layoutStyle === 1 && (
-                <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
+                <div className="grid grid-cols-1 lg:grid-cols-3 gap-8 items-start">
                   <div className="flex flex-col divide-y divide-gray-100 order-2 lg:order-1">
                     {listArticles.map((item) => (
-                      <Link key={item.id} href={`/${item.category.toLowerCase()}/${generateSlug(item.title)}`} className="flex space-x-3 group py-4 first:pt-0 last:pb-0">
-                        <div className="w-20 h-16 bg-gray-100 flex-shrink-0 relative overflow-hidden rounded-sm">
+                      <Link key={item.id} href={`/${item.category.toLowerCase()}/${generateSlug(item.title)}`} className="flex space-x-3.5 group py-4 first:pt-0 last:pb-0 items-start">
+                        <div className="w-24 h-20 sm:w-28 sm:h-20 bg-gray-100 flex-shrink-0 relative overflow-hidden rounded-md shadow-xs">
                           {item.cover_image ? (
-                             <Image src={item.cover_image} alt={item.title} fill className="object-cover" />
+                             <Image src={item.cover_image} alt={item.title} fill className="object-cover group-hover:scale-105 transition-transform duration-300" />
                           ) : (
                              <div className="absolute inset-0 flex items-center justify-center text-[10px] text-gray-400">No img</div>
                           )}
                         </div>
-                        <div className="flex-1">
-                          <h4 className="text-[13px] font-bold leading-snug group-hover:text-blue-600 transition-colors mb-1.5 text-gray-900">
+                        <div className="flex-1 min-w-0">
+                          <h4 className="text-sm md:text-[15px] font-bold leading-snug group-hover:text-blue-600 transition-colors mb-1 text-gray-900 line-clamp-2">
                             {item.title}
                           </h4>
-                          <div className="text-gray-400 text-[11px] flex items-center gap-1">
-                            <Clock size={10} /> {formatDistanceToNow(new Date(item.published_at), { addSuffix: true })}
+                          {item.subheadline && (
+                            <p className="text-gray-500 text-xs leading-relaxed line-clamp-2 mb-1.5">
+                              {item.subheadline}
+                            </p>
+                          )}
+                          <div className="text-gray-400 text-[11px] flex items-center gap-1.5 font-inter">
+                            <span className="flex items-center gap-1"><Clock size={10} /> {formatDistanceToNow(new Date(item.published_at), { addSuffix: true })}</span>
+                            <span>•</span>
+                            <span className="flex items-center gap-1"><BarChart2 size={10} /> {item.impressions || 0}</span>
                           </div>
                         </div>
                       </Link>
                     ))}
                   </div>
                   <div className="lg:col-span-2 group order-1 lg:order-2">
-                    <Link href={`/${featuredArticle.category.toLowerCase()}/${generateSlug(featuredArticle.title)}`} className="block aspect-[16/9] w-full bg-gray-100 mb-4 relative overflow-hidden rounded-sm">
+                    <Link href={`/${featuredArticle.category.toLowerCase()}/${generateSlug(featuredArticle.title)}`} className="block aspect-[16/9] w-full bg-gray-100 mb-4 relative overflow-hidden rounded-md shadow-sm">
                        {featuredArticle.cover_image ? (
                           <Image src={featuredArticle.cover_image} alt={featuredArticle.title} fill className="object-cover group-hover:scale-105 transition-transform duration-500" />
                        ) : (
@@ -260,17 +257,17 @@ export default async function Home() {
                        )}
                     </Link>
                     <Link href={`/${featuredArticle.category.toLowerCase()}/${generateSlug(featuredArticle.title)}`}>
-                      <h3 className="text-xl font-bold leading-snug mb-2 group-hover:text-blue-600 transition-colors tracking-tight text-gray-900">
+                      <h3 className="text-2xl font-bold leading-snug mb-2 group-hover:text-blue-600 transition-colors tracking-tight text-gray-900 font-poppins">
                         {featuredArticle.title}
                       </h3>
                     </Link>
-                    <p className="text-gray-500 text-sm leading-relaxed line-clamp-2 mb-3">
+                    <p className="text-gray-600 text-sm leading-relaxed line-clamp-2 mb-3">
                       {featuredArticle.subheadline}
                     </p>
-                    <div className="text-gray-400 text-xs flex items-center gap-1.5">
-                      <Clock size={11} /> {formatDistanceToNow(new Date(featuredArticle.published_at), { addSuffix: true })}
+                    <div className="text-gray-400 text-xs flex items-center gap-2 font-inter">
+                      <span className="flex items-center gap-1"><Clock size={12} /> {formatDistanceToNow(new Date(featuredArticle.published_at), { addSuffix: true })}</span>
                       <span>•</span>
-                      <BarChart2 size={11} /> {featuredArticle.impressions || 0}
+                      <span className="flex items-center gap-1"><BarChart2 size={12} /> {featuredArticle.impressions || 0} views</span>
                     </div>
                   </div>
                 </div>

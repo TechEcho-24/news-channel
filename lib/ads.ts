@@ -1,6 +1,6 @@
 import { supabase } from "@/lib/supabase";
 
-export type AdSlotType = "leaderboard" | "sidebar" | "in_article" | "homepage_hero" | "footer" | "nav_top";
+export type AdSlotType = "leaderboard" | "sidebar" | "in_article" | "homepage_hero" | "category_banner" | "footer" | "nav_top" | "half_page";
 
 export type Ad = {
   id: string;

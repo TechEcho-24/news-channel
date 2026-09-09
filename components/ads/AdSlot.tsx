@@ -1,13 +1,16 @@
 import Link from "next/link";
 import { getActiveAd, AdSlotType } from "@/lib/ads";
+import AdSlotClientTracker from "./AdSlotClientTracker";
 
 const SLOT_SIZES: Record<AdSlotType, { label: string; className: string }> = {
-  leaderboard:  { label: "728×90",  className: "w-full max-w-[728px] h-[90px]" },
-  sidebar:      { label: "300×250", className: "w-full aspect-[6/5]" },
-  in_article:   { label: "300×250", className: "w-full max-w-[300px] aspect-[6/5] mx-auto" },
-  homepage_hero:{ label: "970×250", className: "w-full h-[120px] md:h-[200px]" },
-  footer:       { label: "728×90",  className: "w-full max-w-[728px] h-[90px]" },
-  nav_top:      { label: "970×90",  className: "w-full h-[60px] md:h-[90px]" },
+  leaderboard:   { label: "728×90",   className: "w-full max-w-[728px] aspect-[728/90] mx-auto" },
+  sidebar:       { label: "300×250",  className: "w-full max-w-[300px] aspect-[300/250] mx-auto" },
+  in_article:    { label: "300×250",  className: "w-full max-w-[300px] aspect-[300/250] mx-auto" },
+  homepage_hero: { label: "970×250",  className: "w-full max-w-[970px] aspect-[970/250] mx-auto" },
+  category_banner: { label: "970×250", className: "w-full max-w-[970px] aspect-[970/250] mx-auto" },
+  footer:        { label: "728×90",   className: "w-full max-w-[728px] aspect-[728/90] mx-auto" },
+  nav_top:       { label: "970×90",   className: "w-full max-w-[970px] aspect-[970/90] mx-auto" },
+  half_page:     { label: "300×600",  className: "w-full max-w-[300px] aspect-[300/600] mx-auto" },
 };
 
 interface AdSlotProps {
@@ -25,7 +28,6 @@ export default async function AdSlot({ slot, className = "" }: AdSlotProps) {
     return (
       <div className={`text-center ${className}`}>
         <span className="text-[10px] text-gray-400 uppercase tracking-widest block mb-1">Advertisement</span>
-        {/* AdSense slot — replace data-ad-slot with your actual slot ID */}
         <ins
           className="adsbygoogle"
           style={{ display: "block" }}
@@ -43,8 +45,25 @@ export default async function AdSlot({ slot, className = "" }: AdSlotProps) {
   const sizes = SLOT_SIZES[slot] || SLOT_SIZES.leaderboard;
 
   if (!ad) {
-    // No ad configured — show nothing (clean, no grey boxes)
-    return null;
+    // Show grey placeholder box when no ad is active for this slot
+    return (
+      <div className={`text-center my-3 ${className}`}>
+        <span className="text-[10px] text-gray-400 uppercase tracking-widest block mb-1 font-inter">
+          Advertisement Slot
+        </span>
+        <Link
+          href="/advertise"
+          className={`group flex flex-col items-center justify-center bg-gray-100/90 hover:bg-gray-200/80 border-2 border-dashed border-gray-300 hover:border-blue-500 rounded-md transition-all p-4 ${sizes.className}`}
+        >
+          <span className="text-xs font-bold text-gray-600 group-hover:text-blue-600 uppercase tracking-wider mb-1 font-inter">
+            Advertise Here ({sizes.label})
+          </span>
+          <span className="text-[11px] text-gray-400 group-hover:text-blue-500 font-medium">
+            Click to book this spot →
+          </span>
+        </Link>
+      </div>
+    );
   }
 
   const href = ad.link_url.startsWith("http://") || ad.link_url.startsWith("https://")
@@ -52,29 +71,16 @@ export default async function AdSlot({ slot, className = "" }: AdSlotProps) {
     : `https://${ad.link_url}`;
 
   return (
-    <div className={`text-center ${className}`}>
+    <div className={`text-center my-3 ${className}`}>
       <span className="text-[10px] text-gray-400 uppercase tracking-widest block mb-1 font-inter">Advertisement</span>
-      <Link
+      <AdSlotClientTracker
+        adId={ad.id}
         href={href}
-        target="_blank"
-        rel="noopener noreferrer sponsored"
-        className={`group relative inline-block overflow-hidden rounded-sm border border-gray-200 shadow-sm ${sizes.className}`}
         title={ad.title}
-      >
-        {/* eslint-disable-next-line @next/next/no-img-element */}
-        <img
-          src={ad.image_url}
-          alt={ad.title}
-          className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
-        />
-
-        {/* Optional Action Button Overlay */}
-        {ad.cta_text && (
-          <span className="absolute bottom-2.5 right-2.5 bg-blue-600 hover:bg-blue-700 text-white text-xs font-bold px-3 py-1.5 rounded shadow-md group-hover:bg-blue-800 transition-colors flex items-center gap-1 font-inter">
-            {ad.cta_text} →
-          </span>
-        )}
-      </Link>
+        imageUrl={ad.image_url}
+        ctaText={ad.cta_text}
+        className={sizes.className}
+      />
     </div>
   );
 }
