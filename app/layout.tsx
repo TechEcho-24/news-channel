@@ -17,7 +17,7 @@ const poppins = Poppins({
   weight: ["400", "500", "600", "700"],
 });
 
-const SITE_URL = process.env.NEXT_PUBLIC_SITE_URL || "https://bnbnews.in";
+const SITE_URL = process.env.NEXT_PUBLIC_SITE_URL || "https://bharatnewsbulletin.com";
 const SITE_NAME = "Bharat News Bulletin";
 
 export const metadata: Metadata = {
@@ -28,7 +28,6 @@ export const metadata: Metadata = {
   },
   description:
     "Bharat News Bulletin (BNB) brings you breaking news, in-depth analysis, and stories from India and the world. Business, Technology, Politics, Sports, and more.",
-  keywords: ["news", "india news", "breaking news", "business", "technology", "politics", "sports", "BNB", "Bharat News Bulletin"],
   authors: [{ name: "Bharat News Bulletin" }],
   creator: "Bharat News Bulletin",
   publisher: "Bharat News Bulletin",
@@ -63,6 +62,19 @@ export default function RootLayout({
 }: Readonly<{
   children: React.ReactNode;
 }>) {
+  const orgSchema = {
+    "@context": "https://schema.org",
+    "@type": "Organization",
+    "name": SITE_NAME,
+    "url": SITE_URL,
+    "logo": `${SITE_URL}/bnblogo.png`,
+    "sameAs": [
+      "https://twitter.com/BNBnews",
+      "https://facebook.com/BNBnews",
+      "https://instagram.com/BNBnews"
+    ]
+  };
+
   return (
     <html
       lang="en"
@@ -70,6 +82,10 @@ export default function RootLayout({
       suppressHydrationWarning
     >
       <body className="min-h-full flex flex-col font-sans text-neutral-900 bg-[#FAFAFA]">
+        <script
+          type="application/ld+json"
+          dangerouslySetInnerHTML={{ __html: JSON.stringify(orgSchema) }}
+        />
         <Script 
           src="https://translate.google.com/translate_a/element.js?cb=googleTranslateElementInit"
           strategy="afterInteractive"

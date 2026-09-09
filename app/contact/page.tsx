@@ -50,14 +50,14 @@ export default function ContactPage() {
           <div className="space-y-6">
             <div className="border-t border-gray-200 pt-6">
               <div className="text-xs font-bold uppercase tracking-widest text-gray-400 mb-1">General</div>
-              <a href="mailto:hello@bnbnews.in" className="text-gray-900 font-medium hover:text-blue-600 transition-colors">
-                hello@bnbnews.in
+              <a href="mailto:hello@bharatnewsbulletin.com" className="text-gray-900 font-medium hover:text-blue-600 transition-colors">
+                hello@bharatnewsbulletin.com
               </a>
             </div>
             <div className="border-t border-gray-200 pt-6">
               <div className="text-xs font-bold uppercase tracking-widest text-gray-400 mb-1">Advertising</div>
-              <a href="mailto:ads@bnbnews.in" className="text-gray-900 font-medium hover:text-blue-600 transition-colors">
-                ads@bnbnews.in
+              <a href="mailto:ads@bharatnewsbulletin.com" className="text-gray-900 font-medium hover:text-blue-600 transition-colors">
+                ads@bharatnewsbulletin.com
               </a>
             </div>
             <div className="border-t border-gray-200 pt-6">
@@ -90,7 +90,7 @@ export default function ContactPage() {
             <form onSubmit={handleSubmit} className="space-y-5">
               {status === "error" && (
                 <div className="bg-red-50 border-l-4 border-red-500 px-4 py-3 text-red-700 text-sm">
-                  Something went wrong. Email us directly at hello@bnbnews.in
+                  Something went wrong. Email us directly at hello@bharatnewsbulletin.com
                 </div>
               )}
 

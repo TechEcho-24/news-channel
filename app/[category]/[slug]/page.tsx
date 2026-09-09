@@ -9,7 +9,7 @@ import ArticleActionsClient from "@/components/articles/ArticleActionsClient";
 import AdSlot from "@/components/ads/AdSlot";
 
 const SITE_NAME = "Bharat News Bulletin";
-const SITE_URL = process.env.NEXT_PUBLIC_SITE_URL || "https://bnbnews.in";
+const SITE_URL = process.env.NEXT_PUBLIC_SITE_URL || "https://bharatnewsbulletin.com";
 
 export async function generateMetadata(
   { params }: { params: Promise<{ category: string; slug: string }> }
@@ -76,25 +76,55 @@ export default async function ArticlePage({ params }: { params: Promise<{ catego
   const jsonLd = {
     "@context": "https://schema.org",
     "@type": "NewsArticle",
+    "mainEntityOfPage": {
+      "@type": "WebPage",
+      "@id": `${SITE_URL}/${resolvedParams.category}/${resolvedParams.slug}`
+    },
     "headline": article.title,
     "description": article.subheadline || article.seo_description || "",
     "image": article.cover_image ? [article.cover_image] : [],
     "datePublished": article.published_at,
     "dateModified": article.updated_at || article.published_at,
     "author": {
-      "@type": "Person",
-      "name": article.author_name || SITE_NAME
+      "@type": "Organization",
+      "name": article.author_name || SITE_NAME,
+      "url": SITE_URL
     },
     "publisher": {
       "@type": "Organization",
       "name": SITE_NAME,
       "logo": {
         "@type": "ImageObject",
-        "url": `${SITE_URL}/logo.png`
+        "url": `${SITE_URL}/bnblogo.png`
       }
     },
     "articleSection": article.category,
     "keywords": allCategories.join(", ")
+  };
+
+  const breadcrumbLd = {
+    "@context": "https://schema.org",
+    "@type": "BreadcrumbList",
+    "itemListElement": [
+      {
+        "@type": "ListItem",
+        "position": 1,
+        "name": "Home",
+        "item": SITE_URL
+      },
+      {
+        "@type": "ListItem",
+        "position": 2,
+        "name": article.category,
+        "item": `${SITE_URL}/${resolvedParams.category}`
+      },
+      {
+        "@type": "ListItem",
+        "position": 3,
+        "name": article.title,
+        "item": `${SITE_URL}/${resolvedParams.category}/${resolvedParams.slug}`
+      }
+    ]
   };
 
   return (
@@ -103,6 +133,10 @@ export default async function ArticlePage({ params }: { params: Promise<{ catego
       <script
         type="application/ld+json"
         dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
+      />
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(breadcrumbLd) }}
       />
 
       {/* Top Ad */}
@@ -130,6 +164,8 @@ export default async function ArticlePage({ params }: { params: Promise<{ catego
               src={article.cover_image}
               alt={article.title}
               fill
+              sizes="(max-width: 768px) 100vw, (max-width: 1200px) 100vw, 100vw"
+              priority
               className="object-cover"
             />
           </div>
@@ -195,9 +231,9 @@ export default async function ArticlePage({ params }: { params: Promise<{ catego
 
             {/* More from this category */}
             <div className="border border-gray-200 p-6 bg-[#FAFAFA]">
-              <h3 className="font-bold uppercase tracking-wider text-sm border-b-2 border-black pb-2 mb-6">
+              <h2 className="font-bold uppercase tracking-wider text-sm border-b-2 border-black pb-2 mb-6">
                 More from {article.category}
-              </h3>
+              </h2>
               <p className="text-sm text-gray-400">Related articles coming soon.</p>
             </div>
 

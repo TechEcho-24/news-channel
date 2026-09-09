@@ -70,7 +70,7 @@ export default async function Home() {
           <div className="lg:col-span-2">
             <Link href={`/${heroArticle.category.toLowerCase()}/${heroSlug}`} className="block relative aspect-[16/9] w-full bg-gray-200 mb-5 overflow-hidden group rounded-sm max-h-[500px] lg:max-h-[600px]">
               {heroArticle.cover_image ? (
-                <Image src={heroArticle.cover_image} alt={heroArticle.title} fill sizes="100vw" className="object-cover group-hover:scale-105 transition-transform duration-500" />
+                <Image src={heroArticle.cover_image} alt={heroArticle.title} fill sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw" className="object-cover group-hover:scale-105 transition-transform duration-500" priority />
               ) : (
                 <div className="absolute inset-0 bg-blue-100 flex items-center justify-center text-gray-500 group-hover:scale-105 transition-transform duration-500">
                   No Image Available
@@ -179,7 +179,7 @@ export default async function Home() {
                       <div>
                         <Link href={`/${item.category.toLowerCase()}/${generateSlug(item.title)}`} className="block aspect-[16/10] w-full relative bg-gray-100 overflow-hidden">
                           {item.cover_image ? (
-                            <Image src={item.cover_image} alt={item.title} fill sizes="100vw" className="object-cover group-hover:scale-105 transition-transform duration-300" />
+                            <Image src={item.cover_image} alt={item.title} fill sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw" quality={75} className="object-cover group-hover:scale-105 transition-transform duration-300" />
                           ) : (
                             <div className="absolute inset-0 flex items-center justify-center text-xs text-gray-400">No Image</div>
                           )}
@@ -215,7 +215,7 @@ export default async function Home() {
                       <div className="lg:col-span-2 group">
                         <Link href={`/${featuredArticle.category.toLowerCase()}/${generateSlug(featuredArticle.title)}`} className="block aspect-[16/9] w-full bg-gray-100 mb-4 relative overflow-hidden rounded-md shadow-sm">
                            {featuredArticle.cover_image ? (
-                              <Image src={featuredArticle.cover_image} alt={featuredArticle.title} fill sizes="100vw" className="object-cover group-hover:scale-105 transition-transform duration-500" />
+                              <Image src={featuredArticle.cover_image} alt={featuredArticle.title} fill sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw" quality={75} className="object-cover group-hover:scale-105 transition-transform duration-500" />
                            ) : (
                               <div className="absolute inset-0 flex items-center justify-center text-gray-400 bg-gray-200">No Image</div>
                            )}
@@ -239,7 +239,7 @@ export default async function Home() {
                           <Link key={item.id} href={`/${item.category.toLowerCase()}/${generateSlug(item.title)}`} className="flex space-x-3.5 group py-4 first:pt-0 last:pb-0 items-start">
                             <div className="w-24 h-20 sm:w-28 sm:h-20 bg-gray-100 flex-shrink-0 relative overflow-hidden rounded-md shadow-xs">
                               {item.cover_image ? (
-                                 <Image src={item.cover_image} alt={item.title} fill sizes="100vw" className="object-cover group-hover:scale-105 transition-transform duration-300" />
+                                 <Image src={item.cover_image} alt={item.title} fill sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw" quality={75} className="object-cover group-hover:scale-105 transition-transform duration-300" />
                               ) : (
                                  <div className="absolute inset-0 flex items-center justify-center text-[10px] text-gray-400">No img</div>
                               )}
@@ -273,7 +273,7 @@ export default async function Home() {
                           <Link key={item.id} href={`/${item.category.toLowerCase()}/${generateSlug(item.title)}`} className="flex space-x-3.5 group py-4 first:pt-0 last:pb-0 items-start">
                             <div className="w-24 h-20 sm:w-28 sm:h-20 bg-gray-100 flex-shrink-0 relative overflow-hidden rounded-md shadow-xs">
                               {item.cover_image ? (
-                                 <Image src={item.cover_image} alt={item.title} fill sizes="100vw" className="object-cover group-hover:scale-105 transition-transform duration-300" />
+                                 <Image src={item.cover_image} alt={item.title} fill sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw" quality={75} className="object-cover group-hover:scale-105 transition-transform duration-300" />
                               ) : (
                                  <div className="absolute inset-0 flex items-center justify-center text-[10px] text-gray-400">No img</div>
                               )}
@@ -299,7 +299,7 @@ export default async function Home() {
                       <div className="lg:col-span-2 group order-1 lg:order-2">
                         <Link href={`/${featuredArticle.category.toLowerCase()}/${generateSlug(featuredArticle.title)}`} className="block aspect-[16/9] w-full bg-gray-100 mb-4 relative overflow-hidden rounded-md shadow-sm">
                            {featuredArticle.cover_image ? (
-                              <Image src={featuredArticle.cover_image} alt={featuredArticle.title} fill sizes="100vw" className="object-cover group-hover:scale-105 transition-transform duration-500" />
+                              <Image src={featuredArticle.cover_image} alt={featuredArticle.title} fill sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw" quality={75} className="object-cover group-hover:scale-105 transition-transform duration-500" />
                            ) : (
                               <div className="absolute inset-0 flex items-center justify-center text-gray-400 bg-gray-200">No Image</div>
                            )}
@@ -342,7 +342,7 @@ export default async function Home() {
                     <Link key={item.id} href={`/${item.category.toLowerCase()}/${generateSlug(item.title)}`} className="block group">
                       <div className="relative aspect-[16/9] w-full bg-gray-100 overflow-hidden rounded-md shadow-sm mb-2">
                         {item.cover_image ? (
-                          <Image src={item.cover_image} alt={item.title} fill sizes="100vw" className="object-cover group-hover:scale-105 transition-transform duration-300" />
+                          <Image src={item.cover_image} alt={item.title} fill sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw" quality={75} className="object-cover group-hover:scale-105 transition-transform duration-300" />
                         ) : (
                           <div className="absolute inset-0 flex items-center justify-center text-xs text-gray-400">No Image</div>
                         )}
