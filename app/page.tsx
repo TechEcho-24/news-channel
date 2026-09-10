@@ -173,7 +173,7 @@ export default async function Home() {
 
               return (
                 <div key={idx}>
-                  {idx > 0 && (
+                  {idx === 1 && (
                     <div className="w-full py-8 my-8 border-y border-gray-200/80 flex justify-center bg-gray-50/40 rounded-lg">
                       <AdSlot slot="category_banner" />
                     </div>

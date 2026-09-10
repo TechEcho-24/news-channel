@@ -22,7 +22,7 @@ export default async function Ticker() {
 
         {/* Marquee Container */}
         <div className="flex-1 overflow-hidden relative flex items-center">
-          <div className="flex whitespace-nowrap animate-[marquee_30s_linear_infinite] hover:[animation-play-state:paused]">
+          <div className="flex whitespace-nowrap animate-[marquee_50s_linear_infinite] hover:[animation-play-state:paused]">
             {latestNews.map((news) => (
               <Link key={news.id} href={news.link} className="mx-8 hover:text-[#3B82F6] hover:underline transition-colors cursor-pointer flex items-center gap-2">
                 <span className="w-1.5 h-1.5 bg-red-500 rounded-full animate-ping"></span>
