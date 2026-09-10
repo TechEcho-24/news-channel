@@ -14,9 +14,9 @@ export default async function Ticker() {
   if (!latestNews || latestNews.length === 0) return null;
 
   return (
-    <div className="bg-[#111111] text-white text-xs font-semibold tracking-wider flex items-center justify-between font-inter border-b border-gray-800 pr-4">
-      <div className="flex items-center flex-1 ">
-        <span className="bg-[#DC2626] text-white font-black px-4 py-2 text-[10px] uppercase tracking-widest flex-shrink-0 z-10 flex items-center relative mr-4">
+    <div className="bg-[#111111] text-white text-xs font-semibold tracking-wider flex items-center justify-between font-inter border-b border-gray-800 ">
+      <div className="flex items-center flex-1  overflow-hidden">
+        <span className="bg-[#DC2626] text-white font-black px-4 py-2 text-[10px] uppercase tracking-widest flex-shrink-0 z-10 flex items-center relative ">
           BREAKING NEWS
         </span>
 
