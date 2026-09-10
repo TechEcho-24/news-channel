@@ -124,14 +124,14 @@ export default function Header() {
   }
 
   return (
-    <header className="border-b border-gray-200 sticky top-0 bg-white/70 backdrop-blur-md z-50">
-      <div className="w-full px-8">
+    <header className={`border-b border-gray-200 sticky top-0 z-50 ${isMobileMenuOpen ? "bg-white" : "bg-white/70 backdrop-blur-md"}`}>
+      <div className="w-full px-4 lg:px-8">
         {/* Top Header */}
         <div className="flex justify-between items-center py-4">
           {/* Mobile Menu Icon */}
-          <div className="lg:hidden">
+          <div className="flex-1 flex justify-start lg:hidden">
             <button 
-              className="p-2 text-gray-700 hover:text-black"
+              className="p-2 -ml-2 text-gray-700 hover:text-black"
               onClick={() => setIsMobileMenuOpen(true)}
             >
               <Menu size={24} />
@@ -139,9 +139,9 @@ export default function Header() {
           </div>
 
           {/* Logo */}
-          <div className="flex-1 lg:flex-none flex justify-center lg:justify-start">
+          <div className="flex-shrink-0 flex justify-center lg:justify-start">
             <Link href="/" className="hover:opacity-90 transition-opacity flex items-center">
-              <Image src="/bnblogo.png" alt="BNB Logo" width={100} height={40} className="object-contain h-10 w-auto" priority />
+              <Image src="/bnblogo.png" alt="BNB Logo" width={100} height={40} className="object-contain h-8 md:h-10 w-auto" priority />
             </Link>
           </div>
 
@@ -185,7 +185,7 @@ export default function Header() {
           </nav>
 
           {/* Actions */}
-          <div className="flex items-center space-x-2 md:space-x-4">
+          <div className="flex-1 lg:flex-none flex items-center justify-end space-x-2 md:space-x-4">
             {/* Search Bar Container */}
             <div className="relative hidden sm:block" ref={searchContainerRef}>
               {isSearchOpen ? (
@@ -253,10 +253,18 @@ export default function Header() {
               )}
             </div>
             
+            <LanguageSelector />
+            <Link href="/profile" className="hidden md:flex w-8 h-8 md:w-10 md:h-10 items-center justify-center text-gray-700 hover:text-blue-600 transition-colors border-2 border-gray-300 rounded-full hover:border-blue-600 bg-gray-50 overflow-hidden font-bold text-xs md:text-sm">
+              {userInitials ? (
+                userInitials
+              ) : (
+                <User size={16} className="md:w-5 md:h-5" />
+              )}
+            </Link>
             <Link
               href={user ? "#" : "/login"}
               onClick={handleSubscribeClick}
-              className={`text-white text-xs md:text-sm font-semibold px-3 py-2 md:px-5 transition-colors shadow-sm ${
+              className={`hidden lg:flex text-white text-xs md:text-sm font-semibold px-3 py-2 md:px-5 transition-colors shadow-sm rounded-md ${
                 isSubscribed 
                   ? "bg-green-600 cursor-default" 
                   : loading 
@@ -266,14 +274,6 @@ export default function Header() {
             >
               {isSubscribed ? "Subscribed" : loading ? "Wait..." : "Subscribe"}
             </Link>
-            <Link href="/profile" className="w-8 h-8 md:w-10 md:h-10 flex items-center justify-center text-gray-700 hover:text-blue-600 transition-colors border-2 border-gray-300 rounded-full hover:border-blue-600 bg-gray-50 overflow-hidden font-bold text-xs md:text-sm">
-              {userInitials ? (
-                userInitials
-              ) : (
-                <User size={16} className="md:w-5 md:h-5" />
-              )}
-            </Link>
-            <LanguageSelector />
           </div>
         </div>
       </div>
@@ -300,9 +300,39 @@ export default function Header() {
             </div>
 
             <ul className="space-y-4 text-lg font-bold capitalize">
+              {/* User Profile in Mobile Menu */}
+              <li className="mb-6">
+                <Link href={user ? "/profile" : "/login"} className="flex items-center gap-3 p-3 bg-gray-50 rounded-lg border border-gray-100 text-gray-700" onClick={() => setIsMobileMenuOpen(false)}>
+                  <div className="w-10 h-10 flex items-center justify-center bg-white border-2 border-gray-300 rounded-full text-sm font-bold">
+                    {userInitials ? userInitials : <User size={20} />}
+                  </div>
+                  <div className="flex flex-col">
+                    <span className="text-sm font-bold">{user ? "My Profile" : "Login / Register"}</span>
+                    <span className="text-xs text-gray-500 font-normal normal-case">{user ? user.email : "Manage your account"}</span>
+                  </div>
+                </Link>
+              </li>
+              <li className="mb-6">
+                <Link
+                  href={user ? "#" : "/login"}
+                  onClick={(e) => {
+                    handleSubscribeClick(e);
+                    if (user && !isSubscribed) setIsMobileMenuOpen(false);
+                  }}
+                  className={`flex justify-center items-center text-white text-base font-semibold px-4 py-3 rounded-lg w-full transition-colors shadow-sm ${
+                    isSubscribed 
+                      ? "bg-green-600 cursor-default" 
+                      : loading 
+                        ? "bg-gray-400 cursor-not-allowed" 
+                        : "bg-[#DC2626] hover:bg-red-700"
+                  }`}
+                >
+                  {isSubscribed ? "Subscribed" : loading ? "Wait..." : "Subscribe for Updates"}
+                </Link>
+              </li>
               {topCategories.map((cat) => (
                 <li key={cat}>
-                  <Link href={`/${cat.toLowerCase()}`} className="block pb-2 border-b border-gray-100" onClick={() => setIsMobileMenuOpen(false)}>
+                  <Link href={`/${cat.toLowerCase()}`} className="block pb-2 border-b border-gray-100 text-gray-900" onClick={() => setIsMobileMenuOpen(false)}>
                     {cat}
                   </Link>
                 </li>

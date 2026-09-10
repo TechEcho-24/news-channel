@@ -61,9 +61,9 @@ function TickerBox({
 
   if (!data) {
     return (
-      <div className={`${bgColor} p-3 rounded border ${borderColor} flex flex-col items-center justify-center h-full min-h-[80px]`}>
-        <span className="text-[10px] text-gray-500 font-semibold mb-1 tracking-wider font-inter">{title}</span>
-        <div className="w-16 h-4 bg-gray-200 animate-pulse rounded"></div>
+      <div className={`${bgColor} p-2 rounded-md border ${borderColor} flex flex-col items-center justify-center h-full min-h-[64px]`}>
+        <span className="text-[9px] text-gray-500 font-semibold mb-1 tracking-wider font-inter">{title}</span>
+        <div className="w-12 h-3 bg-gray-200 animate-pulse rounded"></div>
       </div>
     );
   }
@@ -74,24 +74,24 @@ function TickerBox({
   const sign = isPositive ? "+" : "";
 
   return (
-    <div className={`p-3 rounded border ${borderColor} flex flex-col ${flashClass}`}>
-      <div className="flex justify-between items-start mb-1">
-        <span className="text-xs text-gray-500 font-bold tracking-widest font-inter uppercase">{title}</span>
-        <span className="relative flex h-2 w-2 mt-1">
+    <div className={`p-2.5 rounded-md border ${borderColor} flex flex-col ${flashClass}`}>
+      <div className="flex justify-between items-start mb-0.5">
+        <span className="text-[10px] text-gray-500 font-bold tracking-widest font-inter uppercase">{title}</span>
+        <span className="relative flex h-1.5 w-1.5 mt-0.5">
           <span className={`${isPositive ? 'bg-green-400' : 'bg-red-400'} animate-ping absolute inline-flex h-full w-full rounded-full opacity-75`}></span>
-          <span className={`relative inline-flex rounded-full h-2 w-2 ${isPositive ? 'bg-green-500' : 'bg-red-500'}`}></span>
+          <span className={`relative inline-flex rounded-full h-1.5 w-1.5 ${isPositive ? 'bg-green-500' : 'bg-red-500'}`}></span>
         </span>
       </div>
-      <div className="flex items-baseline gap-1 mb-1">
-        <span className="font-black text-xl leading-none text-gray-900">
+      <div className="flex items-baseline gap-1 mb-0.5">
+        <span className="font-bold text-base md:text-lg leading-none text-gray-800">
           {prefix}{data.price.toLocaleString('en-IN', { maximumFractionDigits: 2 })}
         </span>
       </div>
       <div className="flex items-center justify-between">
-        <span className={`${colorClass} text-xs font-semibold flex items-center`}>
+        <span className={`${colorClass} text-[10px] font-medium flex items-center`}>
           {arrow} {sign}{prefix}{Math.abs(data.change).toLocaleString('en-IN', { maximumFractionDigits: 0 })} ({sign}{data.changePercent.toFixed(2)}%)
         </span>
-        {unit && <span className="text-[10px] text-gray-400 font-medium">{unit}</span>}
+        {unit && <span className="text-[9px] text-gray-400 font-medium ml-1">{unit}</span>}
       </div>
     </div>
   );
@@ -131,7 +131,7 @@ export default function MarketTrendsClient() {
     <div className="flex flex-col space-y-4">
       {/* Live Stock Market */}
       <div>
-        <h3 className="font-black uppercase tracking-widest text-xs border-b-2 border-black pb-2 mb-3 font-inter text-gray-900 flex justify-between items-center">
+        <h3 className="font-black uppercase tracking-widest text-xs border-b-2 border-gray-200 pb-2 mb-3 font-inter text-gray-900 flex justify-between items-center">
           <span>Live Market</span>
           <span className="text-[10px] font-normal text-gray-400 lowercase">live</span>
         </h3>
@@ -143,7 +143,7 @@ export default function MarketTrendsClient() {
 
       {/* Live Commodities (Gold & Silver) */}
       <div>
-        <h3 className="font-black uppercase tracking-widest text-xs border-b-2 border-black pb-2 mb-3 font-inter text-gray-900 flex justify-between items-center">
+        <h3 className="font-black uppercase tracking-widest text-xs border-b-2 border-gray-200 pb-2 mb-3 font-inter text-gray-900 flex justify-between items-center">
           <span>Commodities</span>
           <span className="text-[10px] font-normal text-gray-400 lowercase">real rate</span>
         </h3>

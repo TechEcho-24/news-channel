@@ -2,7 +2,7 @@
 
 import { useState, useEffect } from "react";
 import { createClient } from "@/utils/supabase/client";
-import { Loader2 } from "lucide-react";
+import { Loader2, Mail, MailOpen } from "lucide-react";
 
 export default function NewsletterClient() {
   const [email, setEmail] = useState("");
@@ -82,64 +82,77 @@ export default function NewsletterClient() {
   };
 
   return (
-    <div className="container mx-auto px-4 max-w-4xl text-center">
-      <h2 className="text-3xl font-serif font-bold mb-4">Stay Ahead of the News</h2>
-      <p className="text-gray-400 mb-8 max-w-2xl mx-auto">
-        Get important stories, breaking updates, and editor's picks delivered directly to you.
+    <div className="bg-white rounded-[40px] shadow-[0_10px_60px_-15px_rgba(0,0,0,0.1)] border border-gray-100 p-10 md:p-14 w-full max-w-4xl mx-auto text-center relative z-10 overflow-hidden">
+      {/* Background decoration - optional, mimicking the floating envelopes in the screenshot */}
+      <div className="absolute top-10 left-10 text-gray-200 opacity-50 transform -rotate-12"><Mail size={32} /></div>
+      <div className="absolute top-24 left-32 text-gray-200 opacity-50 transform rotate-12"><Mail size={24} /></div>
+      <div className="absolute top-8 right-20 text-gray-200 opacity-50 transform rotate-6"><Mail size={40} /></div>
+      <div className="absolute top-32 right-12 text-gray-200 opacity-50 transform -rotate-12"><Mail size={28} /></div>
+
+      <div className="flex justify-center mb-6 relative z-10">
+        <div className="text-[#ff5b62]">
+          <MailOpen size={80} strokeWidth={1.5} />
+        </div>
+      </div>
+      
+      <h2 className="text-3xl font-black mb-3 tracking-wide text-gray-800 uppercase">Subscribe</h2>
+      <p className="text-gray-500 mb-10 text-lg">
+        Subscribe to our newsletter & stay updated
       </p>
       
       {status === "success" ? (
-        <div className="bg-green-900/20 border border-green-500 text-green-400 p-6 rounded-lg max-w-xl mx-auto">
-          <h3 className="text-xl font-bold mb-2">Thank you for subscribing!</h3>
-          <p className="text-sm">We've saved your preferences. You'll receive updates at <strong>{email}</strong>.</p>
+        <div className="bg-green-50 border border-green-200 text-green-700 p-6 rounded-md">
+          <h3 className="text-xl font-bold mb-2">Thank you!</h3>
+          <p className="text-sm">You have successfully subscribed with <strong>{email}</strong>.</p>
           <button 
             onClick={() => setStatus("already_subscribed")} 
-            className="mt-4 text-xs underline text-gray-400 hover:text-white"
+            className="mt-4 text-sm font-semibold text-blue-600 hover:underline"
           >
             Update preferences
           </button>
         </div>
       ) : (
-        <form onSubmit={handleSubscribe} className="max-w-xl mx-auto">
-          <div className="bg-white p-1 flex rounded-md overflow-hidden">
-            <input 
-              type="email" 
-              value={email}
-              onChange={(e) => setEmail(e.target.value)}
-              placeholder="Enter your email address" 
-              className="flex-1 text-black px-4 py-3 outline-none disabled:bg-gray-100"
-              required
-              disabled={status === "already_subscribed" && !!user}
-            />
+        <form onSubmit={handleSubscribe} className="relative z-10 max-w-2xl mx-auto">
+          <div className="flex flex-col sm:flex-row gap-4 items-center justify-center">
+            <div className="flex-1 w-full flex items-center bg-gray-100 rounded-md px-5 py-4 focus-within:ring-2 focus-within:ring-blue-600 transition-all">
+              <Mail className="text-gray-400 mr-3" size={20} />
+              <input 
+                type="email" 
+                value={email}
+                onChange={(e) => setEmail(e.target.value)}
+                placeholder="Your Email" 
+                className="flex-1 bg-transparent text-gray-800 placeholder-gray-400 outline-none w-full"
+                required
+                disabled={isSubmitting || status === "already_subscribed"}
+              />
+            </div>
             <button 
               type="submit" 
               disabled={isSubmitting}
-              className="bg-blue-600 hover:bg-blue-700 text-white font-semibold px-8 py-3 transition-colors flex items-center disabled:opacity-70"
+              className="w-full sm:w-auto bg-blue-600 hover:bg-blue-700 text-white font-bold px-10 py-4 rounded-md transition-colors flex justify-center items-center shadow-lg shadow-blue-600/30 disabled:opacity-70"
             >
-              {isSubmitting ? <Loader2 size={20} className="animate-spin" /> : status === "already_subscribed" ? "Update" : "Subscribe"}
+              {isSubmitting ? <Loader2 size={20} className="animate-spin" /> : status === "already_subscribed" ? "Update" : "Submit"}
             </button>
           </div>
           
           {status === "error" && (
-            <p className="text-red-400 text-sm mt-3">Something went wrong. Please try again later.</p>
+            <p className="text-red-500 text-sm mt-4">Something went wrong. Please try again later.</p>
           )}
 
           {status === "already_subscribed" && !isSubmitting && (
-            <p className="text-blue-400 text-sm mt-3">You are already subscribed. You can update your preferences below.</p>
+            <p className="text-blue-600 text-sm mt-4">You are already subscribed. Update your preferences below.</p>
           )}
 
-          <div className="mt-6 flex flex-wrap justify-center gap-4 text-sm text-gray-400">
-            {["Breaking News", "Daily News Digest", "Technology", "Business"].map(option => (
-              <label key={option} className="flex items-center space-x-2 cursor-pointer hover:text-white transition-colors">
-                <input 
-                  type="checkbox" 
-                  checked={preferences.includes(option)}
-                  onChange={() => handleCheckboxChange(option)}
-                  className="accent-blue-600 w-4 h-4" 
-                />
-                <span>{option}</span>
-              </label>
-            ))}
+          <div className="mt-8 opacity-0 h-0 overflow-hidden">
+            {/* Keeping the preferences hidden but functional since the screenshot didn't have them, but they are needed for the backend logic. Or we can just let them be defaulted. */}
+            <div className="flex flex-wrap justify-center gap-2 text-xs">
+              {["Breaking News", "Daily News Digest", "Technology", "Business"].map(option => (
+                <label key={option} className="flex items-center space-x-1 cursor-pointer">
+                  <input type="checkbox" checked={preferences.includes(option)} onChange={() => handleCheckboxChange(option)} />
+                  <span>{option}</span>
+                </label>
+              ))}
+            </div>
           </div>
         </form>
       )}

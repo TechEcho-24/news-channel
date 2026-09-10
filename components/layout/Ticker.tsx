@@ -14,12 +14,12 @@ export default async function Ticker() {
   if (!latestNews || latestNews.length === 0) return null;
 
   return (
-    <div className="bg-[#111111] text-white text-xs font-semibold tracking-wider py-2 px-4 flex items-center justify-between font-inter border-b border-gray-800">
-      <div className="flex items-center flex-1 overflow-hidden">
-        <div className="bg-[#DC2626] text-white px-2.5 py-0.5 mr-4 flex-shrink-0 z-10 shadow-[4px_0px_10px_rgba(17,17,17,1)] font-bold text-[11px] tracking-widest rounded-sm">
+    <div className="bg-[#111111] text-white text-xs font-semibold tracking-wider flex items-center justify-between font-inter border-b border-gray-800 pr-4">
+      <div className="flex items-center flex-1 ">
+        <span className="bg-[#DC2626] text-white font-black px-4 py-2 text-[10px] uppercase tracking-widest flex-shrink-0 z-10 flex items-center relative mr-4">
           BREAKING NEWS
-        </div>
-        
+        </span>
+
         {/* Marquee Container */}
         <div className="flex-1 overflow-hidden relative flex items-center">
           <div className="flex whitespace-nowrap animate-[marquee_30s_linear_infinite] hover:[animation-play-state:paused]">
@@ -39,7 +39,7 @@ export default async function Ticker() {
           </div>
         </div>
       </div>
-      
+
       {/* Date & Time */}
       <div className="hidden md:block flex-shrink-0 ml-6 text-gray-400 text-[11px]">
         <LiveClock />

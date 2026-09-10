@@ -2,6 +2,7 @@ import Link from "next/link";
 import Image from "next/image";
 import { MessageSquare, Clock, ArrowRight, BarChart2 } from "lucide-react";
 import { getLatestArticles, getArticlesByCategory, generateSlug } from "@/lib/api";
+import SubscriptionPopup from "@/components/layout/SubscriptionPopup";
 import { formatDistanceToNow } from "date-fns";
 import MarketTrendsClient from "@/components/articles/MarketTrendsClient";
 import NewsletterClient from "@/components/articles/NewsletterClient";
@@ -68,6 +69,7 @@ export default async function Home() {
 
   return (
     <div className="bg-[#FAFAFA]">
+      <SubscriptionPopup />
       <script
         type="application/ld+json"
         dangerouslySetInnerHTML={{ __html: JSON.stringify(websiteSchema) }}
@@ -92,7 +94,7 @@ export default async function Home() {
               )}
             </Link>
             <div className="flex items-center space-x-3 mb-3">
-              <Link href={`/${heroArticle.category.toLowerCase()}`} className="bg-blue-600 text-white text-xs font-bold uppercase tracking-wider px-2 py-0.5 hover:bg-blue-700 transition-colors font-inter">
+              <Link href={`/${heroArticle.category.toLowerCase()}`} className="bg-blue-600 text-white text-xs font-bold uppercase tracking-wider px-2 py-0.5 hover:bg-blue-700 transition-colors rounded-md font-inter">
                 {heroArticle.category}
               </Link>
               <span className="text-gray-400 flex items-center text-xs gap-1">
@@ -111,7 +113,7 @@ export default async function Home() {
             <p className="text-gray-600 text-base leading-relaxed mb-6 max-w-2xl">
               {heroArticle.subheadline}
             </p>
-            <Link href={`/${heroArticle.category.toLowerCase()}/${heroSlug}`} className="inline-flex items-center bg-blue-600 text-white px-6 py-3 font-semibold text-sm hover:bg-blue-700 transition-colors rounded-sm">
+            <Link href={`/${heroArticle.category.toLowerCase()}/${heroSlug}`} className="inline-flex items-center bg-blue-600 text-white px-6 py-3 font-semibold text-sm hover:bg-blue-700 transition-colors rounded-md">
               Read Full Story <ArrowRight size={16} className="ml-2" />
             </Link>
           </div>
@@ -125,7 +127,7 @@ export default async function Home() {
 
             {/* Secondary Stories - Latest News */}
             <div>
-              <h3 className="font-black uppercase tracking-widest text-xs border-b-2 border-black pb-2 mb-3 font-inter text-gray-900">Latest News</h3>
+              <h3 className="font-black uppercase tracking-widest text-xs border-b-2 border-gray-200 pb-2 mb-3 font-inter text-gray-900">Latest News</h3>
               
               <div className="flex flex-col divide-y divide-gray-100">
                 {sidebarArticles.length > 0 ? sidebarArticles.map((news: any, idx: number) => {
@@ -178,7 +180,7 @@ export default async function Home() {
                   )}
 
               <div className="mb-16 last:mb-0 pt-2">
-                <div className="flex justify-between items-end mb-6 border-b-2 border-black pb-2">
+                <div className="flex justify-between items-end mb-6 border-b-2 border-gray-200 pb-2">
                   <h2 className="text-lg font-black capitalize tracking-widest text-black font-inter uppercase">{block.name}</h2>
                   <Link href={`/${block.name.toLowerCase()}`} className="text-xs font-bold flex items-center text-gray-400 hover:text-blue-600 transition-colors uppercase tracking-wider">
                     More <ArrowRight size={13} className="ml-1" />
@@ -377,7 +379,7 @@ export default async function Home() {
       </section>
 
       {/* SECTION 8 — NEWSLETTER / SUBSCRIBE */}
-      <section className="bg-[#111111] text-white py-16">
+      <section className="bg-white py-20 px-4 flex justify-center">
         <NewsletterClient />
       </section>
     </div>

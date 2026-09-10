@@ -8,7 +8,7 @@ import { useRouter } from "next/navigation";
 import { ArrowLeft, Save, Image as ImageIcon, Sparkles, Loader2, X, Bot, Wand2 } from "lucide-react";
 import { createClient } from "@/utils/supabase/client";
 
-const PREDEFINED_CATEGORIES = ["business", "technology", "economy", "india", "world", "sports", "entertainment", "startups", "lifestyle", "health"];
+const PREDEFINED_CATEGORIES = ["markets", "business", "technology", "economy", "india", "world", "sports", "entertainment", "startups", "lifestyle", "health", "politics", "auto"];
 
 export default function NewArticlePage() {
   const router = useRouter();
@@ -409,6 +409,26 @@ export default function NewArticlePage() {
                       ))}
                     </div>
                   )}
+                </div>
+              </div>
+              <div className="mt-3">
+                <p className="text-xs text-gray-500 mb-2">Quick Select:</p>
+                <div className="flex flex-wrap gap-2">
+                  {PREDEFINED_CATEGORIES.map(cat => (
+                    <button
+                      key={cat}
+                      type="button"
+                      disabled={selectedCategories.includes(cat)}
+                      onClick={() => handleAddCategory(cat)}
+                      className={`text-[11px] px-2 py-1 rounded-full border transition-colors ${
+                        selectedCategories.includes(cat)
+                          ? "bg-gray-100 border-gray-200 text-gray-400 cursor-not-allowed"
+                          : "bg-white border-gray-300 text-gray-600 hover:border-blue-500 hover:text-blue-600"
+                      }`}
+                    >
+                      {cat}
+                    </button>
+                  ))}
                 </div>
               </div>
             </div>

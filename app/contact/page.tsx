@@ -30,7 +30,7 @@ export default function ContactPage() {
     <div className="bg-white">
 
       {/* Header — editorial strip style */}
-      <div className="border-b-4 border-black">
+      <div className="border-b-4 border-gray-200">
         <div className="max-w-5xl mx-auto px-4 py-10">
           <p className="text-xs font-bold uppercase tracking-widest text-gray-500 mb-2">Bharat News Bulletin (BNB) · Contact</p>
           <h1 className="text-5xl font-serif font-bold text-gray-900">Get in Touch</h1>

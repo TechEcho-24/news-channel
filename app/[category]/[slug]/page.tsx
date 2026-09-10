@@ -230,7 +230,7 @@ export default async function ArticlePage({ params }: { params: Promise<{ catego
 
             {/* More from this category */}
             <div className="border border-gray-200 p-6 bg-[#FAFAFA]">
-              <h2 className="font-bold uppercase tracking-wider text-sm border-b-2 border-black pb-2 mb-6">
+              <h2 className="font-bold uppercase tracking-wider text-sm border-b-2 border-gray-200 pb-2 mb-6">
                 More from {article.category}
               </h2>
               <p className="text-sm text-gray-400">Related articles coming soon.</p>

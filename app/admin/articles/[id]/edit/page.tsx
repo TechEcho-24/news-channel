@@ -5,10 +5,10 @@ import { useEditor, EditorContent } from "@tiptap/react";
 import StarterKit from "@tiptap/starter-kit";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
-import { ArrowLeft, Save, Image as ImageIcon, Sparkles, Loader2, X, Bot, Wand2 } from "lucide-react";
+import { ArrowLeft, Save, Image as ImageIcon, Sparkles, Loader2, X, Bot, Wand2, Trash2 } from "lucide-react";
 import { createClient } from "@/utils/supabase/client";
 
-const PREDEFINED_CATEGORIES = ["business", "technology", "economy", "india", "world", "sports", "entertainment", "startups", "lifestyle", "health"];
+const PREDEFINED_CATEGORIES = ["markets", "business", "technology", "economy", "india", "world", "sports", "entertainment", "startups", "lifestyle", "health", "politics", "auto"];
 
 export default function EditArticlePage({ params }: { params: Promise<{ id: string }> }) {
   const resolvedParams = use(params);
@@ -283,13 +283,47 @@ export default function EditArticlePage({ params }: { params: Promise<{ id: stri
     }
   };
 
+  const [isDeleting, setIsDeleting] = useState(false);
+  const handleDelete = async () => {
+    if (!window.confirm("Are you sure you want to delete this article? This action cannot be undone.")) {
+      return;
+    }
+    
+    setIsDeleting(true);
+    try {
+      const { error } = await supabase
+        .from('articles')
+        .delete()
+        .eq('id', resolvedParams.id);
+        
+      if (error) throw error;
+      
+      alert("Article deleted successfully.");
+      router.push("/admin");
+    } catch (error: any) {
+      console.error("Error deleting article:", error);
+      alert("Failed to delete: " + error.message);
+      setIsDeleting(false);
+    }
+  };
+
   return (
     <div className="p-6 max-w-4xl mx-auto pb-24">
-      <div className="flex items-center space-x-3 mb-6">
-        <Link href="/admin" className="p-1.5 border border-gray-300 rounded hover:bg-gray-50 transition-colors bg-white">
-          <ArrowLeft size={18} />
-        </Link>
-        <h1 className="text-xl font-bold">Edit Article</h1>
+      <div className="flex items-center justify-between mb-6">
+        <div className="flex items-center space-x-3">
+          <Link href="/admin" className="p-1.5 border border-gray-300 rounded hover:bg-gray-50 transition-colors bg-white">
+            <ArrowLeft size={18} />
+          </Link>
+          <h1 className="text-xl font-bold">Edit Article</h1>
+        </div>
+        <button 
+          onClick={handleDelete}
+          disabled={isDeleting}
+          className="flex items-center space-x-1.5 px-3 py-1.5 bg-red-50 text-red-600 border border-red-200 rounded hover:bg-red-100 transition-colors disabled:opacity-50 text-sm font-semibold"
+        >
+          {isDeleting ? <Loader2 size={16} className="animate-spin" /> : <Trash2 size={16} />}
+          <span>Delete</span>
+        </button>
       </div>
 
       {/* AI ASSISTANT BLOCK */}
@@ -432,6 +466,26 @@ export default function EditArticlePage({ params }: { params: Promise<{ id: stri
                       ))}
                     </div>
                   )}
+                </div>
+              </div>
+              <div className="mt-3">
+                <p className="text-xs text-gray-500 mb-2">Quick Select:</p>
+                <div className="flex flex-wrap gap-2">
+                  {PREDEFINED_CATEGORIES.map(cat => (
+                    <button
+                      key={cat}
+                      type="button"
+                      disabled={selectedCategories.includes(cat)}
+                      onClick={() => handleAddCategory(cat)}
+                      className={`text-[11px] px-2 py-1 rounded-full border transition-colors ${
+                        selectedCategories.includes(cat)
+                          ? "bg-gray-100 border-gray-200 text-gray-400 cursor-not-allowed"
+                          : "bg-white border-gray-300 text-gray-600 hover:border-blue-500 hover:text-blue-600"
+                      }`}
+                    >
+                      {cat}
+                    </button>
+                  ))}
                 </div>
               </div>
             </div>
