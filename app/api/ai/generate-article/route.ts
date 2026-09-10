@@ -62,7 +62,8 @@ CRITICAL EDITORIAL FORMATTING RULES FOR THE "content" FIELD:
 4. Follow with detailed, well-written narrative body paragraphs (<p>).
 5. If there is a key highlight, crucial quote, or important takeaway, include EXACTLY ONE clean callout blockquote (<blockquote class="border-l-4 border-blue-600 pl-4 py-2 my-4 italic text-gray-800 font-medium bg-gray-50 rounded-r">...</blockquote>).
 6. Ensure the story flows naturally as clean paragraphs without choppy headings.
-7. After the article paragraphs, add a line starting with **Important notes:** followed by any additional bullet points or remarks, each separated by line breaks.
+7. Naturally bold (wrap in <strong> tags) 2-4 important SEO keywords or key phrases within the paragraphs to improve search engine visibility.
+8. After the article paragraphs, add a line starting with **Important notes:** followed by any additional bullet points or remarks, each separated by line breaks.
 
 Respond ONLY with a valid JSON object matching this exact structure, with no markdown code blocks wrapping the JSON:
 {
