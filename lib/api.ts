@@ -43,12 +43,12 @@ export async function getLatestArticles(limit = 10): Promise<Article[]> {
   return data as Article[];
 }
 
-// Get articles by category
 export async function getArticlesByCategory(category: string, limit = 10): Promise<Article[]> {
   const { data, error } = await supabase
     .from("articles")
     .select("*")
-    .ilike("category", category)
+    // Match either the primary category OR if it's in the categories array
+    .or(`category.ilike.%${category}%,categories.cs.{"${category}"}`)
     .order("published_at", { ascending: false })
     .limit(limit);
 

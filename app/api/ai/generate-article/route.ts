@@ -76,12 +76,18 @@ CRITICAL EDITORIAL FORMATTING RULES FOR THE "content" FIELD:
 7. Naturally bold (wrap in <strong> tags) 2-4 important SEO keywords or key phrases within the paragraphs to improve search engine visibility.
 8. After the article paragraphs, add a line starting with **Important notes:** followed by any additional bullet points or remarks, each separated by line breaks.
 
+CATEGORY TAXONOMY RULES:
+You MUST assign categories ONLY from this exact allowed list:
+[India, Business, Economy, Markets, Banking & Finance, Companies, Startups, Technology, Automobile, Energy, Agriculture, Real Estate, Trade & Exports, Policy & Regulations, Employment, Infrastructure, Healthcare & Pharma, Consumer & Retail, International Business, MSME]
+- Select 2-4 relevant categories. If the story is primarily about India, include "India".
+- Do NOT make up new category names. Use ONLY the exact strings provided above.
+
 Respond ONLY with a valid JSON object matching this exact structure, with no markdown code blocks wrapping the JSON:
 {
   "title": "A short, catchy headline (MAXIMUM 6-8 words, highly SEO optimized)",
   "subheadline": "A 1-2 sentence summary of the article",
-  "category": "The main category (e.g. business, technology, health, india, world, sports, entertainment, startups)",
-  "categories": ["tag1", "tag2"],
+  "category": "The SINGLE most relevant Primary Category from the allowed list",
+  "categories": ["Category 1", "Category 2", "Category 3"],
   "seo_keywords": "comma, separated, list, of, keywords",
   "content": "The full article rewritten in HTML format following the paragraph and blockquote rules above. Do NOT wrap in a single parent div."
 }
