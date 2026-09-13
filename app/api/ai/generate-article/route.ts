@@ -104,7 +104,10 @@ ${textToProcess}
     // Pass 1: Initial Generation
     for (const modelName of modelsToTry) {
       try {
-        const model = genAI.getGenerativeModel({ model: modelName });
+        const model = genAI.getGenerativeModel({ 
+          model: modelName,
+          generationConfig: { responseMimeType: "application/json" }
+        });
         const result = await model.generateContent(promptPass1);
         pass1Response = result.response.text();
         break; 
@@ -149,7 +152,10 @@ Respond ONLY with the corrected JSON object matching the original structure, wit
     
     for (const modelName of modelsToTry) {
       try {
-        const model = genAI.getGenerativeModel({ model: modelName });
+        const model = genAI.getGenerativeModel({ 
+          model: modelName,
+          generationConfig: { responseMimeType: "application/json" }
+        });
         const result = await model.generateContent(promptPass2);
         finalAiResponse = result.response.text();
         break; 
