@@ -98,11 +98,15 @@ ${textToProcess}
 """
     `;
 
-    const modelsToTry = ["gemini-1.5-flash", "gemini-flash-latest"];
+    const modelsToTry = ["gemini-1.5-flash", "gemini-flash-latest", "gemini-1.5-pro", "gemini-1.5-pro-latest"];
     let pass1Response = "";
     
+    // Helper function for sleeping
+    const delay = (ms: number) => new Promise(resolve => setTimeout(resolve, ms));
+    
     // Pass 1: Initial Generation
-    for (const modelName of modelsToTry) {
+    for (let i = 0; i < modelsToTry.length; i++) {
+      const modelName = modelsToTry[i];
       try {
         const model = genAI.getGenerativeModel({ 
           model: modelName,
@@ -113,7 +117,11 @@ ${textToProcess}
         break; 
       } catch (error: any) {
         console.warn(`Pass 1 Model ${modelName} failed:`, error.message);
-        if (modelName === modelsToTry[modelsToTry.length - 1]) {
+        
+        // Add a delay before trying the next model, especially if it's an overload error
+        if (i < modelsToTry.length - 1) {
+          await delay(2000); // wait 2 seconds before retrying next model
+        } else {
           throw new Error("All AI models are currently overloaded for Pass 1. Please try again in a few minutes.");
         }
       }
