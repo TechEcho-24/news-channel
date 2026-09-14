@@ -7,10 +7,17 @@ export default function robots(): MetadataRoute.Robots {
       {
         userAgent: "*",
         allow: "/",
-        disallow: ["/admin/", "/api/", "/profile/"],
+        disallow: ["/admin/", "/api/", "/profile/", "/login", "/register"],
       },
+      {
+        userAgent: "Googlebot-News",
+        allow: "/",
+      }
     ],
-    sitemap: `${SITE_URL}/sitemap.xml`,
+    sitemap: [
+      `${SITE_URL}/sitemap.xml`,
+      `${SITE_URL}/news-sitemap.xml`,
+    ],
     host: SITE_URL,
   };
 }

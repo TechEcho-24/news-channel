@@ -4,6 +4,8 @@ import { generateSlug } from "@/lib/api";
 
 const SITE_URL = process.env.NEXT_PUBLIC_SITE_URL || "https://bharatnewsbulletin.com";
 
+export const dynamic = 'force-dynamic';
+export const revalidate = 0;
 const staticCategories = [
   "latest", "india", "world", "business", "technology", "health",
   "startups", "markets", "automobile", "entertainment",
@@ -28,19 +30,20 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
   try {
     const { data: articles } = await supabase
       .from("articles")
-      .select("title, category, updated_at")
+      .select("title, category, updated_at, published_at")
       .order("published_at", { ascending: false })
       .limit(1000);
 
     const articlePages: MetadataRoute.Sitemap = (articles || []).map((article) => ({
       url: `${SITE_URL}/${article.category}/${generateSlug(article.title)}`,
-      lastModified: new Date(article.updated_at),
+      lastModified: new Date(article.updated_at || article.published_at || Date.now()),
       changeFrequency: "weekly" as const,
       priority: 0.7,
     }));
 
     return [...staticPages, ...articlePages];
-  } catch {
+  } catch (error) {
+    console.error("Error generating sitemap:", error);
     return staticPages;
   }
 }

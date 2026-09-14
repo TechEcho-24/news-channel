@@ -4,7 +4,7 @@ import { notFound } from "next/navigation";
 import { format } from "date-fns";
 import { Link as LinkIcon, Share2, Globe, Rss } from "lucide-react";
 import type { Metadata } from "next";
-import { getArticleBySlug } from "@/lib/api";
+import { getArticleBySlug, getArticlesByCategory, generateSlug } from "@/lib/api";
 import ArticleActionsClient from "@/components/articles/ArticleActionsClient";
 import AdSlot from "@/components/ads/AdSlot";
 
@@ -34,6 +34,9 @@ export async function generateMetadata(
     ])).filter(Boolean),
     authors: [{ name: article.author_name || SITE_NAME }],
     alternates: { canonical: articleUrl },
+    robots: {
+      "max-image-preview": "large",
+    },
     openGraph: {
       type: "article",
       url: articleUrl,
@@ -65,6 +68,10 @@ export default async function ArticlePage({ params }: { params: Promise<{ catego
     notFound();
   }
 
+  // Fetch related articles
+  const categoryArticles = await getArticlesByCategory(article.category, 5);
+  const relatedArticles = categoryArticles.filter(a => a.id !== article.id).slice(0, 3);
+
   const publishedDate = article.published_at ? new Date(article.published_at) : new Date();
 
   // Combine primary category and extra categories
@@ -83,8 +90,8 @@ export default async function ArticlePage({ params }: { params: Promise<{ catego
     "headline": article.title,
     "description": article.subheadline || article.seo_description || "",
     "image": article.cover_image ? [article.cover_image] : [],
-    "datePublished": article.published_at,
-    "dateModified": article.updated_at || article.published_at,
+    "datePublished": new Date(article.published_at || Date.now()).toISOString(),
+    "dateModified": new Date(article.updated_at || article.published_at || Date.now()).toISOString(),
     "author": {
       "@type": "Person",
       "name": article.author_name || "BNB Staff"
@@ -233,7 +240,22 @@ export default async function ArticlePage({ params }: { params: Promise<{ catego
               <h2 className="font-bold uppercase tracking-wider text-sm border-b-2 border-gray-200 pb-2 mb-6">
                 More from {article.category}
               </h2>
-              <p className="text-sm text-gray-400">Related articles coming soon.</p>
+              <div className="space-y-4">
+                {relatedArticles.length > 0 ? (
+                  relatedArticles.map((related) => (
+                    <Link key={related.id} href={`/${related.category.toLowerCase()}/${generateSlug(related.title)}`} className="block group">
+                      <h4 className="text-sm font-bold text-gray-900 group-hover:text-blue-600 transition-colors line-clamp-2 mb-1">
+                        {related.title}
+                      </h4>
+                      <div className="text-[11px] text-gray-400 font-inter">
+                        {format(new Date(related.published_at || Date.now()), "MMM d, yyyy")}
+                      </div>
+                    </Link>
+                  ))
+                ) : (
+                  <p className="text-sm text-gray-400">Related articles coming soon.</p>
+                )}
+              </div>
             </div>
 
             {/* Sidebar Sticky Ad */}

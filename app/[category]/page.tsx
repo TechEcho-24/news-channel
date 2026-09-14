@@ -12,12 +12,16 @@ export async function generateMetadata(
 ): Promise<Metadata> {
   const { category } = await params;
   const name = category.charAt(0).toUpperCase() + category.slice(1);
+  const SITE_URL = process.env.NEXT_PUBLIC_SITE_URL || "https://bharatnewsbulletin.com";
   return {
     title: `${name} News`,
     description: `Latest ${name} news, stories, and analysis from ${SITE_NAME}. Stay updated with breaking ${name.toLowerCase()} headlines.`,
     openGraph: {
       title: `${name} News | ${SITE_NAME}`,
       description: `Latest ${name} news and analysis.`,
+    },
+    alternates: {
+      canonical: `${SITE_URL}/${category}`,
     },
   };
 }

@@ -249,6 +249,24 @@ export default function NewArticlePage() {
         
       if (error) throw error;
       
+      // Trigger cache invalidation and IndexNow
+      try {
+        const articleUrl = `/${primaryCategory.toLowerCase()}/${title
+          .toLowerCase()
+          .replace(/[^\\w\\s-]/g, '')
+          .replace(/[\\s_-]+/g, '-')
+          .replace(/^-+|-+$/g, '')}`;
+          
+        await fetch("/api/admin/publish-hook", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ url: articleUrl, category: primaryCategory.toLowerCase() })
+        });
+      } catch (hookError) {
+        console.error("Publish hook failed:", hookError);
+        // Continue even if hook fails
+      }
+      
       alert("Article Published Successfully!");
       router.push("/admin");
     } catch (error: any) {
