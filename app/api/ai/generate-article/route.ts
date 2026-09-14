@@ -2,6 +2,9 @@ import { NextResponse } from 'next/server';
 import * as cheerio from 'cheerio';
 import { GoogleGenerativeAI } from '@google/generative-ai';
 
+export const dynamic = 'force-dynamic'; // Prevent Next.js from caching this route
+export const revalidate = 0; // Disable revalidation caching
+
 // Initialize Gemini API
 const genAI = new GoogleGenerativeAI(process.env.GEMINI_API_KEY || '');
 
@@ -98,7 +101,7 @@ ${textToProcess}
 """
     `;
 
-    const modelsToTry = ["gemini-1.5-flash", "gemini-1.5-pro", "gemini-1.5-flash-8b"];
+    const modelsToTry = ["gemini-1.5-flash", "gemini-1.5-pro"];
     let pass1Response = "";
     
     // Helper function for sleeping
@@ -122,7 +125,7 @@ ${textToProcess}
         if (i < modelsToTry.length - 1) {
           await delay(3000); // wait 3 seconds before retrying next model
         } else {
-          throw new Error(`AI API Error (${modelName}): ${error.message}. Please try again.`);
+          throw new Error(`AI Model Error (${modelName}): ${error.message}.`);
         }
       }
     }
