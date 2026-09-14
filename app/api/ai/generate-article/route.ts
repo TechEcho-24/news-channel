@@ -98,7 +98,7 @@ ${textToProcess}
 """
     `;
 
-    const modelsToTry = ["gemini-1.5-flash", "gemini-flash-latest", "gemini-1.5-pro", "gemini-1.5-pro-latest"];
+    const modelsToTry = ["gemini-1.5-flash", "gemini-1.5-pro", "gemini-1.5-flash-8b"];
     let pass1Response = "";
     
     // Helper function for sleeping
@@ -120,9 +120,9 @@ ${textToProcess}
         
         // Add a delay before trying the next model, especially if it's an overload error
         if (i < modelsToTry.length - 1) {
-          await delay(2000); // wait 2 seconds before retrying next model
+          await delay(3000); // wait 3 seconds before retrying next model
         } else {
-          throw new Error("All AI models are currently overloaded for Pass 1. Please try again in a few minutes.");
+          throw new Error(`AI API Error (${modelName}): ${error.message}. Please try again.`);
         }
       }
     }
