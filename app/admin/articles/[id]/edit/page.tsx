@@ -280,6 +280,24 @@ export default function EditArticlePage({ params }: { params: Promise<{ id: stri
         
       if (error) throw error;
       
+      // Trigger cache revalidation and IndexNow for updated article
+      try {
+        const articleUrl = `/${primaryCategory.toLowerCase()}/${title
+          .toLowerCase()
+          .replace(/[^\w\s-]/g, '')
+          .replace(/[\s_-]+/g, '-')
+          .replace(/^-+|-+$/g, '')}`;
+          
+        await fetch("/api/admin/publish-hook", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ url: articleUrl, category: primaryCategory.toLowerCase() })
+        });
+      } catch (hookError) {
+        console.error("Publish hook failed:", hookError);
+        // Continue even if hook fails
+      }
+      
       alert("Article Updated Successfully!");
       router.push("/admin");
     } catch (error: any) {
@@ -444,7 +462,7 @@ export default function EditArticlePage({ params }: { params: Promise<{ id: stri
             
             {/* Multiple Categories */}
             <div>
-              <label className="block text-xs font-semibold text-gray-600 mb-1">Categories (Type and press Enter)</label>
+              <label className="block text-xs font-semibold text-gray-600 mb-1">Categories (Type and press Enter or tap +)</label>
               <div className="w-full border border-gray-300 rounded-md p-2 bg-white flex flex-wrap gap-2 min-h-[96px] items-start focus-within:border-blue-500 transition-colors relative">
                 {selectedCategories.map(cat => (
                   <span key={cat} className="flex items-center gap-1 bg-blue-100 text-blue-800 text-xs px-2 py-1 rounded-md">
@@ -452,15 +470,24 @@ export default function EditArticlePage({ params }: { params: Promise<{ id: stri
                     <button type="button" onClick={() => removeCategory(cat)} className="text-blue-600 hover:text-blue-900"><X size={12} /></button>
                   </span>
                 ))}
-                <div className="flex-1 min-w-[120px] relative">
+                <div className="flex-1 min-w-[120px] relative flex items-center gap-1">
                   <input
                     type="text"
                     value={categoryInput}
                     onChange={(e) => setCategoryInput(e.target.value)}
                     onKeyDown={handleCategoryKeyDown}
-                    className="w-full bg-transparent focus:outline-none text-sm p-1"
+                    className="flex-1 bg-transparent focus:outline-none text-sm p-1 min-w-0"
                     placeholder={selectedCategories.length === 0 ? "e.g. business, startups..." : ""}
                   />
+                  {categoryInput.trim() && (
+                    <button
+                      type="button"
+                      onMouseDown={(e) => { e.preventDefault(); handleAddCategory(categoryInput); }}
+                      className="flex-shrink-0 bg-blue-600 hover:bg-blue-700 text-white text-xs font-bold px-2 py-1 rounded transition-colors"
+                    >
+                      +
+                    </button>
+                  )}
                   {categorySuggestions.length > 0 && (
                     <div className="absolute top-full left-0 mt-1 w-full bg-white border border-gray-200 rounded-md shadow-lg z-20">
                       {categorySuggestions.map(sugg => (

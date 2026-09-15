@@ -10,6 +10,7 @@ export default function NewsletterClient() {
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [status, setStatus] = useState<"idle" | "success" | "error" | "already_subscribed">("idle");
   const [user, setUser] = useState<any>(null);
+  const [isHidden, setIsHidden] = useState(false);
   
   const supabase = createClient();
 
@@ -20,19 +21,15 @@ export default function NewsletterClient() {
       if (user) {
         setUser(user);
         setEmail(user.email || "");
-        
-        // Check if they are already in the subscribers table
-        const { data } = await supabase
-          .from('subscribers')
-          .select('preferences')
-          .eq('email', user.email)
-          .maybeSingle();
-          
-        if (data) {
-          setStatus("already_subscribed");
-          if (data.preferences && data.preferences.length > 0) {
-            setPreferences(data.preferences);
+        // Check if they are already in the subscribers table via API (bypasses RLS)
+        try {
+          const res = await fetch(`/api/newsletter/check?email=${encodeURIComponent(user.email || "")}`);
+          const data = await res.json();
+          if (data.isSubscribed) {
+            setIsHidden(true);
           }
+        } catch (e) {
+          console.error("Failed to check subscription status", e);
         }
       }
     }
@@ -67,7 +64,11 @@ export default function NewsletterClient() {
         throw new Error(data.error || 'Subscription failed');
       }
       
-      setStatus("success");
+      if (data.already_subscribed) {
+        setStatus("already_subscribed");
+      } else {
+        setStatus("success");
+      }
       
       // Also update profiles table if logged in
       if (user) {
@@ -81,6 +82,10 @@ export default function NewsletterClient() {
       setIsSubmitting(false);
     }
   };
+
+  if (isHidden) {
+    return null;
+  }
 
   return (
     <div className="bg-white rounded-[40px] shadow-[0_10px_60px_-15px_rgba(0,0,0,0.1)] border border-gray-100 p-10 md:p-14 w-full max-w-4xl mx-auto text-center relative z-10 overflow-hidden">
@@ -101,16 +106,17 @@ export default function NewsletterClient() {
         Subscribe to our newsletter & stay updated
       </p>
       
-      {status === "success" ? (
-        <div className="bg-green-50 border border-green-200 text-green-700 p-6 rounded-md">
-          <h3 className="text-xl font-bold mb-2">Thank you!</h3>
-          <p className="text-sm">You have successfully subscribed with <strong>{email}</strong>.</p>
-          <button 
-            onClick={() => setStatus("already_subscribed")} 
-            className="mt-4 text-sm font-semibold text-blue-600 hover:underline"
-          >
-            Update preferences
-          </button>
+      {status === "success" || status === "already_subscribed" ? (
+        <div className={`p-6 rounded-md border ${status === "success" ? "bg-green-50 border-green-200 text-green-700" : "bg-blue-50 border-blue-200 text-blue-700"}`}>
+          <h3 className="text-xl font-bold mb-2">
+            {status === "success" ? "Thank you!" : "Already Subscribed"}
+          </h3>
+          <p className="text-sm">
+            {status === "success" 
+              ? `You have successfully subscribed with ` 
+              : `You are already receiving our newsletter at `}
+            <strong>{email}</strong>.
+          </p>
         </div>
       ) : (
         <form onSubmit={handleSubscribe} className="relative z-10 max-w-2xl mx-auto">
@@ -124,7 +130,7 @@ export default function NewsletterClient() {
                 placeholder="Your Email" 
                 className="flex-1 bg-transparent text-gray-800 placeholder-gray-400 outline-none w-full"
                 required
-                disabled={isSubmitting || status === "already_subscribed"}
+                disabled={isSubmitting}
               />
             </div>
             <button 
@@ -132,7 +138,7 @@ export default function NewsletterClient() {
               disabled={isSubmitting}
               className="w-full sm:w-auto bg-blue-600 hover:bg-blue-700 text-white font-bold px-10 py-4 rounded-md transition-colors flex justify-center items-center shadow-lg shadow-blue-600/30 disabled:opacity-70"
             >
-              {isSubmitting ? <Loader2 size={20} className="animate-spin" /> : status === "already_subscribed" ? "Update" : "Submit"}
+              {isSubmitting ? <Loader2 size={20} className="animate-spin" /> : "Subscribe"}
             </button>
           </div>
           
@@ -140,11 +146,7 @@ export default function NewsletterClient() {
             <p className="text-red-500 text-sm mt-4">Something went wrong. Please try again later.</p>
           )}
 
-          {status === "already_subscribed" && !isSubmitting && (
-            <p className="text-blue-600 text-sm mt-4">You are already subscribed. Update your preferences below.</p>
-          )}
-
-          <div className="mt-8 opacity-0 h-0 overflow-hidden">
+          <div className="hidden">
             {/* Keeping the preferences hidden but functional since the screenshot didn't have them, but they are needed for the backend logic. Or we can just let them be defaulted. */}
             <div className="flex flex-wrap justify-center gap-2 text-xs">
               {["Breaking News", "Daily News Digest", "Technology", "Business"].map(option => (

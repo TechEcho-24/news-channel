@@ -4,6 +4,7 @@ import "./globals.css";
 import Header from "@/components/layout/Header";
 import Footer from "@/components/layout/Footer";
 import Ticker from "@/components/layout/Ticker";
+import TopProgressBar from "@/components/layout/TopProgressBar";
 import Script from "next/script";
 
 const inter = Inter({
@@ -98,6 +99,7 @@ export default function RootLayout({
             }
           `}
         </Script>
+        <TopProgressBar />
         <Ticker />
         <Header />
         <main className="flex-1">

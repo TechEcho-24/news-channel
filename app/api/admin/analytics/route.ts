@@ -1,5 +1,6 @@
 import { NextResponse } from "next/server";
 import { createClient } from "@/utils/supabase/server";
+import { createClient as createAdminClient } from "@supabase/supabase-js";
 
 export const revalidate = 0;
 
@@ -25,6 +26,11 @@ export async function GET(request: Request) {
   const daysDiff = Math.ceil((toDate.getTime() - fromDate.getTime()) / 86400000);
 
   const supabase = await createClient();
+  // Use service_role for subscribers — anon key is blocked by RLS (no SELECT policy)
+  const supabaseAdmin = createAdminClient(
+    process.env.NEXT_PUBLIC_SUPABASE_URL!,
+    process.env.SUPABASE_SERVICE_ROLE_KEY!
+  );
 
   try {
     // ── All-time totals (not range-filtered) ──────────────────────────
@@ -39,7 +45,7 @@ export async function GET(request: Request) {
       supabase.from("articles").select("*", { count: "exact", head: true }),
       supabase.from("articles").select("impressions, title, category, published_at, id"),
       supabase.from("profiles").select("*", { count: "exact", head: true }),
-      supabase.from("subscribers").select("*", { count: "exact", head: true }),
+      supabaseAdmin.from("subscribers").select("*", { count: "exact", head: true }),
       supabase.from("contact_messages").select("*", { count: "exact", head: true }),
       supabase.from("ads").select("*"),
     ]);
@@ -62,7 +68,7 @@ export async function GET(request: Request) {
         .gte("published_at", fromISO).lte("published_at", toISO),
       supabase.from("profiles").select("*", { count: "exact", head: true })
         .gte("created_at", fromISO).lte("created_at", toISO),
-      supabase.from("subscribers").select("*", { count: "exact", head: true })
+      supabaseAdmin.from("subscribers").select("*", { count: "exact", head: true })
         .gte("created_at", fromISO).lte("created_at", toISO),
       supabase.from("articles").select("impressions, title, category, published_at, id")
         .gte("published_at", fromISO).lte("published_at", toISO)

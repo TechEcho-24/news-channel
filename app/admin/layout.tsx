@@ -1,8 +1,22 @@
 import Link from "next/link";
 import { LayoutDashboard, FileText, Settings, LogOut, Users, Megaphone, Inbox, BarChart2 } from "lucide-react";
 import Image from "next/image";
+import { createClient } from "@/utils/supabase/server";
 
-export default function AdminLayout({ children }: { children: React.ReactNode }) {
+export default async function AdminLayout({ children }: { children: React.ReactNode }) {
+  // Fetch current user role for conditional nav rendering
+  const supabase = await createClient();
+  const { data: { user } } = await supabase.auth.getUser();
+  let isSuperAdmin = false;
+  if (user) {
+    const { data: profile } = await supabase
+      .from("profiles")
+      .select("role")
+      .eq("id", user.id)
+      .single();
+    isSuperAdmin = profile?.role === "super_admin";
+  }
+
   return (
     <div className="min-h-screen bg-gray-50 flex">
       {/* Sidebar */}
@@ -23,9 +37,12 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
           <Link href="/admin/articles/new" className="flex items-center px-4 py-3 text-gray-700 hover:bg-blue-50 hover:text-blue-600 rounded-lg transition-colors font-medium">
             <FileText size={18} className="mr-3" /> Post News
           </Link>
-          <Link href="/admin/users" className="flex items-center px-4 py-3 text-gray-700 hover:bg-blue-50 hover:text-blue-600 rounded-lg transition-colors font-medium">
-            <Users size={18} className="mr-3" /> Users
-          </Link>
+          {/* Users & Subscribers — visible to super_admin only */}
+          {isSuperAdmin && (
+            <Link href="/admin/users" className="flex items-center px-4 py-3 text-gray-700 hover:bg-blue-50 hover:text-blue-600 rounded-lg transition-colors font-medium">
+              <Users size={18} className="mr-3" /> Users & Subscribers
+            </Link>
+          )}
           <Link href="/admin/ads" className="flex items-center px-4 py-3 text-gray-700 hover:bg-blue-50 hover:text-blue-600 rounded-lg transition-colors font-medium">
             <Megaphone size={18} className="mr-3" /> Ads
           </Link>

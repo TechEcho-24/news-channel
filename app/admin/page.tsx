@@ -6,11 +6,17 @@ import {
 import { getLatestArticles } from "@/lib/api";
 import { formatDistanceToNow } from "date-fns";
 import { createClient } from "@/utils/supabase/server";
+import { createClient as createAdminClient } from "@supabase/supabase-js";
 
 export const revalidate = 0;
 
 async function getStats() {
   const supabase = await createClient();
+  // Use service_role client for subscribers — anon key blocked by RLS (no SELECT policy)
+  const supabaseAdmin = createAdminClient(
+    process.env.NEXT_PUBLIC_SUPABASE_URL!,
+    process.env.SUPABASE_SERVICE_ROLE_KEY!
+  );
 
   const oneWeekAgo = new Date();
   oneWeekAgo.setDate(oneWeekAgo.getDate() - 7);
@@ -32,8 +38,8 @@ async function getStats() {
     supabase.from("articles").select("impressions"),
     supabase.from("profiles").select("*", { count: "exact", head: true }),
     supabase.from("profiles").select("*", { count: "exact", head: true }).gte("created_at", oneMonthAgo.toISOString()),
-    supabase.from("subscribers").select("*", { count: "exact", head: true }),
-    supabase.from("subscribers").select("*", { count: "exact", head: true }).gte("created_at", oneMonthAgo.toISOString()),
+    supabaseAdmin.from("subscribers").select("*", { count: "exact", head: true }),
+    supabaseAdmin.from("subscribers").select("*", { count: "exact", head: true }).gte("created_at", oneMonthAgo.toISOString()),
     supabase.from("contact_messages").select("*", { count: "exact", head: true }),
   ]);
 

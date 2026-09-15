@@ -23,15 +23,23 @@ export async function POST(request: Request) {
       return NextResponse.json({ error: 'Invalid email format.' }, { status: 400 });
     }
 
+    // Check if already subscribed
+    const { data: existing } = await supabaseAdmin
+      .from('subscribers')
+      .select('id')
+      .eq('email', normalizedEmail)
+      .single();
+
+    if (existing) {
+      return NextResponse.json({ success: true, already_subscribed: true, message: 'You are already subscribed!' });
+    }
+
     const { error } = await supabaseAdmin
       .from('subscribers')
-      .upsert(
-        {
-          email: normalizedEmail,
-          preferences: preferences || ['Breaking News', 'Daily News Digest'],
-        },
-        { onConflict: 'email' }
-      );
+      .insert({
+        email: normalizedEmail,
+        preferences: preferences || ['Breaking News', 'Daily News Digest'],
+      });
 
     if (error) {
       console.error('[NEWSLETTER] Supabase error:', error.message);
@@ -39,7 +47,7 @@ export async function POST(request: Request) {
     }
 
     console.log(`[NEWSLETTER] Subscribed: ${normalizedEmail}`);
-    return NextResponse.json({ success: true });
+    return NextResponse.json({ success: true, already_subscribed: false });
   } catch (err: any) {
     console.error('[NEWSLETTER] Unexpected error:', err.message);
     return NextResponse.json({ error: 'An unexpected error occurred.' }, { status: 500 });
