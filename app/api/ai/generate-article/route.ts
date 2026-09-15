@@ -5,14 +5,12 @@ import { GoogleGenerativeAI } from '@google/generative-ai';
 export const dynamic = 'force-dynamic'; // Prevent Next.js from caching this route
 export const revalidate = 0; // Disable revalidation caching
 
-// Initialize Gemini API
-const genAI = new GoogleGenerativeAI(process.env.GEMINI_API_KEY || '');
-
 export async function POST(request: Request) {
   try {
     const { url, text, content } = await request.json();
 
-    if (!process.env.GEMINI_API_KEY) {
+    const apiKeys = (process.env.GEMINI_API_KEY || '').split(',').map(k => k.trim()).filter(Boolean);
+    if (apiKeys.length === 0) {
       return NextResponse.json({ error: 'Gemini API key is not configured' }, { status: 500 });
     }
 
@@ -108,26 +106,35 @@ ${textToProcess}
     const delay = (ms: number) => new Promise(resolve => setTimeout(resolve, ms));
     
     // Pass 1: Initial Generation
-    for (let i = 0; i < modelsToTry.length; i++) {
-      const modelName = modelsToTry[i];
-      try {
-        const model = genAI.getGenerativeModel({ 
-          model: modelName,
-          generationConfig: { responseMimeType: "application/json" }
-        });
-        const result = await model.generateContent(promptPass1);
-        pass1Response = result.response.text();
-        break; 
-      } catch (error: any) {
-        console.warn(`Pass 1 Model ${modelName} failed:`, error.message);
-        
-        // Add a delay before trying the next model, especially if it's an overload error
-        if (i < modelsToTry.length - 1) {
-          await delay(3000); // wait 3 seconds before retrying next model
-        } else {
-          throw new Error(`AI Model Error (${modelName}): ${error.message}.`);
+    let pass1Success = false;
+    let lastError: any = null;
+
+    for (const apiKey of apiKeys) {
+      if (pass1Success) break;
+      const genAI = new GoogleGenerativeAI(apiKey);
+      
+      for (let i = 0; i < modelsToTry.length; i++) {
+        const modelName = modelsToTry[i];
+        try {
+          const model = genAI.getGenerativeModel({ 
+            model: modelName,
+            generationConfig: { responseMimeType: "application/json" }
+          });
+          const result = await model.generateContent(promptPass1);
+          pass1Response = result.response.text();
+          pass1Success = true;
+          break; 
+        } catch (error: any) {
+          console.warn(`Pass 1 Key ending in ${apiKey.slice(-4)} Model ${modelName} failed:`, error.message);
+          lastError = error;
+          // Delay only if we are going to try another model
+          if (i < modelsToTry.length - 1) await delay(1500); 
         }
       }
+    }
+
+    if (!pass1Success) {
+      throw new Error(`AI Model Error: ${lastError?.message || 'All keys and models exhausted'}.`);
     }
     
     // Pass 2: Fact-Check Validation
@@ -160,19 +167,25 @@ Respond ONLY with the corrected JSON object matching the original structure, wit
 `;
 
     let finalAiResponse = pass1Response; // Fallback to pass1 if pass2 completely fails
+    let pass2Success = false;
     
-    for (const modelName of modelsToTry) {
-      try {
-        const model = genAI.getGenerativeModel({ 
-          model: modelName,
-          generationConfig: { responseMimeType: "application/json" }
-        });
-        const result = await model.generateContent(promptPass2);
-        finalAiResponse = result.response.text();
-        break; 
-      } catch (error: any) {
-        console.warn(`Pass 2 Model ${modelName} failed:`, error.message);
-        // If Pass 2 fails, we still have pass1Response as a fallback, so we don't throw an error here immediately unless we want to strictly fail. We'll proceed with pass1Response.
+    for (const apiKey of apiKeys) {
+      if (pass2Success) break;
+      const genAI = new GoogleGenerativeAI(apiKey);
+      
+      for (const modelName of modelsToTry) {
+        try {
+          const model = genAI.getGenerativeModel({ 
+            model: modelName,
+            generationConfig: { responseMimeType: "application/json" }
+          });
+          const result = await model.generateContent(promptPass2);
+          finalAiResponse = result.response.text();
+          pass2Success = true;
+          break; 
+        } catch (error: any) {
+          console.warn(`Pass 2 Key ending in ${apiKey.slice(-4)} Model ${modelName} failed:`, error.message);
+        }
       }
     }
 

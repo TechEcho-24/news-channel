@@ -28,15 +28,18 @@ export async function GET() {
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9"
         xmlns:news="http://www.google.com/schemas/sitemap-news/0.9">
 ${(articles || []).map((article) => {
-  const url = `${SITE_URL}/${article.category}/${generateSlug(article.title)}`;
-  const pubDate = new Date(article.published_at).toISOString();
-  // Escape XML special characters in title
-  const title = article.title
+  const rawUrl = `${SITE_URL}/${encodeURIComponent(article.category.toLowerCase())}/${generateSlug(article.title)}`;
+  const pubDate = new Date(article.published_at || Date.now()).toISOString();
+  // Escape XML special characters
+  const escapeXml = (unsafe: string) => (unsafe || '')
     .replace(/&/g, '&amp;')
     .replace(/</g, '&lt;')
     .replace(/>/g, '&gt;')
     .replace(/"/g, '&quot;')
     .replace(/'/g, '&apos;');
+
+  const title = escapeXml(article.title);
+  const url = escapeXml(rawUrl);
 
   return `  <url>
     <loc>${url}</loc>

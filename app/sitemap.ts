@@ -35,7 +35,7 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
       .limit(1000);
 
     const articlePages: MetadataRoute.Sitemap = (articles || []).map((article) => ({
-      url: `${SITE_URL}/${article.category}/${generateSlug(article.title)}`,
+      url: `${SITE_URL}/${encodeURIComponent(article.category.toLowerCase())}/${generateSlug(article.title)}`,
       lastModified: new Date(article.updated_at || article.published_at || Date.now()),
       changeFrequency: "weekly" as const,
       priority: 0.7,

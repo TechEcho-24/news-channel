@@ -31,8 +31,8 @@ export async function GET() {
     <lastBuildDate>${new Date().toUTCString()}</lastBuildDate>
     <atom:link href="${SITE_URL}/feed.xml" rel="self" type="application/rss+xml"/>
 ${(articles || []).map((article) => {
-  const url = `${SITE_URL}/${article.category}/${generateSlug(article.title)}`;
-  const pubDate = new Date(article.published_at).toUTCString();
+  const rawUrl = `${SITE_URL}/${encodeURIComponent(article.category.toLowerCase())}/${generateSlug(article.title)}`;
+  const pubDate = new Date(article.published_at || Date.now()).toUTCString();
   
   // Escape XML special characters
   const escapeXml = (unsafe: string) => {
@@ -48,6 +48,7 @@ ${(articles || []).map((article) => {
   const description = escapeXml(article.subheadline);
   const author = escapeXml(article.author_name || 'Bharat News Bulletin');
   const category = escapeXml(article.category);
+  const url = escapeXml(rawUrl);
 
   return `    <item>
       <title>${title}</title>
