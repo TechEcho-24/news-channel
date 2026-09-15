@@ -134,9 +134,73 @@ ${textToProcess}
     }
 
     if (!pass1Success) {
-      throw new Error(`AI Model Error: ${lastError?.message || 'All keys and models exhausted'}.`);
+      if (process.env.GROQ_API_KEY) {
+        console.log("Gemini failed, falling back to Groq API...");
+        try {
+          const groqResponse = await fetch("https://api.groq.com/openai/v1/chat/completions", {
+            method: "POST",
+            headers: {
+              "Authorization": `Bearer ${process.env.GROQ_API_KEY}`,
+              "Content-Type": "application/json"
+            },
+            body: JSON.stringify({
+              model: "llama-3.3-70b-versatile",
+              messages: [
+                { role: "system", content: systemInstruction },
+                { role: "user", content: promptPass1 }
+              ],
+              temperature: 0.1,
+              response_format: { type: "json_object" }
+            })
+          });
+
+          if (!groqResponse.ok) {
+            const err = await groqResponse.text();
+            throw new Error(`Groq Error: ${err}`);
+          }
+          
+          const groqData = await groqResponse.json();
+          pass1Response = groqData.choices[0].message.content;
+          pass1Success = true;
+        } catch (groqError: any) {
+          console.warn(`Groq fallback failed: ${groqError.message}`);
+        }
+      }
+
+      if (!pass1Success && process.env.CLOUDFLARE_ACCOUNT_ID && process.env.CLOUDFLARE_API_TOKEN) {
+        console.log("Falling back to Cloudflare AI...");
+        try {
+          const cfResponse = await fetch(`https://api.cloudflare.com/client/v4/accounts/${process.env.CLOUDFLARE_ACCOUNT_ID}/ai/run/@cf/meta/llama-3.1-70b-instruct`, {
+            method: "POST",
+            headers: {
+              "Authorization": `Bearer ${process.env.CLOUDFLARE_API_TOKEN}`,
+              "Content-Type": "application/json"
+            },
+            body: JSON.stringify({
+              messages: [
+                { role: "system", content: systemInstruction },
+                { role: "user", content: promptPass1 }
+              ]
+            })
+          });
+
+          if (!cfResponse.ok) {
+            const err = await cfResponse.text();
+            throw new Error(`Cloudflare Error: ${err}`);
+          }
+          
+          const cfData = await cfResponse.json();
+          pass1Response = cfData.result.response;
+          pass1Success = true;
+        } catch (cfError: any) {
+          throw new Error(`AI Generation Failed. All API fallbacks (Gemini, Groq, Cloudflare) exhausted. CF Error: ${cfError.message}`);
+        }
+      }
+      
+      if (!pass1Success) {
+        throw new Error(`AI Model Error: All keys and models exhausted, and no fallback worked.`);
+      }
     }
-    
     // Pass 2: Fact-Check Validation
     const promptPass2 = `
 You are a strict fact-checker and validator. 
@@ -186,6 +250,63 @@ Respond ONLY with the corrected JSON object matching the original structure, wit
         } catch (error: any) {
           console.warn(`Pass 2 Key ending in ${apiKey.slice(-4)} Model ${modelName} failed:`, error.message);
         }
+      }
+    }
+    
+    // Groq Fallback for Pass 2
+    if (!pass2Success && process.env.GROQ_API_KEY) {
+      console.log("Gemini Pass 2 failed, falling back to Groq...");
+      try {
+        const groqResponse = await fetch("https://api.groq.com/openai/v1/chat/completions", {
+          method: "POST",
+          headers: {
+            "Authorization": `Bearer ${process.env.GROQ_API_KEY}`,
+            "Content-Type": "application/json"
+          },
+          body: JSON.stringify({
+            model: "llama-3.3-70b-versatile",
+            messages: [
+              { role: "user", content: promptPass2 }
+            ],
+            temperature: 0.1,
+            response_format: { type: "json_object" }
+          })
+        });
+
+        if (groqResponse.ok) {
+          const groqData = await groqResponse.json();
+          finalAiResponse = groqData.choices[0].message.content;
+          pass2Success = true;
+        }
+      } catch (groqError: any) {
+         console.warn(`Groq Pass 2 fallback failed:`, groqError.message);
+      }
+    }
+
+    // Cloudflare Fallback for Pass 2
+    if (!pass2Success && process.env.CLOUDFLARE_ACCOUNT_ID && process.env.CLOUDFLARE_API_TOKEN) {
+      console.log("Groq Pass 2 failed, falling back to Cloudflare...");
+      try {
+        const cfResponse = await fetch(`https://api.cloudflare.com/client/v4/accounts/${process.env.CLOUDFLARE_ACCOUNT_ID}/ai/run/@cf/meta/llama-3.1-70b-instruct`, {
+          method: "POST",
+          headers: {
+            "Authorization": `Bearer ${process.env.CLOUDFLARE_API_TOKEN}`,
+            "Content-Type": "application/json"
+          },
+          body: JSON.stringify({
+            messages: [
+              { role: "user", content: promptPass2 }
+            ]
+          })
+        });
+
+        if (cfResponse.ok) {
+          const cfData = await cfResponse.json();
+          finalAiResponse = cfData.result.response;
+          pass2Success = true;
+        }
+      } catch (cfError: any) {
+         console.warn(`Cloudflare Pass 2 fallback failed:`, cfError.message);
       }
     }
 
