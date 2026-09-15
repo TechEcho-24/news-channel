@@ -20,10 +20,22 @@ export default function NewArticlePage() {
 
   // Fetch logged in user's name as default author
   useEffect(() => {
-    supabase.auth.getUser().then(({ data: { user } }) => {
+    supabase.auth.getUser().then(async ({ data: { user } }) => {
       if (user) {
-        const name = user.user_metadata?.full_name || user.user_metadata?.name || "Anuj Sachan";
-        setAuthorName(name);
+        const { data: profile } = await supabase
+          .from("profiles")
+          .select("full_name")
+          .eq("id", user.id)
+          .single();
+          
+        let name = profile?.full_name || user.user_metadata?.full_name || user.user_metadata?.name;
+        if (!name && user.email) {
+          name = user.email.split("@")[0]; // Fallback to email prefix
+          // Capitalize first letter
+          name = name.charAt(0).toUpperCase() + name.slice(1);
+        }
+        
+        setAuthorName(name || "Admin");
       }
     });
   }, [supabase]);
