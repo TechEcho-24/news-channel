@@ -55,25 +55,26 @@ export default function NewsletterClient() {
     setStatus("idle");
     
     try {
-      // Upsert: If email already exists, update the preferences instead of failing
-      const { error } = await supabase
-        .from('subscribers')
-        .upsert({ 
-          email: email.toLowerCase(), 
-          preferences,
-          user_id: user ? user.id : null
-        }, { onConflict: 'email' });
-        
-      if (error) throw error;
+      const res = await fetch('/api/newsletter/subscribe', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ email, preferences }),
+      });
+
+      const data = await res.json();
+
+      if (!res.ok) {
+        throw new Error(data.error || 'Subscription failed');
+      }
       
       setStatus("success");
       
-      // Also update profiles table if logged in, just to keep in sync with the top header subscribe button
+      // Also update profiles table if logged in
       if (user) {
         await supabase.from('profiles').update({ is_subscribed: true }).eq('id', user.id);
       }
       
-    } catch (error) {
+    } catch (error: any) {
       console.error("Subscription error:", error);
       setStatus("error");
     } finally {
