@@ -23,26 +23,143 @@ export async function POST(request: Request) {
     } else if (url && (url.startsWith('http://') || url.startsWith('https://'))) {
       // 2. Scrape the URL
       let html = '';
+      
+      // A. SSRF Protection & URL Validation
+      let targetUrl;
       try {
-        const response = await fetch(url, {
-          headers: {
-            'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/91.0.4472.124 Safari/537.36'
-          }
-        });
-        if (!response.ok) throw new Error('Failed to fetch URL');
-        html = await response.text();
-      } catch (error: any) {
-        return NextResponse.json({ error: 'Could not fetch the provided URL. Ensure it is a valid, publicly accessible article.' }, { status: 400 });
+        targetUrl = new URL(url);
+      } catch (e) {
+        return NextResponse.json({ error: 'INVALID_URL: The provided URL is malformed.' }, { status: 400 });
       }
 
-      // Extract text using Cheerio
+      if (targetUrl.protocol !== 'http:' && targetUrl.protocol !== 'https:') {
+        return NextResponse.json({ error: 'URL_BLOCKED_FOR_SECURITY: Only HTTP/HTTPS URLs are allowed.' }, { status: 400 });
+      }
+
+      const hostname = targetUrl.hostname;
+      const isLocalhost = hostname === 'localhost' || hostname === '127.0.0.1' || hostname === '::1';
+      const isPrivateIP = /^10\.|^192\.168\.|^172\.(1[6-9]|2[0-9]|3[0-1])\.|^169\.254\./.test(hostname);
+      const isCloudMetadata = hostname === '169.254.169.254';
+
+      if (isLocalhost || isPrivateIP || isCloudMetadata) {
+        return NextResponse.json({ error: 'URL_BLOCKED_FOR_SECURITY: Access to internal/private networks is forbidden.' }, { status: 403 });
+      }
+
+      // B. Robust Fetching
+      const abortController = new AbortController();
+      const timeoutId = setTimeout(() => abortController.abort(), 10000); // 10s timeout
+
+      try {
+        console.log(`[URL FETCH] Requesting: ${url}`);
+        const response = await fetch(url, {
+          headers: {
+            'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36',
+            'Accept': 'text/html,application/xhtml+xml,application/xml;q=0.9,image/webp,*/*;q=0.8',
+            'Accept-Language': 'en-US,en;q=0.5',
+            'Cache-Control': 'no-cache',
+            'Pragma': 'no-cache',
+          },
+          signal: abortController.signal,
+          redirect: 'follow',
+        });
+        clearTimeout(timeoutId);
+
+        console.log(`[URL FETCH] Status: ${response.status} for ${response.url}`);
+
+        if (response.status === 401 || response.status === 403) {
+          // Detect publisher bot protection
+          return NextResponse.json({ 
+            error: "We couldn't automatically extract this publisher's article (Publisher blocked automated access). Please paste the article text and I can process it." 
+          }, { status: 403 });
+        }
+
+        if (!response.ok) {
+           return NextResponse.json({ error: `HTTP_ERROR: Server responded with status ${response.status}.` }, { status: 400 });
+        }
+
+        const contentType = response.headers.get('content-type') || '';
+        console.log(`[URL FETCH] Content-Type: ${contentType}`);
+        if (!contentType.includes('text/html') && !contentType.includes('application/xhtml+xml') && !contentType.includes('text/xml')) {
+           return NextResponse.json({ error: 'UNSUPPORTED_CONTENT_TYPE: The URL does not point to an HTML webpage.' }, { status: 400 });
+        }
+        
+        const contentLength = parseInt(response.headers.get('content-length') || '0', 10);
+        if (contentLength > 5 * 1024 * 1024) {
+           return NextResponse.json({ error: 'URL_BLOCKED_FOR_SECURITY: Response size exceeds the 5MB limit.' }, { status: 400 });
+        }
+
+        html = await response.text();
+      } catch (error: any) {
+        clearTimeout(timeoutId);
+        console.error(`[URL FETCH ERROR]`, error.message);
+        if (error.name === 'AbortError') {
+          return NextResponse.json({ error: 'FETCH_TIMEOUT: The server took too long to respond.' }, { status: 408 });
+        }
+        return NextResponse.json({ error: 'Could not fetch the provided URL due to a network error. Ensure it is valid.' }, { status: 400 });
+      }
+
+      // C. Smart Article Extraction
       const $ = cheerio.load(html);
-      // Aggressive cleanup of non-article elements
-      $('script, style, nav, header, footer, aside, .ad, .advertisement, [role="banner"], [role="navigation"], .related, .recommended, .trending, .comments, .sidebar, .tags, .newsletter, .share, .social, .outbrain, .taboola').remove();
+      let extractedTitle = '';
+      let extractedBody = '';
+      let extractionMethod = 'none';
+
+      // Remove unwanted elements early
+      $('script, style, nav, header, footer, aside, .ad, .advertisement, [role="banner"], [role="navigation"], .related, .recommended, .trending, .comments, .sidebar, .tags, .newsletter, .share, .social, .outbrain, .taboola, iframe, noscript').remove();
+
+      // Method 1: JSON-LD NewsArticle
+      $('script[type="application/ld+json"]').each((_, el) => {
+        try {
+          const jsonld = JSON.parse($(el).html() || '{}');
+          const schemas = Array.isArray(jsonld) ? jsonld : [jsonld];
+          
+          for (const schema of schemas) {
+             const graph = schema['@graph'] || [schema];
+             for (const item of graph) {
+                if (item['@type'] === 'NewsArticle' || item['@type'] === 'Article' || item['@type'] === 'BlogPosting') {
+                   extractedTitle = item.headline || item.name || '';
+                   extractedBody = item.articleBody || item.text || '';
+                   extractionMethod = 'JSON-LD';
+                   break;
+                }
+             }
+             if (extractedBody) break;
+          }
+        } catch (e) {}
+      });
+
+      // Method 2: Semantic HTML Fallback
+      if (!extractedBody || extractedBody.length < 100) {
+         extractedTitle = extractedTitle || $('meta[property="og:title"]').attr('content') || $('title').text() || '';
+         
+         const articleEl = $('article');
+         const mainEl = $('main');
+         const contentEl = $('.article-content, .post-content, .entry-content, #main-content');
+         
+         if (articleEl.length > 0) {
+            extractedBody = articleEl.text();
+            extractionMethod = 'Semantic <article>';
+         } else if (contentEl.length > 0) {
+            extractedBody = contentEl.text();
+            extractionMethod = 'CSS Class';
+         } else if (mainEl.length > 0) {
+            extractedBody = mainEl.text();
+            extractionMethod = 'Semantic <main>';
+         } else {
+            extractedBody = $('body').text();
+            extractionMethod = 'Generic <body>';
+         }
+      }
+
+      extractedBody = extractedBody.replace(/\s+/g, ' ').trim();
+      textToProcess = extractedTitle ? `${extractedTitle}\n\n${extractedBody}` : extractedBody;
+      textToProcess = textToProcess.substring(0, 15000);
+
+      console.log(`[EXTRACTION] Method: ${extractionMethod} | Title found: ${!!extractedTitle} | Body length: ${extractedBody.length}`);
       
-      let mainContent = $('article').text() || $('main').text() || $('.article-content').text() || $('body').text();
-      mainContent = mainContent.replace(/\s+/g, ' ').trim();
-      textToProcess = mainContent.substring(0, 15000);
+      if (textToProcess.length < 50) {
+         return NextResponse.json({ error: 'ARTICLE_EXTRACTION_FAILED: Could not find readable article text on this page.' }, { status: 422 });
+      }
     } else {
       return NextResponse.json({ error: 'Please enter a valid news URL or paste news text content.' }, { status: 400 });
     }
