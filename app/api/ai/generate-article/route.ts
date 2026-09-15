@@ -170,19 +170,49 @@ export async function POST(request: Request) {
 
     // 3. Editorial Gemini Prompt (Pass 1 - Generation)
     const systemInstruction = `
-You are a source-grounded news editor. The supplied source is your ONLY factual knowledge for this task. 
-Every factual statement in your output MUST be directly supported by the source. 
-You may paraphrase, reorganise and shorten the source, but you may NOT add external facts, assumptions, predictions, interpretations, causal relationships or broader conclusions. 
-If a claim cannot be supported by the supplied source, omit it. Never fill missing information using your general knowledge.
-Do NOT invent connections between separate developments.
-Use neutral newsroom language. AVOID AI-style phrases like "firing on all cylinders", "game-changing", "massive boom", "historic shift", "reshaping the global landscape", "soaring demand" unless explicitly supported by the source.
-SOURCE ACCURACY > ARTICLE LENGTH. Never add unsupported content just to make an article longer.
+1. SOURCE FIDELITY IS THE HIGHEST PRIORITY.
+Use ONLY information contained in the supplied source.
+Never add unsupported facts, names, numbers, dates, quotes, statistics, context, background information, or assumptions.
+Do not use general model knowledge to expand a story.
+
+2. DO NOT OVER-SUMMARIZE.
+The goal is to REWRITE the supplied news into a professional Bharat News Bulletin article, not merely summarize it.
+Preserve all materially important information available in the source.
+
+3. RETAIN IMPORTANT DETAILS.
+Unless clearly irrelevant or duplicated, preserve: major facts, important numbers, percentages, dates, company names, people, official statements, meaningful quotes, analyst comments, causes, consequences, market reactions, policy implications, company responses, and relevant background explicitly contained in the source.
+
+4. LENGTH MUST FOLLOW THE SOURCE.
+Do NOT target an arbitrary word count.
+If the source is detailed, produce a detailed article.
+If the source is short, produce a short article.
+Never add filler just to make a short source longer.
+Never aggressively compress a detailed source just to make the output shorter.
+
+5. REMOVE ONLY NON-ARTICLE NOISE.
+Ignore things such as: advertisements, "Scroll to continue", "opens new tab", newsletter promotions, licensing messages, unrelated video-player messages, navigation, publisher UI text.
+Do not confuse legitimate article paragraphs with noise.
+
+6. REMOVE REPETITION INTELLIGENTLY.
+If the source repeats the same fact multiple times, it can be consolidated.
+But do not remove a paragraph merely because it provides additional context to an earlier fact.
+
+7. ARTICLE STRUCTURE.
+Write a clean professional news article. Start with the most important development. Then logically include key figures/details, explanation/context, reactions/comments, implications, and additional relevant developments.
+Do not create unnecessary internal headings unless the existing BNB format specifically requires them.
+Use Bold, Italic, H3 and Quote formatting only where genuinely useful.
+
+8. QUOTES.
+Important quotes from the source can be retained. Do not invent quotes. Do not change the meaning of quoted statements.
+
+13. CRITICAL GENERATION PRINCIPLE:
+SOURCE DETAIL SHOULD DETERMINE OUTPUT DETAIL. A detailed 700-word source should normally result in a substantially detailed rewrite, not a 250-word summary. A 200-word source should NOT be artificially expanded to 700 words. There is NO fixed target article length.
 `;
 
     const promptPass1 = `
-${systemInstruction}
+\${systemInstruction}
 
-Your task is to read the provided source news text and rewrite it completely into a new, high-quality, professional, ready-to-publish news report following the strict grounding rules.
+Your task is to read the provided source news text and rewrite it completely into a new, high-quality, professional, ready-to-publish news report following the strict grounding rules above.
 
 CRITICAL EDITORIAL FORMATTING RULES FOR THE "content" FIELD:
 1. Do NOT clutter the article with sub-headings (do NOT use <h2> or <h3> headings inside the content unless essential).
@@ -194,11 +224,21 @@ CRITICAL EDITORIAL FORMATTING RULES FOR THE "content" FIELD:
 7. Naturally bold (wrap in <strong> tags) 2-4 important SEO keywords or key phrases within the paragraphs to improve search engine visibility. DO NOT use markdown asterisks (**) for bolding, use ONLY HTML <strong> tags.
 8. After the article paragraphs, add a line starting with <p><strong>Important notes:</strong></p> followed by any additional bullet points or remarks (use HTML <ul> and <li>).
 
-CATEGORY TAXONOMY RULES:
+9. HEADLINE AND SUB-HEADLINE.
+Generate a clear, newsworthy headline based strictly on the source.
+The sub-headline should add useful context rather than simply repeat the headline.
+
+10. CATEGORIES.
 You MUST assign categories ONLY from this exact allowed list:
 [India, Business, Economy, Markets, Banking & Finance, Companies, Startups, Technology, Automobile, Energy, Agriculture, Real Estate, Trade & Exports, Policy & Regulations, Employment, Infrastructure, Healthcare & Pharma, Consumer & Retail, International Business, MSME]
-- Select 2-4 relevant categories. If the story is primarily about India, include "India".
-- Do NOT make up new category names. Use ONLY the exact strings provided above.
+Choose only the most relevant existing Bharat News Bulletin categories. Do not add unrelated categories merely because a keyword appears in the article.
+
+11. SEO.
+SEO Title, SEO Keywords and SEO Description must remain strictly based on the supplied article. Do not insert unsupported trending keywords or facts for SEO.
+
+12. IMAGE PROMPTS.
+Cover Image Prompt must be specifically aligned with the actual story. Do not default to generic traders, phones, offices or stock screens unless appropriate.
+Social Media Image Prompt must be story-specific, use only verified source facts, include 2-3 strongest facts when suitable, never invent numbers, not include "Read Full Story", not include my website URL, and leave room for my own CTA.
 
 Respond ONLY with a valid JSON object matching this exact structure, with no markdown code blocks wrapping the JSON:
 {
