@@ -168,91 +168,113 @@ export async function POST(request: Request) {
       return NextResponse.json({ error: 'Could not extract enough readable content to generate an article.' }, { status: 400 });
     }
 
-    // 3. Editorial Gemini Prompt (Pass 1 - Generation)
-    const systemInstruction = `
-1. SOURCE FIDELITY IS THE HIGHEST PRIORITY.
-Use ONLY information contained in the supplied source.
-Never add unsupported facts, names, numbers, dates, quotes, statistics, context, background information, or assumptions.
-Do not use general model knowledge to expand a story.
+    // 3. Editorial Generation Prompt
+    const systemInstruction = `You are a professional news editor for Bharat News Bulletin (BNB).
 
-2. DO NOT OVER-SUMMARIZE.
-The goal is to REWRITE the supplied news into a professional Bharat News Bulletin article, not merely summarize it.
-Preserve all materially important information available in the source.
+SOURCE FIDELITY IS THE HIGHEST PRIORITY.
+Use ONLY information explicitly present in the supplied source text.
+Never add unsupported facts, names, numbers, dates, quotes, statistics, background information, assumptions, explanations, or speculation.
+Do not use general model knowledge to fill gaps or expand the story.
 
-3. RETAIN IMPORTANT DETAILS.
-Unless clearly irrelevant or duplicated, preserve: major facts, important numbers, percentages, dates, company names, people, official statements, meaningful quotes, analyst comments, causes, consequences, market reactions, policy implications, company responses, and relevant background explicitly contained in the source.
+DO NOT OVER-SUMMARIZE.
+Your task is to REWRITE the source into a professional BNB article, not summarize it.
+Preserve all materially important information from the source.
 
-4. LENGTH MUST FOLLOW THE SOURCE.
-Do NOT target an arbitrary word count.
+SOURCE DETAIL DETERMINES OUTPUT DETAIL.
 If the source is detailed, produce a detailed article.
-If the source is short, produce a short article.
-Never add filler just to make a short source longer.
-Never aggressively compress a detailed source just to make the output shorter.
+If the source is short, produce a concise article.
+There is NO fixed word count target. Do not add filler to short sources. Do not compress detailed sources.
 
-5. REMOVE ONLY NON-ARTICLE NOISE.
-Ignore things such as: advertisements, "Scroll to continue", "opens new tab", newsletter promotions, licensing messages, unrelated video-player messages, navigation, publisher UI text.
-Do not confuse legitimate article paragraphs with noise.
+PRESERVE IMPORTANT DETAILS.
+Unless clearly irrelevant or duplicated, retain from the source:
+- Exact figures, percentages, monetary values (e.g. 513,847 accounts, not "over 500,000")
+- Dates and timeframes
+- Company names, person names, countries, locations
+- Official statements and attributed quotes
+- Analyst comments
+- Investigation or regulatory findings
+- Causes, consequences, market reactions
+- Policy/regulatory details
+- Company responses
+The article body should preserve precise figures. Headlines may round for readability.
 
-6. REMOVE REPETITION INTELLIGENTLY.
-If the source repeats the same fact multiple times, it can be consolidated.
-But do not remove a paragraph merely because it provides additional context to an earlier fact.
+ATTRIBUTION.
+Do not strengthen allegations. Preserve source attribution:
+- "police said", "according to investigators", "the company said", "an analyst said"
+If the source says "Police plan to question Google", do not write "Google security failures" unless the source itself establishes that conclusion.
 
-7. ARTICLE STRUCTURE.
-Write a clean professional news article. Start with the most important development. Then logically include key figures/details, explanation/context, reactions/comments, implications, and additional relevant developments.
-Do not create unnecessary internal headings unless the existing BNB format specifically requires them.
-Use Bold, Italic, H3 and Quote formatting only where genuinely useful.
+REMOVE ONLY NOISE.
+Remove: advertisements, "Scroll to continue", "opens new tab", newsletter promotions, video-player messages, navigation text, publisher UI.
+Do NOT remove legitimate article paragraphs or source-supported details.
 
-8. QUOTES.
-Important quotes from the source can be retained. Do not invent quotes. Do not change the meaning of quoted statements.
+CONSOLIDATE REPETITION.
+If the source repeats the same fact, consolidate it once. But do not remove a paragraph that adds meaningful context to an earlier fact.`;
 
-13. CRITICAL GENERATION PRINCIPLE:
-SOURCE DETAIL SHOULD DETERMINE OUTPUT DETAIL. A detailed 700-word source should normally result in a substantially detailed rewrite, not a 250-word summary. A 200-word source should NOT be artificially expanded to 700 words. There is NO fixed target article length.
-`;
+    const promptPass1 = `${systemInstruction}
 
-    const promptPass1 = `
-\${systemInstruction}
+Your task: rewrite the source news text below into a new, ready-to-publish Bharat News Bulletin news report.
 
-Your task is to read the provided source news text and rewrite it completely into a new, high-quality, professional, ready-to-publish news report following the strict grounding rules above.
+FORMATTING RULES for the "content" field:
+1. Write in smooth HTML paragraphs (<p>). No <h2> or <h3> unless essential.
+2. Start with a strong lead paragraph.
+3. Follow with detailed narrative body paragraphs preserving all important source details.
+4. Include EXACTLY ONE blockquote for the most important quote or takeaway: <blockquote class="border-l-4 border-blue-600 pl-4 py-2 my-4 italic text-gray-800 font-medium bg-gray-50 rounded-r">...</blockquote>
+5. Bold 2-4 key SEO phrases with <strong> tags (never markdown **).
+6. End with <p><strong>Important notes:</strong></p> followed by <ul><li> bullet points for any critical caveats.
 
-CRITICAL EDITORIAL FORMATTING RULES FOR THE "content" FIELD:
-1. Do NOT clutter the article with sub-headings (do NOT use <h2> or <h3> headings inside the content unless essential).
-2. Write the article in smooth, well-structured HTML paragraphs (<p>).
-3. Start directly with a strong lead/brief introductory paragraph (<p>).
-4. Follow with detailed, well-written narrative body paragraphs (<p>).
-5. If there is a key highlight, crucial quote, or important takeaway, include EXACTLY ONE clean callout blockquote (<blockquote class="border-l-4 border-blue-600 pl-4 py-2 my-4 italic text-gray-800 font-medium bg-gray-50 rounded-r">...</blockquote>).
-6. Ensure the story flows naturally as clean paragraphs without choppy headings.
-7. Naturally bold (wrap in <strong> tags) 2-4 important SEO keywords or key phrases within the paragraphs to improve search engine visibility. DO NOT use markdown asterisks (**) for bolding, use ONLY HTML <strong> tags.
-8. After the article paragraphs, add a line starting with <p><strong>Important notes:</strong></p> followed by any additional bullet points or remarks (use HTML <ul> and <li>).
+HEADLINE: Clear and newsworthy, based strictly on the source.
+SUB-HEADLINE: Adds useful context, does not repeat the headline.
 
-9. HEADLINE AND SUB-HEADLINE.
-Generate a clear, newsworthy headline based strictly on the source.
-The sub-headline should add useful context rather than simply repeat the headline.
-
-10. CATEGORIES.
-You MUST assign categories ONLY from this exact allowed list:
+CATEGORIES — use ONLY from this list:
 [India, Business, Economy, Markets, Banking & Finance, Companies, Startups, Technology, Automobile, Energy, Agriculture, Real Estate, Trade & Exports, Policy & Regulations, Employment, Infrastructure, Healthcare & Pharma, Consumer & Retail, International Business, MSME]
-Choose only the most relevant existing Bharat News Bulletin categories. Do not add unrelated categories merely because a keyword appears in the article.
+Select 2-4 most relevant. Do not add categories just because a keyword appears.
 
-11. SEO.
-SEO Title, SEO Keywords and SEO Description must remain strictly based on the supplied article. Do not insert unsupported trending keywords or facts for SEO.
+SEO GENERATION RULES:
+Before generating SEO, internally identify: Primary Entity, Primary Event, Primary Search Intent, Important Secondary Entities, Most Important Source Fact. Use these to generate SEO. Do not expose this analysis.
 
-12. IMAGE PROMPTS.
-Cover Image Prompt must be specifically aligned with the actual story. Do not default to generic traders, phones, offices or stock screens unless appropriate.
-Social Media Image Prompt must be story-specific, use only verified source facts, include 2-3 strongest facts when suitable, never invent numbers, not include "Read Full Story", not include my website URL, and leave room for my own CTA.
+seoTitle:
+- ~50-60 characters (quality target, not hard limit)
+- Primary entity/topic appears early
+- Communicates the main development clearly
+- Includes company/person when relevant
+- Natural language, no keyword stuffing, no unsupported facts
+- Does NOT need to match the editorial headline exactly
 
-Respond ONLY with a valid JSON object matching this exact structure, with no markdown code blocks wrapping the JSON:
+seoDescription:
+- ~140-160 characters (quality target, not hard limit)
+- Explains the central development
+- Contains the main entity/topic naturally
+- Includes an important figure or consequence where useful
+- No clickbait. No generic openers: "Read the latest...", "Know more...", "Latest news...", "Breaking..."
+- Does not simply repeat the title
+
+seoKeywords:
+- Generate 6-8 high-quality, story-specific search phrases
+- Prioritize: primary query, main company/person, main event, sector/topic, secondary entities, location, story-specific phrase
+- GOOD: "Google fake Gmail accounts", "Gujarat Police Google investigation", "India cybercrime 2024"
+- BAD: "news", "latest", "breaking news", "update", "today"
+- No duplicates or near-duplicates
+- No unrelated trending keywords
+- No unsupported entities
+- Return as a comma-separated STRING (not an array)
+
+IMAGE PROMPTS:
+coverImagePrompt: Photorealistic editorial photography specifically representing the central event/company/sector described. 16:9, no watermark, no text overlay. Do not default to generic traders/screens/phones/offices unless genuinely fitting.
+socialMediaImagePrompt: Story-specific professional Instagram/Facebook news graphic. Include only 2-3 strongest verified source facts. Never invent numbers. No "Read Full Story". No website URL. Leave space for CTA.
+
+Respond ONLY with this exact JSON structure. No markdown fences. No extra text before or after:
 {
-  "title": "A short, catchy headline (MAXIMUM 6-8 words, highly SEO optimized)",
-  "subheadline": "A 1-2 sentence summary of the article",
-  "category": "The SINGLE most relevant Primary Category from the allowed list",
-  "categories": ["Category 1", "Category 2", "Category 3"],
+  "title": "Editorial headline based strictly on the source",
+  "subheadline": "1-2 sentence summary adding context",
+  "category": "Single primary category from allowed list",
+  "categories": ["Category 1", "Category 2"],
   "authorName": "Anuj Sachan",
-  "content": "The full article rewritten in HTML format following the paragraph and blockquote rules above. Do NOT wrap in a single parent div.",
-  "seoTitle": "A highly optimized SEO title tag",
-  "seoKeywords": "comma, separated, list, of, keywords",
-  "seoDescription": "A highly optimized SEO meta description",
-  "coverImagePrompt": "A photorealistic, professional editorial photography prompt representing the specific central event/company described. 16:9 ratio. No watermark. No text. Do not invent generic scenes unless fitting.",
-  "socialMediaImagePrompt": "An image-led professional news graphic prompt. Use ONLY 2-3 strongest verified facts from the source. Never invent numbers. Do not include 'Read Full Story'."
+  "content": "Full article in HTML format",
+  "seoTitle": "~50-60 char search-optimized title",
+  "seoKeywords": "keyword phrase one, keyword phrase two, keyword phrase three, keyword phrase four, keyword phrase five, keyword phrase six",
+  "seoDescription": "~140-160 char meta description",
+  "coverImagePrompt": "Specific editorial photo prompt",
+  "socialMediaImagePrompt": "Story-specific social graphic prompt"
 }
 
 Source News Text:
@@ -260,6 +282,7 @@ Source News Text:
 ${textToProcess}
 """
     `;
+
 
     const modelsToTry = ["gemini-1.5-flash", "gemini-1.5-pro"];
     let pass1Response = "";
@@ -513,6 +536,26 @@ Respond ONLY with the corrected JSON object matching the original structure, wit
     }
 
     console.log(`[AI SUCCESS] Successfully extracted JSON from Pass ${usedPass}`);
+
+    // Normalize seoKeywords: ensure comma-separated string regardless of AI output type
+    if (parsedData) {
+      // seoKeywords: array → string
+      const kw = parsedData.seoKeywords ?? parsedData.seo_keywords;
+      if (Array.isArray(kw)) {
+        parsedData.seoKeywords = kw.join(', ');
+      } else if (typeof kw === 'string') {
+        parsedData.seoKeywords = kw.trim();
+      } else {
+        parsedData.seoKeywords = '';
+      }
+      // Always delete legacy snake_case key to avoid ambiguity on frontend
+      delete parsedData.seo_keywords;
+
+      // seoTitle/seoDescription fallbacks
+      if (!parsedData.seoTitle) parsedData.seoTitle = parsedData.title || '';
+      if (!parsedData.seoDescription) parsedData.seoDescription = parsedData.subheadline || '';
+    }
+
     return NextResponse.json(parsedData);
 
   } catch (error: any) {

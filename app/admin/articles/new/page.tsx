@@ -159,9 +159,17 @@ export default function NewArticlePage() {
         editor?.commands.setContent(data.content);
       }
       
-      setSeoTitle(data.title || "");
-      setSeoDescription(data.subheadline || "");
-      if (data.seo_keywords) setSeoKeywords(data.seo_keywords);
+      setSeoTitle(data.seoTitle || data.title || "");
+      setSeoDescription(data.seoDescription || data.subheadline || "");
+      
+      // Normalize seoKeywords: AI may return camelCase key, and value may be array or string
+      const rawKeywords = data.seoKeywords ?? data.seo_keywords ?? "";
+      if (rawKeywords) {
+        const normalizedKeywords = Array.isArray(rawKeywords)
+          ? rawKeywords.join(", ")
+          : String(rawKeywords).trim();
+        setSeoKeywords(normalizedKeywords);
+      }
       
       // Handle categories
       const newCats = new Set([...selectedCategories]);
