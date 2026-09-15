@@ -206,8 +206,13 @@ Respond ONLY with a valid JSON object matching this exact structure, with no mar
   "subheadline": "A 1-2 sentence summary of the article",
   "category": "The SINGLE most relevant Primary Category from the allowed list",
   "categories": ["Category 1", "Category 2", "Category 3"],
-  "seo_keywords": "comma, separated, list, of, keywords",
-  "content": "The full article rewritten in HTML format following the paragraph and blockquote rules above. Do NOT wrap in a single parent div."
+  "authorName": "Anuj Sachan",
+  "content": "The full article rewritten in HTML format following the paragraph and blockquote rules above. Do NOT wrap in a single parent div.",
+  "seoTitle": "A highly optimized SEO title tag",
+  "seoKeywords": "comma, separated, list, of, keywords",
+  "seoDescription": "A highly optimized SEO meta description",
+  "coverImagePrompt": "A photorealistic, professional editorial photography prompt representing the specific central event/company described. 16:9 ratio. No watermark. No text. Do not invent generic scenes unless fitting.",
+  "socialMediaImagePrompt": "An image-led professional news graphic prompt. Use ONLY 2-3 strongest verified facts from the source. Never invent numbers. Do not include 'Read Full Story'."
 }
 
 Source News Text:
@@ -235,11 +240,15 @@ ${textToProcess}
         try {
           const model = genAI.getGenerativeModel({ 
             model: modelName,
-            generationConfig: { responseMimeType: "application/json" }
+            generationConfig: { 
+              responseMimeType: "application/json",
+              maxOutputTokens: 8192
+            }
           });
           const result = await model.generateContent(promptPass1);
           pass1Response = result.response.text();
           pass1Success = true;
+          console.log(`[AI SUCCESS] Pass 1 Gemini model ${modelName} succeeded. Length: ${pass1Response.length}`);
           break; 
         } catch (error: any) {
           console.warn(`Pass 1 Key ending in ${apiKey.slice(-4)} Model ${modelName} failed:`, error.message);
@@ -267,6 +276,7 @@ ${textToProcess}
                 { role: "user", content: promptPass1 }
               ],
               temperature: 0.1,
+              max_tokens: 8000,
               response_format: { type: "json_object" }
             })
           });
@@ -297,7 +307,8 @@ ${textToProcess}
               messages: [
                 { role: "system", content: systemInstruction },
                 { role: "user", content: promptPass1 }
-              ]
+              ],
+              max_tokens: 5000
             })
           });
 
@@ -358,7 +369,10 @@ Respond ONLY with the corrected JSON object matching the original structure, wit
         try {
           const model = genAI.getGenerativeModel({ 
             model: modelName,
-            generationConfig: { responseMimeType: "application/json" }
+            generationConfig: { 
+              responseMimeType: "application/json",
+              maxOutputTokens: 8192
+            }
           });
           const result = await model.generateContent(promptPass2);
           finalAiResponse = result.response.text();
@@ -386,6 +400,7 @@ Respond ONLY with the corrected JSON object matching the original structure, wit
               { role: "user", content: promptPass2 }
             ],
             temperature: 0.1,
+            max_tokens: 8000,
             response_format: { type: "json_object" }
           })
         });
@@ -413,7 +428,8 @@ Respond ONLY with the corrected JSON object matching the original structure, wit
           body: JSON.stringify({
             messages: [
               { role: "user", content: promptPass2 }
-            ]
+            ],
+            max_tokens: 5000
           })
         });
 
@@ -427,23 +443,37 @@ Respond ONLY with the corrected JSON object matching the original structure, wit
       }
     }
 
-    // Clean up markdown codeblock wrapper if included
-    finalAiResponse = finalAiResponse.replace(/```json/g, '').replace(/```/g, '').trim();
+    // Robust JSON Extraction & Parsing
+    const extractJson = (text: string) => {
+      const match = text.match(/\{[\s\S]*\}/);
+      if (!match) throw new Error("No JSON object found in response");
+      return JSON.parse(match[0]);
+    };
 
+    let parsedData;
+    let usedPass = 2;
+    
     try {
-      const parsedData = JSON.parse(finalAiResponse);
-      return NextResponse.json(parsedData);
-    } catch (parseError) {
-      console.error('Failed to parse Gemini validation response as JSON:', finalAiResponse);
-      // Fallback to pass 1 JSON parsing if pass 2 returned invalid JSON
+      console.log(`[AI RESPONSE] Pass 2 length: ${finalAiResponse.length} chars`);
+      parsedData = extractJson(finalAiResponse);
+    } catch (parseError: any) {
+      console.error(`[AI ERROR] Pass 2 JSON parsing failed: ${parseError.message}`);
+      console.error(`[AI ERROR] Pass 2 Raw Response snippet: ${finalAiResponse.substring(0, 500)}`);
+      
+      // Fallback to Pass 1
       try {
-          const pass1Clean = pass1Response.replace(/```json/g, '').replace(/```/g, '').trim();
-          const parsedDataPass1 = JSON.parse(pass1Clean);
-          return NextResponse.json(parsedDataPass1);
-      } catch (e) {
-          return NextResponse.json({ error: 'AI generated invalid data format in both passes.' }, { status: 500 });
+        usedPass = 1;
+        console.log(`[AI RESPONSE] Pass 1 length: ${pass1Response.length} chars`);
+        parsedData = extractJson(pass1Response);
+      } catch (e: any) {
+        console.error(`[AI ERROR] Pass 1 JSON parsing failed: ${e.message}`);
+        console.error(`[AI ERROR] Pass 1 Raw Response snippet: ${pass1Response.substring(0, 500)}`);
+        return NextResponse.json({ error: 'AI generated invalid data format in both passes.' }, { status: 500 });
       }
     }
+
+    console.log(`[AI SUCCESS] Successfully extracted JSON from Pass ${usedPass}`);
+    return NextResponse.json(parsedData);
 
   } catch (error: any) {
     console.error('AI Generation Error:', error);
