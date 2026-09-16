@@ -6,6 +6,7 @@ import Footer from "@/components/layout/Footer";
 import Ticker from "@/components/layout/Ticker";
 import TopProgressBar from "@/components/layout/TopProgressBar";
 import Script from "next/script";
+import GoogleAnalyticsProvider from "@/components/GoogleAnalyticsProvider";
 
 const inter = Inter({
   variable: "--font-inter",
@@ -106,6 +107,7 @@ export default function RootLayout({
           {children}
         </main>
         <Footer />
+        <GoogleAnalyticsProvider />
       </body>
     </html>
   );
