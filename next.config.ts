@@ -1,6 +1,14 @@
 import type { NextConfig } from "next";
 
 const nextConfig: NextConfig = {
+  async rewrites() {
+    return [
+      {
+        source: '/:key.txt',
+        destination: '/api/indexnow-key?key=:key',
+      },
+    ];
+  },
   images: {
     remotePatterns: [
       {

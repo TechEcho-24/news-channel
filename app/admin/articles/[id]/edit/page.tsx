@@ -324,6 +324,24 @@ export default function EditArticlePage({ params }: { params: Promise<{ id: stri
         
       if (error) throw error;
       
+      // Notify IndexNow of the deleted URL to speed up de-indexing
+      try {
+        const primaryCategory = selectedCategories[0] || "news";
+        const articleUrl = `/${primaryCategory.toLowerCase()}/${title
+          .toLowerCase()
+          .replace(/[^\\w\\s-]/g, '')
+          .replace(/[\\s_-]+/g, '-')
+          .replace(/^-+|-+$/g, '')}`;
+          
+        await fetch("/api/admin/publish-hook", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ url: articleUrl, category: primaryCategory.toLowerCase() })
+        });
+      } catch (hookError) {
+        console.error("Publish hook failed on delete:", hookError);
+      }
+
       alert("Article deleted successfully.");
       router.push("/admin");
     } catch (error: any) {
