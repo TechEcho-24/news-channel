@@ -12,6 +12,7 @@ export type Article = {
   content: string;
   author_name: string;
   cover_image: string | null;
+  image_alt?: string;
   views: number;
   impressions: number;
   published_at: string;

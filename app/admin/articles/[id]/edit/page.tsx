@@ -37,6 +37,7 @@ export default function EditArticlePage({ params }: { params: Promise<{ id: stri
   // Image Upload state
   const [imageFile, setImageFile] = useState<File | null>(null);
   const [imagePreview, setImagePreview] = useState<string | null>(null);
+  const [imageAlt, setImageAlt] = useState("");
   const [isUploadingImage, setIsUploadingImage] = useState(false);
   const fileInputRef = useRef<HTMLInputElement>(null);
 
@@ -70,6 +71,7 @@ export default function EditArticlePage({ params }: { params: Promise<{ id: stri
         setSeoDescription(data.seo_description || "");
         setSeoKeywords(data.seo_keywords || "");
         setImagePreview(data.cover_image || null);
+        setImageAlt(data.image_alt || "");
         
         const cats = [];
         if (data.category) cats.push(data.category);
@@ -274,6 +276,7 @@ export default function EditArticlePage({ params }: { params: Promise<{ id: stri
             seo_description: finalSeoDesc,
             seo_keywords: seoKeywords,
             content: contentHtml,
+            image_alt: imageAlt,
             ...(finalImageUrl ? { cover_image: finalImageUrl } : {})
         })
         .eq('id', resolvedParams.id);
@@ -620,6 +623,16 @@ export default function EditArticlePage({ params }: { params: Promise<{ id: stri
                   value={seoKeywords}
                   onChange={(e) => setSeoKeywords(e.target.value)}
                   placeholder="news, business, market crash..."
+                  className="w-full border border-gray-300 p-2 rounded-md focus:outline-none focus:border-blue-500 transition-colors text-sm" 
+               />
+             </div>
+             <div className="md:col-span-2">
+               <label className="block text-xs font-semibold text-gray-600 mb-1">Image Alt Text (Optional)</label>
+               <input 
+                  type="text" 
+                  value={imageAlt}
+                  onChange={(e) => setImageAlt(e.target.value)}
+                  placeholder={title || "Describe the cover image"}
                   className="w-full border border-gray-300 p-2 rounded-md focus:outline-none focus:border-blue-500 transition-colors text-sm" 
                />
              </div>

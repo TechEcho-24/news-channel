@@ -105,7 +105,7 @@ export default async function ArticlePage({ params }: { params: Promise<{ catego
       }
     },
     "articleSection": article.category,
-    "keywords": allCategories.join(", ")
+    "keywords": article.seo_keywords ? article.seo_keywords : allCategories.join(", ")
   };
 
   const breadcrumbLd = {
@@ -168,7 +168,7 @@ export default async function ArticlePage({ params }: { params: Promise<{ catego
           <div className="relative aspect-[21/9] w-full bg-gray-100 overflow-hidden">
             <Image
               src={article.cover_image}
-              alt={article.title}
+              alt={article.image_alt || article.title}
               fill
               sizes="(max-width: 768px) 100vw, (max-width: 1200px) 100vw, 100vw"
               priority

@@ -55,9 +55,9 @@ export default function NewArticlePage() {
   const [aiInput, setAiInput] = useState("");
   const [isAiGenerating, setIsAiGenerating] = useState(false);
 
-  // Image Upload state
   const [imageFile, setImageFile] = useState<File | null>(null);
   const [imagePreview, setImagePreview] = useState<string | null>(null);
+  const [imageAlt, setImageAlt] = useState("");
   const [isUploadingImage, setIsUploadingImage] = useState(false);
   const fileInputRef = useRef<HTMLInputElement>(null);
 
@@ -263,7 +263,8 @@ export default function NewArticlePage() {
             seo_description: finalSeoDesc,
             seo_keywords: seoKeywords,
             content: contentHtml,
-            cover_image: finalImageUrl
+            cover_image: finalImageUrl,
+            image_alt: imageAlt
           }
         ]);
         
@@ -557,6 +558,16 @@ export default function NewArticlePage() {
                   value={seoKeywords}
                   onChange={(e) => setSeoKeywords(e.target.value)}
                   placeholder="news, business, market crash..."
+                  className="w-full border border-gray-300 p-2 rounded-md focus:outline-none focus:border-blue-500 transition-colors text-sm" 
+               />
+             </div>
+             <div className="md:col-span-2">
+               <label className="block text-xs font-semibold text-gray-600 mb-1">Image Alt Text (Optional)</label>
+               <input 
+                  type="text" 
+                  value={imageAlt}
+                  onChange={(e) => setImageAlt(e.target.value)}
+                  placeholder={title || "Describe the cover image"}
                   className="w-full border border-gray-300 p-2 rounded-md focus:outline-none focus:border-blue-500 transition-colors text-sm" 
                />
              </div>
