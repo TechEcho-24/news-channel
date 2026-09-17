@@ -248,6 +248,7 @@ export default function NewArticlePage() {
       const primaryCategory = selectedCategories[0]; // For backwards compatibility with older URL logic
       const finalSeoTitle = seoTitle.trim() || title;
       const finalSeoDesc = seoDescription.trim() || subheadline;
+      const finalImageAlt = imageAlt.trim() || title.split(/\s+/).slice(0, 3).join(" ");
       const contentHtml = editor?.getHTML() || "";
       
       const { error } = await supabase
@@ -264,7 +265,7 @@ export default function NewArticlePage() {
             seo_keywords: seoKeywords,
             content: contentHtml,
             cover_image: finalImageUrl,
-            image_alt: imageAlt
+            image_alt: finalImageAlt
           }
         ]);
         

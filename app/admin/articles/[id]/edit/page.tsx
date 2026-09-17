@@ -262,6 +262,7 @@ export default function EditArticlePage({ params }: { params: Promise<{ id: stri
       const primaryCategory = selectedCategories[0]; // For backwards compatibility with older URL logic
       const finalSeoTitle = seoTitle.trim() || title;
       const finalSeoDesc = seoDescription.trim() || subheadline;
+      const finalImageAlt = imageAlt.trim() || title.split(/\s+/).slice(0, 3).join(" ");
       const contentHtml = editor?.getHTML() || "";
       
       const { error } = await supabase
@@ -276,7 +277,7 @@ export default function EditArticlePage({ params }: { params: Promise<{ id: stri
             seo_description: finalSeoDesc,
             seo_keywords: seoKeywords,
             content: contentHtml,
-            image_alt: imageAlt,
+            image_alt: finalImageAlt,
             ...(finalImageUrl ? { cover_image: finalImageUrl } : {})
         })
         .eq('id', resolvedParams.id);
