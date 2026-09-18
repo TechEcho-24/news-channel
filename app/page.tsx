@@ -69,6 +69,7 @@ export default async function Home() {
 
   return (
     <div className="bg-[#FAFAFA]">
+      <MarketTrendsClient />
       <SubscriptionPopup />
       <script
         type="application/ld+json"
@@ -120,11 +121,6 @@ export default async function Home() {
 
           {/* Sidebar Area */}
           <div className="flex flex-col space-y-5">
-            {/* Market Trend & Analytics */}
-            <div>
-              <MarketTrendsClient />
-            </div>
-
             {/* Secondary Stories - Latest News */}
             <div>
               <h3 className="font-black uppercase tracking-widest text-xs border-b-2 border-gray-200 pb-2 mb-3 font-inter text-gray-900">Latest News</h3>

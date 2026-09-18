@@ -92,22 +92,22 @@ export default function ProfilePage() {
       <div className="max-w-2xl mx-auto space-y-6">
 
         {/* Profile Header Card */}
-        <div className="bg-gradient-to-r from-blue-600 to-indigo-700 rounded-2xl px-8 py-10 text-white flex items-center gap-6 shadow-lg">
+        <div className="bg-gradient-to-r from-blue-600 to-indigo-700 rounded-2xl px-6 py-8 sm:px-8 sm:py-10 text-white flex flex-col sm:flex-row items-center text-center sm:text-left gap-4 sm:gap-6 shadow-lg overflow-hidden">
           <div className="h-20 w-20 bg-white/20 rounded-full flex items-center justify-center text-3xl font-bold border-2 border-white/40 flex-shrink-0">
             {displayInitial}
           </div>
-          <div>
-            <h1 className="text-2xl font-bold">{displayName}</h1>
-            <p className="text-blue-100 text-sm mt-0.5">{user?.email}</p>
+          <div className="min-w-0 flex-1 w-full sm:w-auto px-2 sm:px-0">
+            <h1 className="text-2xl font-bold truncate">{displayName}</h1>
+            <p className="text-blue-100 text-sm mt-0.5 truncate">{user?.email}</p>
             <span className="inline-block mt-2 px-3 py-0.5 bg-white/20 rounded-full text-xs font-semibold uppercase tracking-wider">
               {profile?.role?.replace("_", " ") || "Reader"}
             </span>
           </div>
           {(profile?.role === "super_admin" || profile?.role === "author") && (
-            <div className="ml-auto">
+            <div className="mt-2 sm:mt-0 sm:ml-auto w-full sm:w-auto flex justify-center">
               <Link
                 href="/admin"
-                className="flex items-center gap-2 bg-white/15 hover:bg-white/25 transition-colors px-4 py-2 rounded-lg text-sm font-medium"
+                className="flex items-center justify-center gap-2 bg-white/15 hover:bg-white/25 transition-colors px-4 py-2 rounded-lg text-sm font-medium w-full sm:w-auto"
               >
                 <Shield size={16} />
                 Admin Panel
