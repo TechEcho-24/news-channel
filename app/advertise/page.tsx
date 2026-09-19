@@ -1,176 +1,234 @@
 import type { Metadata } from "next";
-import Link from "next/link";
 
 export const metadata: Metadata = {
-  title: "Advertise with Bharat News Bulletin (BNB)",
-  description: "Put your brand in front of thousands of engaged readers. Direct, transparent advertising with Bharat News Bulletin (BNB).",
+  title: "Advertise | Bharat News Bulletin",
+  description: "Put your brand in front of engaged Indian readers. Direct, transparent advertising with Bharat News Bulletin.",
 };
+
+const ADS_EMAIL = "support@techecho.in";
+
+const packages = [
+  {
+    name: "Sidebar Banner",
+    price: "₹1,500",
+    period: "/month",
+    slot: "300 × 250 px",
+    features: [
+      "Sidebar placement on all articles",
+      "Click-through to your website",
+      "Start & end date control",
+      "JPG / PNG accepted",
+    ],
+    highlight: false,
+  },
+  {
+    name: "Leaderboard",
+    price: "₹3,500",
+    period: "/month",
+    slot: "728 × 90 px",
+    features: [
+      "Top-of-page on every article",
+      "Maximum visibility",
+      "Click-through to your website",
+      "Priority placement",
+      "Monthly performance report",
+    ],
+    highlight: true,
+  },
+  {
+    name: "Sponsored Article",
+    price: "₹2,000",
+    period: "/article",
+    slot: "Full Article",
+    features: [
+      "Written by the BNB team",
+      "Permanent on our website",
+      "Shared on BNB social media",
+      "SEO benefit for your brand",
+    ],
+    highlight: false,
+  },
+];
+
+const steps = [
+  { num: "01", title: "Email us", desc: "Tell us which slot you want and for how long." },
+  { num: "02", title: "Send your creative", desc: "We accept JPG / PNG. No animations or misleading content." },
+  { num: "03", title: "Review & publish", desc: "We review the ad and make it live within 24 hours." },
+  { num: "04", title: "That's it", desc: "Your ad runs for the agreed period. Renew any time." },
+];
 
 export default function AdvertisePage() {
   return (
-    <div className="bg-white">
+    <>
+      <style>{`
+        .ad-card {
+          border-radius: 16px;
+          border: 2px solid #e5e7eb;
+          padding: 32px;
+          display: flex;
+          flex-direction: column;
+          background: #fff;
+          transition: box-shadow 0.2s, border-color 0.2s;
+        }
+        .ad-card:hover { box-shadow: 0 8px 32px rgba(0,0,0,0.08); }
+        .ad-card.highlight { border-color: #2563EB; box-shadow: 0 4px 24px rgba(37,99,235,0.12); }
+        .step-box { padding: 24px; background: #f9fafb; border-radius: 12px; }
+        .step-num { font-size: 36px; font-weight: 800; color: #e5e7eb; font-variant-numeric: tabular-nums; margin-bottom: 8px; }
+      `}</style>
 
-      {/* Header */}
-      <div className="border-b-4 border-gray-200">
-        <div className="max-w-5xl mx-auto px-4 py-10">
-          <p className="text-xs font-bold uppercase tracking-widest text-gray-500 mb-2">Bharat News Bulletin (BNB) · Advertising</p>
-          <h1 className="text-5xl font-serif font-bold text-gray-900">Work with Us</h1>
-        </div>
-      </div>
+      <div style={{ background: "#FAFAFA" }}>
 
-      <div className="max-w-5xl mx-auto px-4 py-14 space-y-16">
-
-        {/* Intro */}
-        <section className="grid md:grid-cols-2 gap-12 items-start">
-          <div>
-            <p className="text-xl text-gray-700 leading-relaxed">
-              Bharat News Bulletin (BNB) reaches readers who care about what they read. No doomscrolling, no clickbait — just people who come here specifically for news.
+        {/* Hero */}
+        <div style={{ background: "linear-gradient(135deg, #111827 0%, #1e3a5f 100%)", position: "relative", overflow: "hidden" }}>
+          <div style={{
+            position: "absolute", inset: 0,
+            backgroundImage: "linear-gradient(rgba(37,99,235,0.05) 1px, transparent 1px), linear-gradient(90deg, rgba(37,99,235,0.05) 1px, transparent 1px)",
+            backgroundSize: "40px 40px",
+          }} />
+          <div style={{ maxWidth: "1100px", margin: "0 auto", padding: "72px 24px 60px", position: "relative", zIndex: 1 }}>
+            <p style={{ fontSize: "11px", fontWeight: 700, color: "#2563EB", letterSpacing: "0.15em", textTransform: "uppercase", marginBottom: "14px" }}>
+              Advertising · Bharat News Bulletin
             </p>
-            <p className="text-gray-500 mt-4 leading-relaxed">
-              That makes our audience unusually valuable for local businesses and brands who want real engagement, not just impressions.
+            <h1 style={{ fontSize: "clamp(32px, 5vw, 56px)", fontWeight: 800, color: "#ffffff", letterSpacing: "-0.02em", marginBottom: "20px", lineHeight: 1.1 }}>
+              Reach readers who<br />
+              <span style={{ color: "#60a5fa" }}>actually care.</span>
+            </h1>
+            <p style={{ fontSize: "17px", color: "#9ca3af", maxWidth: "560px", lineHeight: 1.7, marginBottom: "36px" }}>
+              BNB readers come here intentionally — for news, not entertainment. That intent makes them a more valuable audience for your brand.
             </p>
-            <a href="mailto:ads@bharatnewsbulletin.com" className="inline-block mt-8 bg-blue-600 text-white font-semibold px-7 py-3 text-sm hover:bg-blue-700 transition-colors">
-              Email us to start → ads@bharatnewsbulletin.com
+            <a
+              href={`mailto:${ADS_EMAIL}`}
+              style={{
+                display: "inline-flex", alignItems: "center", gap: "10px",
+                background: "#2563EB", color: "#fff", fontWeight: 700, fontSize: "15px",
+                padding: "14px 28px", borderRadius: "10px", textDecoration: "none",
+              }}
+            >
+              Email us → {ADS_EMAIL}
             </a>
           </div>
-          <div className="border border-gray-200 p-7 space-y-5">
-            <div className="text-xs font-bold uppercase tracking-widest text-gray-400 border-b border-gray-100 pb-3">Why direct advertising?</div>
-            {[
-              ["No middlemen", "You pay us. We show your ad. Simple."],
-              ["Fixed pricing", "No bidding wars. You know exactly what you pay."],
-              ["Real humans", "Talk to a real person, not an automated dashboard."],
-              ["Local focus", "We prioritise businesses from our community."],
-            ].map(([title, desc]) => (
-              <div key={title}>
-                <div className="font-semibold text-gray-900 text-sm">{title}</div>
-                <div className="text-gray-500 text-sm">{desc}</div>
-              </div>
-            ))}
-          </div>
-        </section>
-
-        {/* Ad Packages */}
-        <section>
-          <h2 className="text-xs font-bold uppercase tracking-widest text-gray-500 mb-8 border-t border-gray-200 pt-8">Ad Packages</h2>
-          <div className="grid md:grid-cols-3 gap-6">
-            {[
-              {
-                name: "Starter",
-                price: "₹1,500",
-                period: "/month",
-                slot: "Sidebar Banner (300×250)",
-                features: [
-                  "Sidebar placement on all articles",
-                  "Your brand seen by engaged readers",
-                  "Click-through to your website",
-                  "Start & end date control",
-                ],
-                cta: "Book Sidebar Ad",
-                highlight: false,
-              },
-              {
-                name: "Featured",
-                price: "₹3,500",
-                period: "/month",
-                slot: "Leaderboard (728×90)",
-                features: [
-                  "Premium top-of-page placement",
-                  "Maximum visibility on every article",
-                  "Click-through to your website",
-                  "Priority placement",
-                  "Basic performance report",
-                ],
-                cta: "Book Featured Ad",
-                highlight: true,
-              },
-              {
-                name: "Sponsored Story",
-                price: "₹2,000",
-                period: "per article",
-                slot: "Sponsored Article",
-                features: [
-                  "Full article written about your brand",
-                  "Permanent on our website",
-                  "Shared on our social media",
-                  "SEO benefits for your brand",
-                ],
-                cta: "Book Sponsored Story",
-                highlight: false,
-              },
-            ].map(({ name, price, period, slot, features, cta, highlight }) => (
-              <div
-                key={name}
-                className={`rounded-2xl border-2 p-7 flex flex-col ${
-                  highlight ? "border-blue-600 shadow-lg shadow-blue-100" : "border-gray-200"
-                }`}
-              >
-                {highlight && (
-                  <div className="text-xs text-blue-600 font-bold uppercase tracking-widest mb-3">Most Popular</div>
-                )}
-                <h3 className="text-xl font-bold text-gray-900">{name}</h3>
-                <div className="text-sm text-gray-500 mb-4">{slot}</div>
-                <div className="mb-5">
-                  <span className="text-4xl font-bold text-gray-900">{price}</span>
-                  <span className="text-gray-500 text-sm">{period}</span>
-                </div>
-                <ul className="space-y-2.5 mb-8 flex-1">
-                  {features.map(f => (
-                    <li key={f} className="flex items-start gap-2 text-sm text-gray-700">
-                      <span className="text-green-500 mt-0.5 flex-shrink-0">✓</span>
-                      {f}
-                    </li>
-                  ))}
-                </ul>
-                <a
-                  href={`mailto:ads@bharatnewsbulletin.com?subject=${encodeURIComponent(cta)}`}
-                  className={`w-full py-3 rounded-lg font-semibold text-center text-sm transition-colors ${
-                    highlight
-                      ? "bg-blue-600 text-white hover:bg-blue-700"
-                      : "border border-gray-300 text-gray-700 hover:bg-gray-50"
-                  }`}
-                >
-                  {cta}
-                </a>
-              </div>
-            ))}
-          </div>
-          <p className="text-xs text-gray-400 mt-4">Prices are indicative. Custom packages and long-term discounts available — email us to discuss.</p>
-        </section>
-
-
-        {/* Process */}
-        <section className="border-t border-gray-200 pt-12">
-          <h2 className="text-xs font-bold uppercase tracking-widest text-gray-500 mb-8">How it Works</h2>
-          <div className="grid md:grid-cols-4 gap-0 border border-gray-200 divide-y md:divide-y-0 md:divide-x divide-gray-200">
-            {[
-              { step: "01", title: "Email us", desc: "Tell us which slot you want and for how long." },
-              { step: "02", title: "Send your banner", desc: "We accept JPG / PNG. No animations or misleading content." },
-              { step: "03", title: "Review & publish", desc: "We review the ad and make it live within 24 hours." },
-              { step: "04", title: "That's it", desc: "Your ad runs for the agreed period. Renew any time." },
-            ].map(({ step, title, desc }) => (
-              <div key={step} className="p-6">
-                <div className="text-3xl font-bold text-gray-200 mb-3 font-mono">{step}</div>
-                <div className="font-semibold text-gray-900 mb-1">{title}</div>
-                <p className="text-sm text-gray-500 leading-relaxed">{desc}</p>
-              </div>
-            ))}
-          </div>
-        </section>
-
-        {/* Final CTA */}
-        <div className="bg-[#111] text-white p-10 flex flex-col sm:flex-row items-center justify-between gap-6">
-          <div>
-            <div className="text-xl font-bold mb-1">Ready? Let's talk.</div>
-            <div className="text-gray-400 text-sm">No pressure, no long contracts to start.</div>
-          </div>
-          <a href="mailto:ads@bharatnewsbulletin.com"
-            className="inline-block border-2 border-gray-900 text-gray-900 font-semibold px-8 py-3 text-sm hover:bg-gray-900 hover:text-white transition-colors"
-          >
-            ads@bharatnewsbulletin.com
-          </a>
         </div>
 
+        <div style={{ maxWidth: "1100px", margin: "0 auto", padding: "64px 24px 80px" }}>
+
+          {/* Why direct ads */}
+          <section style={{ marginBottom: "64px" }}>
+            <p style={{ fontSize: "11px", fontWeight: 700, color: "#2563EB", letterSpacing: "0.15em", textTransform: "uppercase", marginBottom: "8px" }}>
+              Why BNB
+            </p>
+            <h2 style={{ fontSize: "clamp(22px, 2.5vw, 30px)", fontWeight: 800, color: "#111827", letterSpacing: "-0.02em", marginBottom: "32px" }}>
+              Direct advertising. No middlemen.
+            </h2>
+            <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(220px, 1fr))", gap: "16px" }}>
+              {[
+                ["No bidding wars", "Fixed pricing — you know exactly what you pay before you commit."],
+                ["No algorithms", "Your ad appears as booked, every time. No surprises."],
+                ["Real humans", "You deal directly with our team — not an automated dashboard."],
+                ["Local focus", "We prioritise Indian businesses and community brands."],
+              ].map(([title, desc]) => (
+                <div key={title} style={{ background: "#fff", border: "1px solid #e5e7eb", borderRadius: "12px", padding: "24px" }}>
+                  <div style={{ fontSize: "15px", fontWeight: 700, color: "#111827", marginBottom: "8px" }}>{title}</div>
+                  <div style={{ fontSize: "13px", color: "#6b7280", lineHeight: 1.65 }}>{desc}</div>
+                </div>
+              ))}
+            </div>
+          </section>
+
+          {/* Packages */}
+          <section style={{ marginBottom: "64px" }}>
+            <p style={{ fontSize: "11px", fontWeight: 700, color: "#2563EB", letterSpacing: "0.15em", textTransform: "uppercase", marginBottom: "8px" }}>
+              Packages
+            </p>
+            <h2 style={{ fontSize: "clamp(22px, 2.5vw, 30px)", fontWeight: 800, color: "#111827", letterSpacing: "-0.02em", marginBottom: "32px" }}>
+              Pick a slot that fits your budget.
+            </h2>
+            <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(280px, 1fr))", gap: "20px" }}>
+              {packages.map(({ name, price, period, slot, features, highlight }) => (
+                <div key={name} className={`ad-card${highlight ? " highlight" : ""}`}>
+                  {highlight && (
+                    <div style={{ fontSize: "10px", fontWeight: 700, color: "#2563EB", letterSpacing: "0.12em", textTransform: "uppercase", marginBottom: "10px" }}>
+                      ★ Most Popular
+                    </div>
+                  )}
+                  <h3 style={{ fontSize: "18px", fontWeight: 700, color: "#111827", marginBottom: "4px" }}>{name}</h3>
+                  <div style={{ fontSize: "12px", color: "#9ca3af", fontWeight: 600, textTransform: "uppercase", letterSpacing: "0.06em", marginBottom: "20px" }}>{slot}</div>
+                  <div style={{ marginBottom: "24px" }}>
+                    <span style={{ fontSize: "38px", fontWeight: 800, color: "#111827", letterSpacing: "-0.03em" }}>{price}</span>
+                    <span style={{ fontSize: "13px", color: "#9ca3af", marginLeft: "4px" }}>{period}</span>
+                  </div>
+                  <ul style={{ listStyle: "none", padding: 0, margin: "0 0 28px", flex: 1 }}>
+                    {features.map(f => (
+                      <li key={f} style={{ display: "flex", alignItems: "flex-start", gap: "8px", fontSize: "14px", color: "#374151", marginBottom: "8px" }}>
+                        <span style={{ color: "#16a34a", flexShrink: 0, marginTop: "2px" }}>✓</span>
+                        {f}
+                      </li>
+                    ))}
+                  </ul>
+                  <a
+                    href={`mailto:${ADS_EMAIL}?subject=Enquiry: ${name}`}
+                    style={{
+                      display: "block", textAlign: "center", padding: "12px",
+                      borderRadius: "8px", fontWeight: 700, fontSize: "14px",
+                      textDecoration: "none", transition: "opacity 0.15s",
+                      background: highlight ? "#2563EB" : "#f3f4f6",
+                      color: highlight ? "#fff" : "#374151",
+                      border: highlight ? "none" : "1px solid #e5e7eb",
+                    }}
+                  >
+                    Book this slot
+                  </a>
+                </div>
+              ))}
+            </div>
+            <p style={{ fontSize: "12px", color: "#9ca3af", marginTop: "16px" }}>
+              Custom packages and long-term discounts available. Email us to discuss.
+            </p>
+          </section>
+
+          {/* How it works */}
+          <section style={{ marginBottom: "64px" }}>
+            <p style={{ fontSize: "11px", fontWeight: 700, color: "#2563EB", letterSpacing: "0.15em", textTransform: "uppercase", marginBottom: "8px" }}>
+              Process
+            </p>
+            <h2 style={{ fontSize: "clamp(22px, 2.5vw, 30px)", fontWeight: 800, color: "#111827", letterSpacing: "-0.02em", marginBottom: "28px" }}>
+              How it works
+            </h2>
+            <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(200px, 1fr))", gap: "16px" }}>
+              {steps.map(({ num, title, desc }) => (
+                <div key={num} className="step-box">
+                  <div className="step-num">{num}</div>
+                  <div style={{ fontSize: "15px", fontWeight: 700, color: "#111827", marginBottom: "6px" }}>{title}</div>
+                  <div style={{ fontSize: "13px", color: "#6b7280", lineHeight: 1.6 }}>{desc}</div>
+                </div>
+              ))}
+            </div>
+          </section>
+
+          {/* CTA */}
+          <div style={{
+            background: "linear-gradient(135deg, #1d4ed8, #1e3a8a)",
+            borderRadius: "16px", padding: "48px 40px",
+            display: "flex", flexWrap: "wrap", alignItems: "center",
+            justifyContent: "space-between", gap: "24px",
+          }}>
+            <div>
+              <h3 style={{ fontSize: "24px", fontWeight: 800, color: "#fff", marginBottom: "8px" }}>Ready to advertise?</h3>
+              <p style={{ fontSize: "15px", color: "#93c5fd" }}>No long contracts to start. Email us and we'll get back within 24 hours.</p>
+            </div>
+            <a
+              href={`mailto:${ADS_EMAIL}`}
+              style={{
+                display: "inline-flex", alignItems: "center",
+                background: "#fff", color: "#1d4ed8", fontWeight: 700,
+                fontSize: "15px", padding: "14px 28px", borderRadius: "10px",
+                textDecoration: "none", whiteSpace: "nowrap",
+              }}
+            >
+              {ADS_EMAIL}
+            </a>
+          </div>
+        </div>
       </div>
-    </div>
+    </>
   );
 }

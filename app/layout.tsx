@@ -68,9 +68,9 @@ export default function RootLayout({
     "url": SITE_URL,
     "logo": `${SITE_URL}/bnblogo.png`,
     "sameAs": [
-      "https://twitter.com/BNBnews",
-      "https://facebook.com/BNBnews",
-      "https://instagram.com/BNBnews"
+      "https://www.linkedin.com/company/bharat-news-bulletin/",
+      "https://www.facebook.com/profile.php?id=61594250281793",
+      "https://www.instagram.com/bharatnewsbulletin/"
     ]
   };
 
