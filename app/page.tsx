@@ -129,20 +129,28 @@ export default async function Home() {
                 {sidebarArticles.length > 0 ? sidebarArticles.map((news: any, idx: number) => {
                   const slug = generateSlug(news.title);
                   return (
-                    <div key={idx} className="py-2.5 first:pt-0">
-                      <div className="flex justify-between items-center mb-1">
-                        <Link href={`/${news.category.toLowerCase()}`} className="text-blue-600 font-bold text-[11px] capitalize tracking-wider font-inter hover:underline">{news.category}</Link>
-                        <div className="text-gray-400 text-[11px] flex items-center gap-1">
-                          <Clock size={10} />
-                          {formatDistanceToNow(new Date(news.published_at), { addSuffix: true })}
-                        </div>
+                    <Link key={idx} href={`/${news.category.toLowerCase()}/${slug}`} className="flex gap-3 group py-3 first:pt-0 items-start">
+                      <div className="w-20 h-16 bg-gray-100 flex-shrink-0 relative overflow-hidden rounded shadow-sm">
+                        {news.cover_image ? (
+                           <Image src={news.cover_image} alt={news.title} fill sizes="80px" className="object-cover group-hover:scale-105 transition-transform duration-300" />
+                        ) : (
+                           <div className="absolute inset-0 flex items-center justify-center text-[8px] text-gray-400">No img</div>
+                        )}
                       </div>
-                      <Link href={`/${news.category.toLowerCase()}/${slug}`}>
-                        <h4 className="text-[15px] font-bold leading-snug hover:text-blue-600 transition-colors text-gray-900">
+                      <div className="flex-1 min-w-0">
+                        <div className="flex items-center gap-2 mb-1">
+                          <span className="text-blue-600 font-bold text-[10px] capitalize tracking-wider font-inter">{news.category}</span>
+                          <span className="text-gray-300 text-[10px]">•</span>
+                          <span className="text-gray-400 text-[10px] flex items-center gap-1">
+                            <Clock size={10} />
+                            {formatDistanceToNow(new Date(news.published_at), { addSuffix: true })}
+                          </span>
+                        </div>
+                        <h4 className="text-[13px] sm:text-sm font-bold leading-snug group-hover:text-blue-600 transition-colors text-gray-900 line-clamp-2">
                           {news.title}
                         </h4>
-                      </Link>
-                    </div>
+                      </div>
+                    </Link>
                   );
                 }) : (
                   <p className="text-sm text-gray-400 italic py-3">No breaking news in the last 12 hours.</p>
