@@ -105,7 +105,7 @@ export default function Header() {
     setLoading(false);
   };
 
-  const topCategories = ["Latest", "India", "World"];
+  const topCategories = ["Latest", "India", "World", "Reviews"];
   const dropdownCategories = [
     "Business",
     "Technology",
@@ -116,7 +116,6 @@ export default function Header() {
     "Entertainment",
     "Sports",
     "Lifestyle",
-    "Reviews",
   ];
 
   if (pathname?.startsWith('/admin')) {
