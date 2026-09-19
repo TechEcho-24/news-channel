@@ -3,13 +3,14 @@
 import { useState, useEffect, useMemo } from "react";
 import Link from "next/link";
 import { formatDistanceToNow } from "date-fns";
-import { Eye, Edit, FileText, Search, Loader2 } from "lucide-react";
+import { Eye, Pencil, FileText, Search, Loader2, Link2, Check } from "lucide-react";
 import { createClient } from "@/utils/supabase/client";
 
 const supabase = createClient();
 
 export default function AllArticlesPage() {
   const [articles, setArticles] = useState<any[]>([]);
+  const [copiedId, setCopiedId] = useState<string | null>(null);
   const [isLoading, setIsLoading] = useState(true);
   const [search, setSearch] = useState("");
   const [selectedAuthor, setSelectedAuthor] = useState<string>("All");
@@ -141,15 +142,36 @@ export default function AllArticlesPage() {
                     </span>
                   </div>
                 </div>
-                <div className="flex items-center gap-3 flex-shrink-0">
-                  <span className="px-2.5 py-1 bg-green-100 text-green-700 text-[10px] font-black rounded uppercase tracking-wider">
-                    Published
-                  </span>
+                <div className="flex items-center gap-2 flex-shrink-0">
+                  {/* Copy URL button */}
+                  <button
+                    title="Copy article URL"
+                    onClick={() => {
+                      const slug = article.title
+                        .toLowerCase()
+                        .replace(/[^\w\s-]/g, '')
+                        .replace(/[\s_-]+/g, '-')
+                        .replace(/^-+|-+$/g, '');
+                      const url = `${window.location.origin}/${article.category.toLowerCase()}/${slug}`;
+                      navigator.clipboard.writeText(url);
+                      setCopiedId(article.id);
+                      setTimeout(() => setCopiedId(null), 2000);
+                    }}
+                    className={`p-2 rounded-lg transition-all ${
+                      copiedId === article.id
+                        ? "bg-green-100 text-green-600"
+                        : "bg-gray-100 text-gray-500 hover:bg-blue-50 hover:text-blue-600"
+                    }`}
+                  >
+                    {copiedId === article.id ? <Check size={15} /> : <Link2 size={15} />}
+                  </button>
+                  {/* Edit button */}
                   <Link
                     href={`/admin/articles/${article.id}/edit`}
-                    className="flex items-center text-blue-600 hover:text-blue-800 text-sm font-semibold bg-blue-50 hover:bg-blue-100 px-4 py-2 rounded-lg transition-colors"
+                    title="Edit article"
+                    className="p-2 rounded-lg bg-gray-100 text-gray-500 hover:bg-blue-50 hover:text-blue-600 transition-all"
                   >
-                    <Edit size={14} className="mr-1.5" /> Edit
+                    <Pencil size={15} />
                   </Link>
                 </div>
               </div>
