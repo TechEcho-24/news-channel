@@ -1,12 +1,13 @@
 import Link from "next/link";
 import {
-  Users, FileText, Eye, TrendingUp, Edit, BarChart2,
-  Mail, MessageSquare, Newspaper, TrendingDown, Minus
+  Users, FileText, Eye, TrendingUp, BarChart2,
+  Mail, MessageSquare, Newspaper, Minus
 } from "lucide-react";
 import { getLatestArticles } from "@/lib/api";
 import { formatDistanceToNow } from "date-fns";
 import { createClient } from "@/utils/supabase/server";
 import { createClient as createAdminClient } from "@supabase/supabase-js";
+import { ArticleRowActions } from "./ArticleRowActions";
 
 export const revalidate = 0;
 
@@ -191,17 +192,7 @@ export default async function AdminDashboard() {
                   </span>
                 </div>
               </div>
-              <div className="flex items-center gap-2 flex-shrink-0">
-                <span className="px-2.5 py-1 bg-green-100 text-green-700 text-[10px] font-black rounded uppercase tracking-wider">
-                  Published
-                </span>
-                <Link
-                  href={`/admin/articles/${article.id}/edit`}
-                  className="flex items-center text-blue-600 hover:text-blue-800 text-xs font-semibold bg-blue-50 hover:bg-blue-100 px-3 py-1.5 rounded-lg transition-colors"
-                >
-                  <Edit size={13} className="mr-1" /> Edit
-                </Link>
-              </div>
+              <ArticleRowActions article={{ id: article.id, title: article.title, category: article.category }} />
             </div>
           ))}
           {latestArticles.length === 0 && (
