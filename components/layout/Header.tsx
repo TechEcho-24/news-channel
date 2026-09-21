@@ -108,14 +108,16 @@ export default function Header() {
   const topCategories = ["Latest", "India", "World", "Reviews"];
   const dropdownCategories = [
     "Business",
+    "Economy",
     "Technology",
-    "Health",
-    "Startups",
-    "Markets",
-    "Automobile",
-    "Entertainment",
     "Sports",
     "Lifestyle",
+    "Entertainment",
+    "Auto",
+    "Education",
+    "Health",
+    "Startups",
+    "Opinion"
   ];
 
   if (pathname?.startsWith('/admin')) {
@@ -154,27 +156,6 @@ export default function Header() {
                   </Link>
                 </li>
               ))}
-              
-              {/* Dropdown */}
-              <li className="relative group cursor-pointer py-4">
-                <span className="hover:text-[#472066] transition-colors flex items-center">
-                  Categories <ChevronDown size={16} className="ml-1" />
-                </span>
-                
-                <div className="absolute top-full left-0 w-48 bg-white border border-gray-200 shadow-lg opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all duration-200 z-50">
-                  <ul className="py-2">
-                    {dropdownCategories.map((cat) => (
-                      <li key={cat}>
-                        <Link href={`/${cat.toLowerCase()}`} className="block px-4 py-2 hover:bg-gray-50 hover:text-[#472066] transition-colors">
-                          {cat}
-                        </Link>
-                      </li>
-                    ))}
-                  </ul>
-                </div>
-              </li>
-              
-              {/* Contact Link in Center Nav */}
               <li>
                 <Link href="/contact" className="hover:text-[#472066] transition-colors">
                   Contact
@@ -273,6 +254,23 @@ export default function Header() {
             >
               {isSubscribed ? "Subscribed" : loading ? "Wait..." : "Subscribe"}
             </Link>
+          </div>
+        </div>
+        
+        {/* Secondary Category Navigation */}
+        <div className="hidden lg:flex items-center justify-between border-t border-gray-100 py-3 overflow-x-auto no-scrollbar">
+          <div className="flex items-center space-x-6 text-sm font-semibold text-gray-700">
+            <Link href="/latest" className={`hover:text-[#472066] border-b-2 pb-1 transition-colors ${pathname === '/latest' || pathname === '/' ? 'border-[#472066] text-[#472066]' : 'border-transparent hover:border-[#472066]'}`}>All</Link>
+            <Link href="/india" className={`hover:text-[#472066] border-b-2 pb-1 transition-colors ${pathname === '/india' ? 'border-[#472066] text-[#472066]' : 'border-transparent hover:border-[#472066]'}`}>India</Link>
+            <Link href="/world" className={`hover:text-[#472066] border-b-2 pb-1 transition-colors ${pathname === '/world' ? 'border-[#472066] text-[#472066]' : 'border-transparent hover:border-[#472066]'}`}>World</Link>
+            {dropdownCategories.map((cat) => {
+              const isActive = pathname === `/${cat.toLowerCase()}`;
+              return (
+                <Link key={cat} href={`/${cat.toLowerCase()}`} className={`hover:text-[#472066] border-b-2 pb-1 transition-colors whitespace-nowrap ${isActive ? 'border-[#472066] text-[#472066]' : 'border-transparent hover:border-[#472066]'}`}>
+                  {cat}
+                </Link>
+              );
+            })}
           </div>
         </div>
       </div>

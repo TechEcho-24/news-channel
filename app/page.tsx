@@ -36,7 +36,7 @@ export default async function Home() {
 
   const sidebarArticles = latestArticles
     .filter(article => new Date(article.published_at) >= twelveHoursAgo)
-    .slice(0, 7);
+    .slice(4, 9);
 
   // Fetch articles for specific categories for the blocks
   const categoryNames = ["business", "technology", "economy", "india", "world", "entertainment", "startups", "lifestyle"];
@@ -63,18 +63,21 @@ export default async function Home() {
   const websiteSchema = {
     "@context": "https://schema.org",
     "@type": "WebSite",
-    "name": SITE_NAME,
-    "url": SITE_URL
+    "name": "Bharat News Bulletin",
+    "alternateName": "BNB",
+    "url": "https://bharatnewsbulletin.com/"
   };
 
   return (
     <div className="bg-white">
-      <MarketTrendsClient />
       <SubscriptionPopup />
       <script
         type="application/ld+json"
         dangerouslySetInnerHTML={{ __html: JSON.stringify(websiteSchema) }}
       />
+      <h1 className="sr-only">
+        Bharat News Bulletin (BNB) - Latest India and World News
+      </h1>
       {/* HOMEPAGE HERO TOP AD BANNER */}
       <div className="container mx-auto px-4 pt-6">
         <AdSlot slot="homepage_hero" />
@@ -83,40 +86,64 @@ export default async function Home() {
       {/* SECTION — HERO NEWS */}
       <section className="container mx-auto px-4 pt-10 pb-16">
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-10">
-          {/* Main Lead Story */}
-          <div className="lg:col-span-2">
-            <Link href={`/${heroArticle.category.toLowerCase()}/${heroSlug}`} className="block relative aspect-[16/9] w-full bg-gray-200 mb-5 overflow-hidden group rounded-sm max-h-[500px] lg:max-h-[600px]">
+          {/* Main Lead Story & Secondary Stories */}
+          <div className="lg:col-span-2 flex flex-col gap-6">
+            <Link href={`/${heroArticle.category.toLowerCase()}/${heroSlug}`} className="block relative aspect-[16/9] md:aspect-[4/3] lg:aspect-[16/9] w-full bg-gray-900 overflow-hidden group rounded-md shadow-md">
               {heroArticle.cover_image ? (
-                <Image src={heroArticle.cover_image} alt={heroArticle.title} fill sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw" className="object-cover group-hover:scale-105 transition-transform duration-500" priority />
+                <Image src={heroArticle.cover_image} alt={heroArticle.title} fill sizes="(max-width: 768px) 100vw, (max-width: 1200px) 66vw, 66vw" className="object-cover group-hover:scale-105 transition-transform duration-700" priority />
               ) : (
-                <div className="absolute inset-0 bg-blue-100 flex items-center justify-center text-gray-500 group-hover:scale-105 transition-transform duration-500">
+                <div className="absolute inset-0 bg-gray-800 flex items-center justify-center text-gray-500 group-hover:scale-105 transition-transform duration-700">
                   No Image Available
                 </div>
               )}
+              {/* Gradient Overlay */}
+              <div className="absolute inset-0 bg-gradient-to-t from-[#111111] via-[#111111]/40 to-transparent flex flex-col justify-end p-5 md:p-8">
+                <div className="flex items-center space-x-3 mb-3">
+                  <span className="bg-[#472066] text-white text-xs font-bold uppercase tracking-wider px-2.5 py-1 rounded-sm font-inter">
+                    {heroArticle.category}
+                  </span>
+                </div>
+                <h2 className="text-2xl md:text-3xl lg:text-4xl font-black text-white leading-tight mb-3 group-hover:text-[#febf2c] transition-colors font-sans tracking-tight">
+                  {heroArticle.title}
+                </h2>
+                <p className="text-gray-200 text-sm md:text-base leading-relaxed mb-4 max-w-3xl line-clamp-2">
+                  {heroArticle.subheadline}
+                </p>
+                <div className="flex items-center text-gray-300 text-xs gap-2 font-inter">
+                  <span className="text-white font-semibold">By {heroArticle.author_name || "BNB Staff"}</span>
+                  <span>•</span>
+                  <span className="flex items-center gap-1">
+                    <Clock size={12} />
+                    {formatDistanceToNow(new Date(heroArticle.published_at), { addSuffix: true })}
+                  </span>
+                </div>
+              </div>
             </Link>
-            <div className="flex items-center space-x-3 mb-3">
-              <Link href={`/${heroArticle.category.toLowerCase()}`} className="bg-[#febf2c] text-[#472066] text-xs font-bold uppercase tracking-wider px-2 py-0.5 hover:bg-[#e6ab20] transition-colors rounded-sm font-inter">
-                {heroArticle.category}
-              </Link>
-              <span className="text-gray-400 flex items-center text-xs gap-1">
-                <Clock size={12} />
-                {formatDistanceToNow(new Date(heroArticle.published_at), { addSuffix: true })}
-                <span className="mx-1">•</span>
-                <BarChart2 size={12} />
-                {heroArticle.impressions || 0} views
-              </span>
+
+            {/* Bottom 3 Articles */}
+            <div className="grid grid-cols-1 sm:grid-cols-3 gap-5">
+              {latestArticles.slice(1, 4).map((item) => (
+                <Link key={item.id} href={`/${item.category.toLowerCase()}/${generateSlug(item.title)}`} className="group flex flex-col">
+                  <div className="relative aspect-[16/10] w-full bg-gray-100 overflow-hidden rounded-md shadow-sm mb-3">
+                    {item.cover_image ? (
+                      <Image src={item.cover_image} alt={item.title} fill sizes="(max-width: 768px) 100vw, 33vw" className="object-cover group-hover:scale-105 transition-transform duration-500" />
+                    ) : (
+                      <div className="absolute inset-0 flex items-center justify-center text-xs text-gray-400">No Image</div>
+                    )}
+                  </div>
+                  <div className="flex items-center gap-2 mb-1.5">
+                    <span className="text-[#472066] font-bold text-[10px] uppercase tracking-wider font-inter">{item.category}</span>
+                    <span className="text-gray-400 text-[10px] flex items-center gap-1">
+                      <Clock size={10} />
+                      {formatDistanceToNow(new Date(item.published_at), { addSuffix: true })}
+                    </span>
+                  </div>
+                  <h3 className="text-sm md:text-base font-bold leading-snug group-hover:text-[#472066] transition-colors text-gray-900 line-clamp-3">
+                    {item.title}
+                  </h3>
+                </Link>
+              ))}
             </div>
-            <Link href={`/${heroArticle.category.toLowerCase()}/${heroSlug}`}>
-              <h1 className="text-3xl md:text-4xl font-black leading-tight mb-4 hover:text-[#472066] transition-colors font-sans tracking-tight">
-                {heroArticle.title}
-              </h1>
-            </Link>
-            <p className="text-gray-600 text-base leading-relaxed mb-6 max-w-2xl">
-              {heroArticle.subheadline}
-            </p>
-            <Link href={`/${heroArticle.category.toLowerCase()}/${heroSlug}`} className="inline-flex items-center bg-[#febf2c] text-[#472066] px-6 py-3 font-bold text-sm hover:bg-[#e6ab20] transition-colors rounded-sm">
-              Read Full Story <ArrowRight size={16} className="ml-2" />
-            </Link>
           </div>
 
           {/* Sidebar Area */}
@@ -159,6 +186,9 @@ export default async function Home() {
                   <p className="text-sm text-gray-400 italic py-3">No breaking news in the last 12 hours.</p>
                 )}
               </div>
+              <Link href="/latest" className="block w-full text-center bg-gray-50 text-[#472066] font-bold text-xs uppercase tracking-wider py-3 mt-4 hover:bg-gray-100 transition-colors">
+                View All News &rarr;
+              </Link>
             </div>
 
             {/* Sidebar Ad */}
