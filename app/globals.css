@@ -1,15 +1,18 @@
 @import "tailwindcss";
 
 @theme inline {
-  --color-background: #FAFAFA;
+  --color-background: #ffffff;
   --color-foreground: #111111;
-  --font-sans: var(--font-inter), ui-sans-serif, system-ui, sans-serif;
+  --font-sans: var(--font-nunito), ui-sans-serif, system-ui, sans-serif;
   --font-serif: var(--font-inter), ui-sans-serif, system-ui, sans-serif;
   --font-inter: var(--font-inter), ui-sans-serif, system-ui, sans-serif;
   --font-poppins: var(--font-inter), ui-sans-serif, system-ui, sans-serif;
+  --font-nunito: var(--font-nunito), ui-sans-serif, system-ui, sans-serif;
   --font-mono: var(--font-inter), ui-sans-serif, system-ui, sans-serif;
-  --color-brand: #2563EB;
-  --color-breaking: #DC2626;
+  --color-brand: #472066;
+  --color-breaking: #febf2c;
+  --color-quint-purple: #472066;
+  --color-quint-amber: #febf2c;
 }
 
 @keyframes marquee {

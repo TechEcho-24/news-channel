@@ -1,5 +1,5 @@
 import type { Metadata } from "next";
-import { Inter } from "next/font/google";
+import { Inter, Nunito_Sans } from "next/font/google";
 import "./globals.css";
 import Header from "@/components/layout/Header";
 import Footer from "@/components/layout/Footer";
@@ -10,6 +10,11 @@ import GoogleAnalyticsProvider from "@/components/GoogleAnalyticsProvider";
 
 const inter = Inter({
   variable: "--font-inter",
+  subsets: ["latin"],
+});
+
+const nunito = Nunito_Sans({
+  variable: "--font-nunito",
   subsets: ["latin"],
 });
 
@@ -77,10 +82,10 @@ export default function RootLayout({
   return (
     <html
       lang="en"
-      className={`${inter.variable} h-full antialiased`}
+      className={`${inter.variable} ${nunito.variable} h-full antialiased`}
       suppressHydrationWarning
     >
-      <body className="min-h-full flex flex-col font-sans text-neutral-900 bg-[#FAFAFA]">
+      <body className="min-h-full flex flex-col font-sans text-neutral-900 bg-white">
         <script
           type="application/ld+json"
           dangerouslySetInnerHTML={{ __html: JSON.stringify(orgSchema) }}

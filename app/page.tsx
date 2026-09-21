@@ -68,7 +68,7 @@ export default async function Home() {
   };
 
   return (
-    <div className="bg-[#FAFAFA]">
+    <div className="bg-white">
       <MarketTrendsClient />
       <SubscriptionPopup />
       <script
@@ -95,7 +95,7 @@ export default async function Home() {
               )}
             </Link>
             <div className="flex items-center space-x-3 mb-3">
-              <Link href={`/${heroArticle.category.toLowerCase()}`} className="bg-blue-600 text-white text-xs font-bold uppercase tracking-wider px-2 py-0.5 hover:bg-blue-700 transition-colors rounded-md font-inter">
+              <Link href={`/${heroArticle.category.toLowerCase()}`} className="bg-[#febf2c] text-[#472066] text-xs font-bold uppercase tracking-wider px-2 py-0.5 hover:bg-[#e6ab20] transition-colors rounded-sm font-inter">
                 {heroArticle.category}
               </Link>
               <span className="text-gray-400 flex items-center text-xs gap-1">
@@ -107,14 +107,14 @@ export default async function Home() {
               </span>
             </div>
             <Link href={`/${heroArticle.category.toLowerCase()}/${heroSlug}`}>
-              <h1 className="text-3xl md:text-4xl font-bold leading-tight mb-4 hover:text-blue-600 transition-colors font-poppins tracking-tight">
+              <h1 className="text-3xl md:text-4xl font-black leading-tight mb-4 hover:text-[#472066] transition-colors font-sans tracking-tight">
                 {heroArticle.title}
               </h1>
             </Link>
             <p className="text-gray-600 text-base leading-relaxed mb-6 max-w-2xl">
               {heroArticle.subheadline}
             </p>
-            <Link href={`/${heroArticle.category.toLowerCase()}/${heroSlug}`} className="inline-flex items-center bg-blue-600 text-white px-6 py-3 font-semibold text-sm hover:bg-blue-700 transition-colors rounded-md">
+            <Link href={`/${heroArticle.category.toLowerCase()}/${heroSlug}`} className="inline-flex items-center bg-[#febf2c] text-[#472066] px-6 py-3 font-bold text-sm hover:bg-[#e6ab20] transition-colors rounded-sm">
               Read Full Story <ArrowRight size={16} className="ml-2" />
             </Link>
           </div>
@@ -130,25 +130,28 @@ export default async function Home() {
                   const slug = generateSlug(news.title);
                   return (
                     <Link key={idx} href={`/${news.category.toLowerCase()}/${slug}`} className="flex gap-3 group py-3 first:pt-0 items-start">
-                      <div className="w-20 h-16 bg-gray-100 flex-shrink-0 relative overflow-hidden rounded shadow-sm">
-                        {news.cover_image ? (
-                           <Image src={news.cover_image} alt={news.title} fill sizes="80px" className="object-cover group-hover:scale-105 transition-transform duration-300" />
-                        ) : (
-                           <div className="absolute inset-0 flex items-center justify-center text-[8px] text-gray-400">No img</div>
-                        )}
-                      </div>
                       <div className="flex-1 min-w-0">
                         <div className="flex items-center gap-2 mb-1">
-                          <span className="text-blue-600 font-bold text-[10px] capitalize tracking-wider font-inter">{news.category}</span>
+                          <span className="text-[#472066] font-bold text-[10px] capitalize tracking-wider font-inter">{news.category}</span>
                           <span className="text-gray-300 text-[10px]">•</span>
                           <span className="text-gray-400 text-[10px] flex items-center gap-1">
                             <Clock size={10} />
                             {formatDistanceToNow(new Date(news.published_at), { addSuffix: true })}
                           </span>
                         </div>
-                        <h4 className="text-[13px] sm:text-sm font-bold leading-snug group-hover:text-blue-600 transition-colors text-gray-900 line-clamp-2">
+                        <h4 className="text-[13px] sm:text-sm font-bold leading-snug group-hover:text-[#472066] transition-colors text-blue-950 line-clamp-2">
                           {news.title}
                         </h4>
+                        {news.subheadline && (
+                          <p className="text-xs text-gray-500 line-clamp-2 mt-1">{news.subheadline}</p>
+                        )}
+                      </div>
+                      <div className="w-20 h-16 bg-gray-100 flex-shrink-0 relative overflow-hidden rounded shadow-sm mt-1">
+                        {news.cover_image ? (
+                           <Image src={news.cover_image} alt={news.title} fill sizes="80px" className="object-cover group-hover:scale-105 transition-transform duration-300" />
+                        ) : (
+                           <div className="absolute inset-0 flex items-center justify-center text-[8px] text-gray-400">No img</div>
+                        )}
                       </div>
                     </Link>
                   );
@@ -177,16 +180,12 @@ export default async function Home() {
 
               return (
                 <div key={idx}>
-                  {idx === 1 && (
-                    <div className="w-full py-8 my-8 border-y border-gray-200/80 flex justify-center bg-gray-50/40 rounded-lg">
-                      <AdSlot slot="category_banner" />
-                    </div>
-                  )}
+                  {/* Category banner ad — disabled */}
 
               <div className="mb-16 last:mb-0 pt-2">
                 <div className="flex justify-between items-end mb-6 border-b-2 border-gray-200 pb-2">
-                  <h2 className="text-lg font-black capitalize tracking-widest text-black font-inter uppercase">{block.name}</h2>
-                  <Link href={`/${block.name.toLowerCase()}`} className="text-xs font-bold flex items-center text-gray-400 hover:text-blue-600 transition-colors uppercase tracking-wider">
+                  <h2 className="text-lg font-black capitalize tracking-widest text-[#472066] font-inter uppercase">{block.name}</h2>
+                  <Link href={`/${block.name.toLowerCase()}`} className="text-xs font-bold flex items-center text-gray-400 hover:text-[#472066] transition-colors uppercase tracking-wider">
                     More <ArrowRight size={13} className="ml-1" />
                   </Link>
                 </div>
@@ -209,7 +208,7 @@ export default async function Home() {
                             <Clock size={11} /> {formatDistanceToNow(new Date(item.published_at), { addSuffix: true })}
                           </div>
                           <Link href={`/${item.category.toLowerCase()}/${generateSlug(item.title)}`}>
-                            <h4 className="text-base font-bold leading-snug group-hover:text-blue-600 transition-colors mb-2 text-gray-900 line-clamp-2">
+                            <h4 className="text-base font-bold leading-snug group-hover:text-[#472066] transition-colors mb-2 text-gray-900 line-clamp-2">
                               {item.title}
                             </h4>
                           </Link>
@@ -222,7 +221,7 @@ export default async function Home() {
                       </div>
                       <div className="px-4 pb-3 pt-2 text-gray-400 text-[11px] flex items-center justify-between font-inter border-t border-gray-100 bg-gray-50/50">
                         <span className="flex items-center gap-1"><BarChart2 size={11} /> {item.impressions || 0} views</span>
-                        <span className="text-blue-600 font-semibold group-hover:underline text-[11px]">Read Story &rarr;</span>
+                        <span className="text-[#472066] font-semibold group-hover:underline text-[11px]">Read Story &rarr;</span>
                       </div>
                     </div>
                   ))}
@@ -241,7 +240,7 @@ export default async function Home() {
                            )}
                         </Link>
                         <Link href={`/${featuredArticle.category.toLowerCase()}/${generateSlug(featuredArticle.title)}`}>
-                          <h3 className="text-2xl font-bold leading-snug mb-2 group-hover:text-blue-600 transition-colors tracking-tight text-gray-900 font-poppins">
+                          <h3 className="text-2xl font-black leading-snug mb-2 group-hover:text-[#472066] transition-colors tracking-tight text-gray-900 font-sans">
                             {featuredArticle.title}
                           </h3>
                         </Link>
@@ -265,7 +264,7 @@ export default async function Home() {
                               )}
                             </div>
                             <div className="flex-1 min-w-0">
-                              <h4 className="text-sm md:text-[15px] font-bold leading-snug group-hover:text-blue-600 transition-colors mb-1 text-gray-900 line-clamp-2">
+                              <h4 className="text-sm md:text-[15px] font-bold leading-snug group-hover:text-[#472066] transition-colors mb-1 text-gray-900 line-clamp-2">
                                 {item.title}
                               </h4>
                               {item.subheadline && (
@@ -299,7 +298,7 @@ export default async function Home() {
                               )}
                             </div>
                             <div className="flex-1 min-w-0">
-                              <h4 className="text-sm md:text-[15px] font-bold leading-snug group-hover:text-blue-600 transition-colors mb-1 text-gray-900 line-clamp-2">
+                              <h4 className="text-sm md:text-[15px] font-bold leading-snug group-hover:text-[#472066] transition-colors mb-1 text-gray-900 line-clamp-2">
                                 {item.title}
                               </h4>
                               {item.subheadline && (
@@ -325,7 +324,7 @@ export default async function Home() {
                            )}
                         </Link>
                         <Link href={`/${featuredArticle.category.toLowerCase()}/${generateSlug(featuredArticle.title)}`}>
-                          <h3 className="text-2xl font-bold leading-snug mb-2 group-hover:text-blue-600 transition-colors tracking-tight text-gray-900 font-poppins">
+                          <h3 className="text-2xl font-black leading-snug mb-2 group-hover:text-[#472066] transition-colors tracking-tight text-gray-900 font-sans">
                             {featuredArticle.title}
                           </h3>
                         </Link>
@@ -367,7 +366,7 @@ export default async function Home() {
                           <div className="absolute inset-0 flex items-center justify-center text-xs text-gray-400">No Image</div>
                         )}
                       </div>
-                      <h4 className="text-base font-medium text-gray-800 line-clamp-2 group-hover:text-blue-600 transition-colors">
+                      <h4 className="text-base font-bold text-gray-900 line-clamp-2 group-hover:text-[#472066] transition-colors">
                         {item.title}
                       </h4>
                       {item.subheadline && (
