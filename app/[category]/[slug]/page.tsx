@@ -145,10 +145,10 @@ export default async function ArticlePage({ params }: { params: Promise<{ catego
         dangerouslySetInnerHTML={{ __html: JSON.stringify(breadcrumbLd) }}
       />
 
-      {/* Top Ad */}
-      <div className="container mx-auto px-4 py-6 max-w-5xl flex justify-center border-b border-gray-100">
+      {/* Top Leaderboard Ad — disabled */}
+      {/* <div className="container mx-auto px-4 py-6 max-w-5xl flex justify-center border-b border-gray-100">
         <AdSlot slot="leaderboard" />
-      </div>
+      </div> */}
 
       {/* Article Header */}
       <div className="container mx-auto px-4 pt-8 lg:pt-12 max-w-5xl text-left">
@@ -160,6 +160,17 @@ export default async function ArticlePage({ params }: { params: Promise<{ catego
         <h1 className="text-[32px] font-bold leading-tight mb-6">
           {article.title}
         </h1>
+      </div>
+
+      {/* Author Meta (Moved above image) */}
+      <div className="container mx-auto px-4 max-w-5xl text-left mb-6">
+        <div className="flex items-center gap-2">
+          <div className="font-bold text-sm text-gray-900">By {article.author_name || "Bharat News Bulletin Staff"}</div>
+          <span className="text-gray-300">•</span>
+          <div className="text-xs text-gray-500">
+            Published on {format(publishedDate, "MMMM d, yyyy")}
+          </div>
+        </div>
       </div>
 
       {/* Hero Image */}
@@ -213,13 +224,7 @@ export default async function ArticlePage({ params }: { params: Promise<{ catego
               </div>
             )}
 
-            {/* Author Meta at Bottom */}
-            <div className="border-t border-gray-100 py-6 mb-8 text-left">
-              <div className="font-bold text-sm text-gray-900">Author: {article.author_name || "Bharat News Bulletin Staff"}</div>
-              <div className="text-xs text-gray-500 mt-1">
-                Published on {format(publishedDate, "MMMM d, yyyy")}
-              </div>
-            </div>
+            {/* Author Meta moved to top */}
 
             {/* In-Article Ad */}
             <div className="my-10 text-center">
@@ -232,8 +237,8 @@ export default async function ArticlePage({ params }: { params: Promise<{ catego
 
           {/* Sidebar */}
           <div className="w-full lg:w-[300px] flex-shrink-0 flex flex-col space-y-10">
-            {/* Sidebar Ad */}
-            <AdSlot slot="sidebar" />
+            {/* Sidebar Ad — disabled */}
+            {/* <AdSlot slot="sidebar" /> */}
 
             {/* More from this category */}
             <div className="border border-gray-200 p-6 bg-[#FAFAFA]">
@@ -258,10 +263,10 @@ export default async function ArticlePage({ params }: { params: Promise<{ catego
               </div>
             </div>
 
-            {/* Sidebar Sticky Ad */}
-            <div className="sticky top-24">
+            {/* Sticky Sidebar Ad — disabled */}
+            {/* <div className="sticky top-24">
               <AdSlot slot="half_page" />
-            </div>
+            </div> */}
           </div>
         </div>
       </div>

@@ -1,5 +1,5 @@
 import type { Metadata } from "next";
-import { Inter } from "next/font/google";
+import { Inter, Nunito_Sans } from "next/font/google";
 import "./globals.css";
 import Header from "@/components/layout/Header";
 import Footer from "@/components/layout/Footer";
@@ -7,9 +7,15 @@ import Ticker from "@/components/layout/Ticker";
 import TopProgressBar from "@/components/layout/TopProgressBar";
 import Script from "next/script";
 import GoogleAnalyticsProvider from "@/components/GoogleAnalyticsProvider";
+import MarketTrendsClient from "@/components/articles/MarketTrendsClient";
 
 const inter = Inter({
   variable: "--font-inter",
+  subsets: ["latin"],
+});
+
+const nunito = Nunito_Sans({
+  variable: "--font-nunito",
   subsets: ["latin"],
 });
 
@@ -19,39 +25,50 @@ const SITE_NAME = "Bharat News Bulletin";
 export const metadata: Metadata = {
   metadataBase: new URL(SITE_URL),
   title: {
-    default: `${SITE_NAME} (BNB) — India's Digital Newsroom`,
+    default: "Bharat News Bulletin (BNB) | Latest India & World News",
     template: `%s | ${SITE_NAME}`,
   },
   description:
     "Bharat News Bulletin (BNB) brings you breaking news, in-depth analysis, and stories from India and the world. Business, Technology, Politics, Sports, and more.",
-  authors: [{ name: "Bharat News Bulletin" }],
-  creator: "Bharat News Bulletin",
-  publisher: "Bharat News Bulletin",
+  authors: [{ name: SITE_NAME }],
+  creator: SITE_NAME,
+  publisher: SITE_NAME,
   robots: {
     index: true,
     follow: true,
-    googleBot: { index: true, follow: true },
+    googleBot: {
+      index: true,
+      follow: true,
+    },
   },
   openGraph: {
     type: "website",
     locale: "en_IN",
-    url: SITE_URL,
+    url: `${SITE_URL}/`,
     siteName: SITE_NAME,
-    title: `${SITE_NAME} — India's Digital Newsroom`,
+    title: "Bharat News Bulletin (BNB) | Latest India & World News",
     description:
-      "Breaking news, analysis, and stories from India and the world.",
-    images: [{ url: "/og-default.png", width: 1200, height: 630, alt: `${SITE_NAME} News` }],
+      "Latest news from India and around the world, including business, economy, technology, markets, sports and lifestyle.",
+    images: [
+      {
+        url: "/og-default.png",
+        width: 1200,
+        height: 630,
+        alt: "Bharat News Bulletin",
+      },
+    ],
   },
   twitter: {
     card: "summary_large_image",
-    title: `${SITE_NAME} — India's Digital Newsroom`,
-    description: "Breaking news, analysis, and stories from India and the world.",
+    title: "Bharat News Bulletin (BNB) | Latest India & World News",
+    description:
+      "Latest news from India and around the world, including business, economy, technology, markets, sports and lifestyle.",
     images: ["/og-default.png"],
   },
   alternates: {
-    canonical: SITE_URL,
+    canonical: `${SITE_URL}/`,
     types: {
-      'application/rss+xml': `${SITE_URL}/feed.xml`,
+      "application/rss+xml": `${SITE_URL}/feed.xml`,
     },
   },
 };
@@ -64,23 +81,24 @@ export default function RootLayout({
   const orgSchema = {
     "@context": "https://schema.org",
     "@type": "Organization",
-    "name": SITE_NAME,
-    "url": SITE_URL,
-    "logo": `${SITE_URL}/bnblogo.png`,
-    "sameAs": [
+    name: SITE_NAME,
+    alternateName: "BNB",
+    url: `${SITE_URL}/`,
+    logo: `${SITE_URL}/bnblogo.png`,
+    sameAs: [
       "https://www.linkedin.com/company/bharat-news-bulletin/",
       "https://www.facebook.com/profile.php?id=61594250281793",
-      "https://www.instagram.com/bharatnewsbulletin/"
-    ]
+      "https://www.instagram.com/bharatnewsbulletin/",
+    ],
   };
 
   return (
     <html
       lang="en"
-      className={`${inter.variable} h-full antialiased`}
+      className={`${inter.variable} ${nunito.variable} h-full antialiased`}
       suppressHydrationWarning
     >
-      <body className="min-h-full flex flex-col font-sans text-neutral-900 bg-[#FAFAFA]">
+      <body className="min-h-full flex flex-col font-sans text-neutral-900 bg-white">
         <script
           type="application/ld+json"
           dangerouslySetInnerHTML={{ __html: JSON.stringify(orgSchema) }}
@@ -103,6 +121,7 @@ export default function RootLayout({
         <TopProgressBar />
         <Ticker />
         <Header />
+        <MarketTrendsClient />
         <main className="flex-1">
           {children}
         </main>

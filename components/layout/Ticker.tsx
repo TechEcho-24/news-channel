@@ -14,9 +14,9 @@ export default async function Ticker() {
   if (!latestNews || latestNews.length === 0) return null;
 
   return (
-    <div className="bg-[#111111] text-white text-xs font-semibold tracking-wider flex items-center justify-between font-inter border-b border-gray-800 ">
+    <div className="bg-[#472066] text-white text-xs font-semibold tracking-wider flex items-center justify-between font-inter border-b border-gray-800 ">
       <div className="flex items-center flex-1  overflow-hidden">
-        <span className="bg-[#DC2626] text-white font-black px-4 py-2 text-[10px] uppercase tracking-widest flex-shrink-0 z-10 flex items-center relative ">
+        <span className="bg-[#febf2c] text-[#472066] font-black px-4 py-2 text-[10px] uppercase tracking-widest flex-shrink-0 z-10 flex items-center relative ">
           BREAKING NEWS
         </span>
 
@@ -24,15 +24,15 @@ export default async function Ticker() {
         <div className="flex-1 overflow-hidden relative flex items-center">
           <div className="flex whitespace-nowrap animate-[marquee_50s_linear_infinite] hover:[animation-play-state:paused]">
             {latestNews.map((news) => (
-              <Link key={news.id} href={news.link} className="mx-8 hover:text-[#3B82F6] hover:underline transition-colors cursor-pointer flex items-center gap-2">
-                <span className="w-1.5 h-1.5 bg-red-500 rounded-full animate-ping"></span>
+              <Link key={news.id} href={news.link} className="mx-8 hover:text-[#febf2c] hover:underline transition-colors cursor-pointer flex items-center gap-2">
+                <span className="w-1.5 h-1.5 bg-[#febf2c] rounded-full animate-ping"></span>
                 <span>{news.text}</span>
               </Link>
             ))}
             {/* Duplicate for seamless continuous loop */}
             {latestNews.map((news) => (
-              <Link key={`dup-${news.id}`} href={news.link} aria-hidden="true" tabIndex={-1} rel="nofollow" className="mx-8 hover:text-[#3B82F6] hover:underline transition-colors cursor-pointer flex items-center gap-2">
-                <span className="w-1.5 h-1.5 bg-red-500 rounded-full animate-ping"></span>
+              <Link key={`dup-${news.id}`} href={news.link} aria-hidden="true" tabIndex={-1} rel="nofollow" className="mx-8 hover:text-[#febf2c] hover:underline transition-colors cursor-pointer flex items-center gap-2">
+                <span className="w-1.5 h-1.5 bg-[#febf2c] rounded-full animate-ping"></span>
                 <span>{news.text}</span>
               </Link>
             ))}

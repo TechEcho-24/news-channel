@@ -108,14 +108,16 @@ export default function Header() {
   const topCategories = ["Latest", "India", "World", "Reviews"];
   const dropdownCategories = [
     "Business",
+    "Economy",
     "Technology",
-    "Health",
-    "Startups",
-    "Markets",
-    "Automobile",
-    "Entertainment",
     "Sports",
     "Lifestyle",
+    "Entertainment",
+    "Auto",
+    "Education",
+    "Health",
+    "Startups",
+    "Opinion"
   ];
 
   if (pathname?.startsWith('/admin')) {
@@ -149,34 +151,13 @@ export default function Header() {
             <ul className="flex items-center space-x-6 text-sm font-semibold tracking-wide capitalize text-gray-700 font-inter">
               {topCategories.map((cat) => (
                 <li key={cat}>
-                  <Link href={`/${cat.toLowerCase()}`} className="hover:text-blue-600 transition-colors">
+                  <Link href={`/${cat.toLowerCase()}`} className="hover:text-[#472066] transition-colors">
                     {cat}
                   </Link>
                 </li>
               ))}
-              
-              {/* Dropdown */}
-              <li className="relative group cursor-pointer py-4">
-                <span className="hover:text-blue-600 transition-colors flex items-center">
-                  Categories <ChevronDown size={16} className="ml-1" />
-                </span>
-                
-                <div className="absolute top-full left-0 w-48 bg-white border border-gray-200 shadow-lg opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all duration-200 z-50">
-                  <ul className="py-2">
-                    {dropdownCategories.map((cat) => (
-                      <li key={cat}>
-                        <Link href={`/${cat.toLowerCase()}`} className="block px-4 py-2 hover:bg-gray-50 hover:text-blue-600 transition-colors">
-                          {cat}
-                        </Link>
-                      </li>
-                    ))}
-                  </ul>
-                </div>
-              </li>
-              
-              {/* Contact Link in Center Nav */}
               <li>
-                <Link href="/contact" className="hover:text-blue-600 transition-colors">
+                <Link href="/contact" className="hover:text-[#472066] transition-colors">
                   Contact
                 </Link>
               </li>
@@ -188,7 +169,7 @@ export default function Header() {
             {/* Search Bar Container */}
             <div className="relative hidden sm:block" ref={searchContainerRef}>
               {isSearchOpen ? (
-                <div className="flex items-center border border-blue-600 rounded-full px-3 py-1.5 bg-white w-[250px] transition-all">
+                <div className="flex items-center border border-[#472066] rounded-full px-3 py-1.5 bg-white w-[250px] transition-all">
                   <Search size={16} className="text-gray-400 mr-2" />
                   <input 
                     type="text" 
@@ -216,7 +197,7 @@ export default function Header() {
                 <div className="absolute top-full right-0 mt-3 w-[350px] bg-white border border-gray-200 shadow-xl rounded-lg overflow-hidden z-[100] font-inter">
                   <div className="p-3 bg-gray-50 border-b border-gray-100 text-xs font-semibold text-gray-500 flex justify-between items-center">
                     <span>SEARCH RESULTS</span>
-                    {isSearching && <Loader2 size={14} className="animate-spin text-blue-600" />}
+                    {isSearching && <Loader2 size={14} className="animate-spin text-[#472066]" />}
                   </div>
                   <div className="max-h-[400px] overflow-y-auto">
                     {searchResults.length > 0 ? (
@@ -253,7 +234,7 @@ export default function Header() {
             </div>
             
             <LanguageSelector />
-            <Link href="/profile" className="hidden md:flex w-8 h-8 md:w-10 md:h-10 items-center justify-center text-gray-700 hover:text-blue-600 transition-colors border-2 border-gray-300 rounded-full hover:border-blue-600 bg-gray-50 overflow-hidden font-bold text-xs md:text-sm">
+            <Link href="/profile" className="hidden md:flex w-8 h-8 md:w-10 md:h-10 items-center justify-center text-gray-700 hover:text-[#472066] transition-colors border-2 border-gray-300 rounded-full hover:border-[#472066] bg-gray-50 overflow-hidden font-bold text-xs md:text-sm">
               {userInitials ? (
                 userInitials
               ) : (
@@ -263,16 +244,33 @@ export default function Header() {
             <Link
               href={user ? "#" : "/login"}
               onClick={handleSubscribeClick}
-              className={`hidden lg:flex text-white text-xs md:text-sm font-semibold px-3 py-2 md:px-5 transition-colors shadow-sm rounded-md ${
+              className={`hidden lg:flex text-xs md:text-sm font-semibold px-3 py-2 md:px-5 transition-colors shadow-sm rounded-md ${
                 isSubscribed 
-                  ? "bg-green-600 cursor-default" 
+                  ? "bg-green-600 text-white cursor-default" 
                   : loading 
-                    ? "bg-gray-400 cursor-not-allowed" 
-                    : "bg-[#DC2626] hover:bg-red-700"
+                    ? "bg-gray-400 text-white cursor-not-allowed" 
+                    : "bg-[#febf2c] text-[#472066] hover:bg-[#e6ab20]"
               }`}
             >
               {isSubscribed ? "Subscribed" : loading ? "Wait..." : "Subscribe"}
             </Link>
+          </div>
+        </div>
+        
+        {/* Secondary Category Navigation */}
+        <div className="hidden lg:flex items-center justify-between border-t border-gray-100 py-3 overflow-x-auto no-scrollbar">
+          <div className="flex items-center space-x-6 text-sm font-semibold text-gray-700">
+            <Link href="/latest" className={`hover:text-[#472066] border-b-2 pb-1 transition-colors ${pathname === '/latest' || pathname === '/' ? 'border-[#472066] text-[#472066]' : 'border-transparent hover:border-[#472066]'}`}>All</Link>
+            <Link href="/india" className={`hover:text-[#472066] border-b-2 pb-1 transition-colors ${pathname === '/india' ? 'border-[#472066] text-[#472066]' : 'border-transparent hover:border-[#472066]'}`}>India</Link>
+            <Link href="/world" className={`hover:text-[#472066] border-b-2 pb-1 transition-colors ${pathname === '/world' ? 'border-[#472066] text-[#472066]' : 'border-transparent hover:border-[#472066]'}`}>World</Link>
+            {dropdownCategories.map((cat) => {
+              const isActive = pathname === `/${cat.toLowerCase()}`;
+              return (
+                <Link key={cat} href={`/${cat.toLowerCase()}`} className={`hover:text-[#472066] border-b-2 pb-1 transition-colors whitespace-nowrap ${isActive ? 'border-[#472066] text-[#472066]' : 'border-transparent hover:border-[#472066]'}`}>
+                  {cat}
+                </Link>
+              );
+            })}
           </div>
         </div>
       </div>
@@ -294,7 +292,7 @@ export default function Header() {
           
           <div className="p-4">
             <div className="mb-6 relative">
-              <input type="text" placeholder="Search news..." className="w-full border border-gray-300 p-3 pl-10 rounded-lg focus:outline-none focus:border-blue-600" />
+              <input type="text" placeholder="Search news..." className="w-full border border-gray-300 p-3 pl-10 rounded-lg focus:outline-none focus:border-[#472066]" />
               <Search size={18} className="absolute left-3 top-3.5 text-gray-400" />
             </div>
 
@@ -318,12 +316,12 @@ export default function Header() {
                     handleSubscribeClick(e);
                     if (user && !isSubscribed) setIsMobileMenuOpen(false);
                   }}
-                  className={`flex justify-center items-center text-white text-base font-semibold px-4 py-3 rounded-lg w-full transition-colors shadow-sm ${
+                  className={`flex justify-center items-center text-base font-semibold px-4 py-3 rounded-lg w-full transition-colors shadow-sm ${
                     isSubscribed 
-                      ? "bg-green-600 cursor-default" 
+                      ? "bg-green-600 text-white cursor-default" 
                       : loading 
-                        ? "bg-gray-400 cursor-not-allowed" 
-                        : "bg-[#DC2626] hover:bg-red-700"
+                        ? "bg-gray-400 text-white cursor-not-allowed" 
+                        : "bg-[#febf2c] text-[#472066] hover:bg-[#e6ab20]"
                   }`}
                 >
                   {isSubscribed ? "Subscribed" : loading ? "Wait..." : "Subscribe for Updates"}
@@ -339,7 +337,7 @@ export default function Header() {
               <li className="pt-4 pb-2 text-gray-400 text-sm tracking-wider">ALL CATEGORIES</li>
               {dropdownCategories.map((cat) => (
                 <li key={cat}>
-                  <Link href={`/${cat.toLowerCase()}`} className="block pb-2 border-b border-gray-100 text-gray-600 hover:text-blue-600" onClick={() => setIsMobileMenuOpen(false)}>
+                  <Link href={`/${cat.toLowerCase()}`} className="block pb-2 border-b border-gray-100 text-gray-600 hover:text-[#472066]" onClick={() => setIsMobileMenuOpen(false)}>
                     {cat}
                   </Link>
                 </li>
