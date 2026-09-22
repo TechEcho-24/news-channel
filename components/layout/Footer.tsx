@@ -117,6 +117,7 @@ export default function Footer() {
               <li><Link href="/health" className="hover:text-blue-600 transition-colors">Health</Link></li>
               <li><Link href="/markets" className="hover:text-blue-600 transition-colors">Markets</Link></li>
               <li><Link href="/startups" className="hover:text-blue-600 transition-colors">Startups</Link></li>
+              <li><Link href="/gadgets" className="hover:text-blue-600 transition-colors">Gadgets</Link></li>
             </ul>
           </div>
 

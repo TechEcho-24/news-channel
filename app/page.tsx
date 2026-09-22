@@ -39,7 +39,7 @@ export default async function Home() {
     .slice(4, 9);
 
   // Fetch articles for specific categories for the blocks
-  const categoryNames = ["business", "technology", "economy", "india", "world", "entertainment", "startups", "lifestyle"];
+  const categoryNames = ["business", "technology", "gadgets", "economy", "india", "world", "entertainment", "startups", "lifestyle"];
   const categoryBlocks = await Promise.all(
     categoryNames.map(async (cat) => {
       const limit = cat === "economy" ? 4 : 5;

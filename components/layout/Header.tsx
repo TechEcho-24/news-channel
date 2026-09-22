@@ -117,7 +117,8 @@ export default function Header() {
     "Education",
     "Health",
     "Startups",
-    "Opinion"
+    "Opinion",
+    "Gadgets"
   ];
 
   if (pathname?.startsWith('/admin')) {

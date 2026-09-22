@@ -8,7 +8,7 @@ import { useRouter } from "next/navigation";
 import { ArrowLeft, Save, Image as ImageIcon, Sparkles, Loader2, X, Bot, Wand2 } from "lucide-react";
 import { createClient } from "@/utils/supabase/client";
 
-const PREDEFINED_CATEGORIES = ["markets", "business", "technology", "economy", "india", "world", "sports", "entertainment", "startups", "lifestyle", "health", "politics", "auto"];
+const PREDEFINED_CATEGORIES = ["markets", "business", "technology", "economy", "india", "world", "sports", "entertainment", "startups", "lifestyle", "health", "politics", "auto", "gadgets"];
 
 export default function NewArticlePage() {
   const router = useRouter();
