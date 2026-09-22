@@ -30,13 +30,8 @@ export default async function Home() {
   const heroArticle = latestArticles[0];
   const heroSlug = generateSlug(heroArticle.title);
 
-  // Sidebar Articles (Latest News) - strictly last 12 hours, max 7 items
-  const twelveHoursAgo = new Date();
-  twelveHoursAgo.setHours(twelveHoursAgo.getHours() - 12);
-
-  const sidebarArticles = latestArticles
-    .filter(article => new Date(article.published_at) >= twelveHoursAgo)
-    .slice(4, 9);
+  // Sidebar Articles (Latest News) - max 5 items
+  const sidebarArticles = latestArticles.slice(0, 5); // Take up to 5 latest items
 
   // Fetch articles for specific categories for the blocks
   const categoryNames = ["business", "technology", "gadgets", "economy", "india", "world", "entertainment", "startups", "lifestyle"];

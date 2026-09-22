@@ -261,7 +261,6 @@ export default function Header() {
         {/* Secondary Category Navigation */}
         <div className="hidden lg:flex items-center justify-between border-t border-gray-100 py-3 overflow-x-auto no-scrollbar">
           <div className="flex items-center space-x-6 text-sm font-semibold text-gray-700">
-            <Link href="/latest" className={`hover:text-[#472066] border-b-2 pb-1 transition-colors ${pathname === '/latest' || pathname === '/' ? 'border-[#472066] text-[#472066]' : 'border-transparent hover:border-[#472066]'}`}>All</Link>
             <Link href="/india" className={`hover:text-[#472066] border-b-2 pb-1 transition-colors ${pathname === '/india' ? 'border-[#472066] text-[#472066]' : 'border-transparent hover:border-[#472066]'}`}>India</Link>
             <Link href="/world" className={`hover:text-[#472066] border-b-2 pb-1 transition-colors ${pathname === '/world' ? 'border-[#472066] text-[#472066]' : 'border-transparent hover:border-[#472066]'}`}>World</Link>
             {dropdownCategories.map((cat) => {
