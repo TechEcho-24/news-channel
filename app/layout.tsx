@@ -4,7 +4,7 @@ import "./globals.css";
 import Header from "@/components/layout/Header";
 import Footer from "@/components/layout/Footer";
 import Ticker from "@/components/layout/Ticker";
-import TopProgressBar from "@/components/layout/TopProgressBar";
+import NextTopLoader from "nextjs-toploader";
 import Script from "next/script";
 import GoogleAnalyticsProvider from "@/components/GoogleAnalyticsProvider";
 import MarketTrendsClient from "@/components/articles/MarketTrendsClient";
@@ -98,7 +98,7 @@ export default function RootLayout({
       className={`${inter.variable} ${nunito.variable} h-full antialiased`}
       suppressHydrationWarning
     >
-      <body className="min-h-full flex flex-col font-sans text-neutral-900 bg-white">
+      <body className="min-h-full flex flex-col font-sans text-neutral-900 bg-white dark:bg-[#111111] dark:text-gray-100 transition-colors duration-300">
         <script
           type="application/ld+json"
           dangerouslySetInnerHTML={{ __html: JSON.stringify(orgSchema) }}
@@ -112,13 +112,23 @@ export default function RootLayout({
             function googleTranslateElementInit() {
               new google.translate.TranslateElement({
                 pageLanguage: 'en',
-                includedLanguages: 'hi,en',
+                includedLanguages: 'hi,en,de,ta,te',
                 autoDisplay: false
               }, 'google_translate_element');
             }
           `}
         </Script>
-        <TopProgressBar />
+        <NextTopLoader
+          color="#2563eb"
+          initialPosition={0.08}
+          crawlSpeed={200}
+          height={3}
+          crawl={true}
+          showSpinner={false}
+          easing="ease"
+          speed={200}
+          shadow="0 0 10px #2563eb,0 0 5px #2563eb"
+        />
         <Ticker />
         <Header />
         <MarketTrendsClient />

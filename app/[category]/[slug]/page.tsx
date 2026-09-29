@@ -6,6 +6,7 @@ import { Link as LinkIcon, Share2, Globe, Rss } from "lucide-react";
 import type { Metadata } from "next";
 import { getArticleBySlug, getArticlesByCategory, generateSlug } from "@/lib/api";
 import ArticleActionsClient from "@/components/articles/ArticleActionsClient";
+import ShareButtons from "@/components/articles/ShareButtons";
 import AdSlot from "@/components/ads/AdSlot";
 
 const SITE_NAME = "Bharat News Bulletin";
@@ -134,7 +135,7 @@ export default async function ArticlePage({ params }: { params: Promise<{ catego
   };
 
   return (
-    <article className="bg-white min-h-screen">
+    <article className="bg-white dark:bg-[#111111] dark:text-gray-100 min-h-screen transition-colors duration-300">
       {/* Schema.org JSON-LD for Google SEO */}
       <script
         type="application/ld+json"
@@ -164,19 +165,22 @@ export default async function ArticlePage({ params }: { params: Promise<{ catego
 
       {/* Author Meta (Moved above image) */}
       <div className="container mx-auto px-4 max-w-5xl text-left mb-6">
-        <div className="flex items-center gap-2">
-          <div className="font-bold text-sm text-gray-900">By {article.author_name || "Bharat News Bulletin Staff"}</div>
-          <span className="text-gray-300">•</span>
-          <div className="text-xs text-gray-500">
-            Published on {format(publishedDate, "MMMM d, yyyy")}
+        <div className="flex flex-wrap items-center justify-between md:justify-start gap-4">
+          <div className="flex items-center flex-wrap gap-2">
+            <div className="font-bold text-sm text-gray-900 dark:text-gray-200">By {article.author_name || "Bharat News Bulletin Staff"}</div>
+            <span className="text-gray-300 dark:text-gray-700 hidden sm:inline">•</span>
+            <div className="text-xs text-gray-500 dark:text-gray-400">
+              {format(publishedDate, "MMM d, yyyy")}
+            </div>
           </div>
+          <ShareButtons title={article.title} />
         </div>
       </div>
 
       {/* Hero Image */}
       {article.cover_image && (
         <div className="container mx-auto px-4 max-w-5xl mb-12">
-          <div className="relative aspect-[21/9] w-full bg-gray-100 overflow-hidden">
+          <div className="relative aspect-[16/9] md:aspect-[21/9] w-full bg-gray-100 dark:bg-gray-800 overflow-hidden rounded-lg">
             <Image
               src={article.cover_image}
               alt={article.image_alt || article.title}
@@ -196,26 +200,26 @@ export default async function ArticlePage({ params }: { params: Promise<{ catego
           {/* Main Content */}
           <div className="flex-1 max-w-2xl mx-auto lg:mx-0">
             {article.subheadline && (
-              <p className="text-xl font-semibold italic text-gray-700 mb-8 leading-relaxed border-l-4 border-blue-600 pl-4">
+              <p className="text-xl font-semibold italic text-gray-700 dark:text-gray-300 mb-8 leading-relaxed border-l-4 border-blue-600 pl-4">
                 {article.subheadline}
               </p>
             )}
 
             <div 
-              className="prose prose-lg prose-blue max-w-none mb-12 [&_h3]:font-bold [&_h3]:text-[22px] [&_h3]:mt-10 [&_h3]:mb-4 [&_h3]:text-gray-900 [&_blockquote]:border-l-4 [&_blockquote]:border-blue-600 [&_blockquote]:bg-blue-50/70 [&_blockquote]:py-3.5 [&_blockquote]:px-5 [&_blockquote]:rounded-r-md [&_blockquote]:font-medium [&_blockquote]:text-gray-900 [&_blockquote]:my-8 [&_blockquote_p]:m-0 [&_p]:mb-6 [&_p]:text-gray-800 [&_p]:leading-relaxed"
+              className="prose prose-lg prose-blue dark:prose-invert max-w-none mb-12 [&_h3]:font-bold [&_h3]:text-[22px] [&_h3]:mt-10 [&_h3]:mb-4 [&_h3]:text-gray-900 dark:[&_h3]:text-gray-100 [&_blockquote]:border-l-4 [&_blockquote]:border-blue-600 [&_blockquote]:bg-blue-50/70 dark:[&_blockquote]:bg-blue-900/20 [&_blockquote]:py-3.5 [&_blockquote]:px-5 [&_blockquote]:rounded-r-md [&_blockquote]:font-medium [&_blockquote]:text-gray-900 dark:[&_blockquote]:text-gray-200 [&_blockquote]:my-8 [&_blockquote_p]:m-0 [&_p]:mb-6 [&_p]:text-gray-800 dark:[&_p]:text-gray-300 [&_p]:leading-relaxed"
               dangerouslySetInnerHTML={{ __html: article.content || "" }}
             />
 
             {/* Topic Category Tags Badges for SEO & Navigation */}
             {allCategories.length > 0 && (
-              <div className="my-8 pt-4 border-t border-gray-100">
+              <div className="my-8 pt-4 border-t border-gray-100 dark:border-gray-800">
                 <span className="text-xs font-bold text-gray-400 uppercase tracking-wider block mb-2.5">Related Topics:</span>
                 <div className="flex flex-wrap gap-2">
                   {allCategories.map((cat) => (
                     <Link
                       key={cat}
                       href={`/${cat.toLowerCase().trim()}`}
-                      className="text-xs font-semibold px-3 py-1.5 rounded-full bg-gray-100 hover:bg-blue-50 hover:text-blue-600 text-gray-700 transition-colors"
+                      className="text-xs font-semibold px-3 py-1.5 rounded-full bg-gray-100 dark:bg-gray-800 hover:bg-blue-50 dark:hover:bg-blue-900/30 hover:text-blue-600 text-gray-700 dark:text-gray-300 transition-colors"
                     >
                       #{cat}
                     </Link>
@@ -241,15 +245,15 @@ export default async function ArticlePage({ params }: { params: Promise<{ catego
             {/* <AdSlot slot="sidebar" /> */}
 
             {/* More from this category */}
-            <div className="border border-gray-200 p-6 bg-[#FAFAFA]">
-              <h2 className="font-bold uppercase tracking-wider text-sm border-b-2 border-gray-200 pb-2 mb-6">
+            <div className="border border-gray-200 dark:border-gray-800 p-6 bg-[#FAFAFA] dark:bg-[#161616]">
+              <h2 className="font-bold uppercase tracking-wider text-sm border-b-2 border-gray-200 dark:border-gray-800 pb-2 mb-6">
                 More from {article.category}
               </h2>
               <div className="space-y-4">
                 {relatedArticles.length > 0 ? (
                   relatedArticles.map((related) => (
                     <Link key={related.id} href={`/${related.category.toLowerCase()}/${generateSlug(related.title)}`} className="block group">
-                      <h4 className="text-sm font-bold text-gray-900 group-hover:text-blue-600 transition-colors line-clamp-2 mb-1">
+                      <h4 className="text-sm font-bold text-gray-900 dark:text-gray-100 group-hover:text-blue-600 dark:group-hover:text-blue-400 transition-colors line-clamp-2 mb-1">
                         {related.title}
                       </h4>
                       <div className="text-[11px] text-gray-400 font-inter">

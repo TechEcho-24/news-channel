@@ -126,14 +126,14 @@ export default function Header() {
   }
 
   return (
-    <header className={`border-b border-gray-200 sticky top-0 z-50 ${isMobileMenuOpen ? "bg-white" : "bg-white/70 backdrop-blur-md"}`}>
+    <header className={`border-b border-gray-200 dark:border-gray-800 sticky top-0 z-50 ${isMobileMenuOpen ? "bg-white dark:bg-[#111111]" : "bg-white dark:bg-[#111111]/70 backdrop-blur-md"}`}>
       <div className="w-full px-4 lg:px-8">
         {/* Top Header */}
         <div className="flex justify-between items-center py-4">
           {/* Mobile Menu Icon */}
           <div className="flex-1 flex justify-start lg:hidden">
             <button 
-              className="p-2 -ml-2 text-gray-700 hover:text-black"
+              className="p-2 -ml-2 text-gray-700 dark:text-gray-300 hover:text-black dark:hover:text-white"
               onClick={() => setIsMobileMenuOpen(true)}
             >
               <Menu size={24} />
@@ -149,7 +149,7 @@ export default function Header() {
 
           {/* Desktop Navigation */}
           <nav className="hidden lg:flex flex-1 justify-center mx-8">
-            <ul className="flex items-center space-x-6 text-sm font-semibold tracking-wide capitalize text-gray-700 font-inter">
+            <ul className="flex items-center space-x-6 text-sm font-semibold tracking-wide capitalize text-gray-700 dark:text-gray-300 font-inter">
               {topCategories.map((cat) => (
                 <li key={cat}>
                   <Link href={`/${cat.toLowerCase()}`} className="hover:text-[#472066] transition-colors">
@@ -170,7 +170,7 @@ export default function Header() {
             {/* Search Bar Container */}
             <div className="relative hidden sm:block" ref={searchContainerRef}>
               {isSearchOpen ? (
-                <div className="flex items-center border border-[#472066] rounded-full px-3 py-1.5 bg-white w-[250px] transition-all">
+                <div className="flex items-center border border-[#472066] rounded-full px-3 py-1.5 bg-white dark:bg-[#111111] w-[250px] transition-all">
                   <Search size={16} className="text-gray-400 mr-2" />
                   <input 
                     type="text" 
@@ -187,7 +187,7 @@ export default function Header() {
               ) : (
                 <button 
                   onClick={() => setIsSearchOpen(true)}
-                  className="p-2 text-gray-700 hover:text-black transition-colors"
+                  className="p-2 text-gray-700 dark:text-gray-300 hover:text-black dark:hover:text-white transition-colors"
                 >
                   <Search size={20} />
                 </button>
@@ -195,8 +195,8 @@ export default function Header() {
 
               {/* Search Results Dropdown */}
               {isSearchOpen && searchQuery.trim() !== "" && (
-                <div className="absolute top-full right-0 mt-3 w-[350px] bg-white border border-gray-200 shadow-xl rounded-lg overflow-hidden z-[100] font-inter">
-                  <div className="p-3 bg-gray-50 border-b border-gray-100 text-xs font-semibold text-gray-500 flex justify-between items-center">
+                <div className="absolute top-full right-0 mt-3 w-[350px] bg-white dark:bg-[#111111] border border-gray-200 dark:border-gray-800 shadow-xl rounded-lg overflow-hidden z-[100] font-inter">
+                  <div className="p-3 bg-gray-50 dark:bg-gray-900 border-b border-gray-100 dark:border-gray-800 text-xs font-semibold text-gray-500 flex justify-between items-center">
                     <span>SEARCH RESULTS</span>
                     {isSearching && <Loader2 size={14} className="animate-spin text-[#472066]" />}
                   </div>
@@ -207,7 +207,7 @@ export default function Header() {
                           key={article.id} 
                           href={`/${article.category.toLowerCase()}/${generateSlug(article.title)}`}
                           onClick={() => { setIsSearchOpen(false); setSearchQuery(""); }}
-                          className="flex items-start p-3 border-b border-gray-100 hover:bg-gray-50 transition-colors gap-3"
+                          className="flex items-start p-3 border-b border-gray-100 dark:border-gray-800 hover:bg-gray-50 dark:bg-gray-900 transition-colors gap-3"
                         >
                           <div className="w-16 h-12 relative flex-shrink-0 bg-gray-200 rounded overflow-hidden">
                             {article.cover_image ? (
@@ -217,7 +217,7 @@ export default function Header() {
                             )}
                           </div>
                           <div className="flex-1 min-w-0">
-                            <h4 className="text-sm font-bold text-gray-900 leading-tight mb-1 truncate">{article.title}</h4>
+                            <h4 className="text-sm font-bold text-gray-900 dark:text-white leading-tight mb-1 truncate">{article.title}</h4>
                             <p className="text-xs text-gray-500 line-clamp-1">{article.subheadline}</p>
                           </div>
                         </Link>
@@ -235,7 +235,7 @@ export default function Header() {
             </div>
             
             <LanguageSelector />
-            <Link href="/profile" className="hidden md:flex w-8 h-8 md:w-10 md:h-10 items-center justify-center text-gray-700 hover:text-[#472066] transition-colors border-2 border-gray-300 rounded-full hover:border-[#472066] bg-gray-50 overflow-hidden font-bold text-xs md:text-sm">
+            <Link href="/profile" className="hidden md:flex w-8 h-8 md:w-10 md:h-10 items-center justify-center text-gray-700 dark:text-gray-300 hover:text-[#472066] transition-colors border-2 border-gray-300 rounded-full hover:border-[#472066] bg-gray-50 dark:bg-gray-900 overflow-hidden font-bold text-xs md:text-sm">
               {userInitials ? (
                 userInitials
               ) : (
@@ -259,8 +259,8 @@ export default function Header() {
         </div>
         
         {/* Secondary Category Navigation */}
-        <div className="hidden lg:flex items-center justify-between border-t border-gray-100 py-3 overflow-x-auto no-scrollbar">
-          <div className="flex items-center space-x-6 text-sm font-semibold text-gray-700">
+        <div className="hidden lg:flex items-center justify-between border-t border-gray-100 dark:border-gray-800 py-3 overflow-x-auto no-scrollbar">
+          <div className="flex items-center space-x-6 text-sm font-semibold text-gray-700 dark:text-gray-300">
             <Link href="/india" className={`hover:text-[#472066] border-b-2 pb-1 transition-colors ${pathname === '/india' ? 'border-[#472066] text-[#472066]' : 'border-transparent hover:border-[#472066]'}`}>India</Link>
             <Link href="/world" className={`hover:text-[#472066] border-b-2 pb-1 transition-colors ${pathname === '/world' ? 'border-[#472066] text-[#472066]' : 'border-transparent hover:border-[#472066]'}`}>World</Link>
             {dropdownCategories.map((cat) => {
@@ -277,13 +277,13 @@ export default function Header() {
 
       {/* Mobile Menu Overlay */}
       {isMobileMenuOpen && (
-        <div className="fixed inset-0 bg-white z-[100] lg:hidden overflow-y-auto font-inter">
-          <div className="p-4 border-b border-gray-200 flex justify-between items-center bg-[#FAFAFA]">
+        <div className="fixed inset-0 bg-white dark:bg-[#111111] z-[100] lg:hidden overflow-y-auto font-inter">
+          <div className="p-4 border-b border-gray-200 dark:border-gray-800 flex justify-between items-center bg-[#FAFAFA]">
             <Link href="/" onClick={() => setIsMobileMenuOpen(false)}>
               <Image src="/bnblogo.png" alt="BNB Logo" width={90} height={36} className="object-contain h-9 w-auto" />
             </Link>
             <button 
-              className="p-2 text-gray-700 hover:text-black"
+              className="p-2 text-gray-700 dark:text-gray-300 hover:text-black dark:hover:text-white"
               onClick={() => setIsMobileMenuOpen(false)}
             >
               <X size={28} />
@@ -299,8 +299,8 @@ export default function Header() {
             <ul className="space-y-4 text-lg font-bold capitalize">
               {/* User Profile in Mobile Menu */}
               <li className="mb-6">
-                <Link href={user ? "/profile" : "/login"} className="flex items-center gap-3 p-3 bg-gray-50 rounded-lg border border-gray-100 text-gray-700" onClick={() => setIsMobileMenuOpen(false)}>
-                  <div className="w-10 h-10 flex items-center justify-center bg-white border-2 border-gray-300 rounded-full text-sm font-bold">
+                <Link href={user ? "/profile" : "/login"} className="flex items-center gap-3 p-3 bg-gray-50 dark:bg-gray-900 rounded-lg border border-gray-100 dark:border-gray-800 text-gray-700 dark:text-gray-300" onClick={() => setIsMobileMenuOpen(false)}>
+                  <div className="w-10 h-10 flex items-center justify-center bg-white dark:bg-[#111111] border-2 border-gray-300 rounded-full text-sm font-bold">
                     {userInitials ? userInitials : <User size={20} />}
                   </div>
                   <div className="flex flex-col">
@@ -329,7 +329,7 @@ export default function Header() {
               </li>
               {topCategories.map((cat) => (
                 <li key={cat}>
-                  <Link href={`/${cat.toLowerCase()}`} className="block pb-2 border-b border-gray-100 text-gray-900" onClick={() => setIsMobileMenuOpen(false)}>
+                  <Link href={`/${cat.toLowerCase()}`} className="block pb-2 border-b border-gray-100 dark:border-gray-800 text-gray-900 dark:text-white" onClick={() => setIsMobileMenuOpen(false)}>
                     {cat}
                   </Link>
                 </li>
@@ -337,7 +337,7 @@ export default function Header() {
               <li className="pt-4 pb-2 text-gray-400 text-sm tracking-wider">ALL CATEGORIES</li>
               {dropdownCategories.map((cat) => (
                 <li key={cat}>
-                  <Link href={`/${cat.toLowerCase()}`} className="block pb-2 border-b border-gray-100 text-gray-600 hover:text-[#472066]" onClick={() => setIsMobileMenuOpen(false)}>
+                  <Link href={`/${cat.toLowerCase()}`} className="block pb-2 border-b border-gray-100 dark:border-gray-800 text-gray-600 hover:text-[#472066]" onClick={() => setIsMobileMenuOpen(false)}>
                     {cat}
                   </Link>
                 </li>
