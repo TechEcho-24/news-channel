@@ -98,7 +98,7 @@ export default function RootLayout({
       className={`${inter.variable} ${nunito.variable} h-full antialiased`}
       suppressHydrationWarning
     >
-      <body className="min-h-full flex flex-col font-sans text-neutral-900 bg-white">
+      <body className="min-h-full flex flex-col font-sans text-neutral-900 bg-white dark:bg-[#111111] dark:text-gray-100 transition-colors duration-300">
         <script
           type="application/ld+json"
           dangerouslySetInnerHTML={{ __html: JSON.stringify(orgSchema) }}
@@ -112,7 +112,7 @@ export default function RootLayout({
             function googleTranslateElementInit() {
               new google.translate.TranslateElement({
                 pageLanguage: 'en',
-                includedLanguages: 'hi,en',
+                includedLanguages: 'hi,en,de,ta,te',
                 autoDisplay: false
               }, 'google_translate_element');
             }
