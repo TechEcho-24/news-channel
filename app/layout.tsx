@@ -29,7 +29,7 @@ export const metadata: Metadata = {
     template: `%s | ${SITE_NAME}`,
   },
   description:
-    "Bharat News Bulletin (BNB) brings you breaking news, in-depth analysis, and stories from India and the world. Business, Technology, Politics, Sports, and more.",
+    "Bharat News Bulletin (BNB) delivers the latest India and world news covering business, economy, markets, technology, startups, sports and major national developments.",
   authors: [{ name: SITE_NAME }],
   creator: SITE_NAME,
   publisher: SITE_NAME,
@@ -48,7 +48,7 @@ export const metadata: Metadata = {
     siteName: SITE_NAME,
     title: "Bharat News Bulletin (BNB) | Latest India & World News",
     description:
-      "Latest news from India and around the world, including business, economy, technology, markets, sports and lifestyle.",
+      "Bharat News Bulletin (BNB) delivers the latest India and world news covering business, economy, markets, technology, startups, sports and major national developments.",
     images: [
       {
         url: "/og-default.png",
@@ -62,7 +62,7 @@ export const metadata: Metadata = {
     card: "summary_large_image",
     title: "Bharat News Bulletin (BNB) | Latest India & World News",
     description:
-      "Latest news from India and around the world, including business, economy, technology, markets, sports and lifestyle.",
+      "Bharat News Bulletin (BNB) delivers the latest India and world news covering business, economy, markets, technology, startups, sports and major national developments.",
     images: ["/og-default.png"],
   },
   alternates: {
@@ -80,7 +80,7 @@ export default function RootLayout({
 }>) {
   const orgSchema = {
     "@context": "https://schema.org",
-    "@type": "Organization",
+    "@type": "NewsMediaOrganization",
     name: SITE_NAME,
     alternateName: "BNB",
     url: `${SITE_URL}/`,
@@ -90,6 +90,14 @@ export default function RootLayout({
       "https://www.facebook.com/profile.php?id=61594250281793",
       "https://www.instagram.com/bharatnewsbulletin/",
     ],
+  };
+
+  const websiteSchema = {
+    "@context": "https://schema.org",
+    "@type": "WebSite",
+    name: SITE_NAME,
+    alternateName: "BNB",
+    url: `${SITE_URL}/`,
   };
 
   return (
@@ -102,6 +110,10 @@ export default function RootLayout({
         <script
           type="application/ld+json"
           dangerouslySetInnerHTML={{ __html: JSON.stringify(orgSchema) }}
+        />
+        <script
+          type="application/ld+json"
+          dangerouslySetInnerHTML={{ __html: JSON.stringify(websiteSchema) }}
         />
         <Script 
           src="https://translate.google.com/translate_a/element.js?cb=googleTranslateElementInit"
