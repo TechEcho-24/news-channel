@@ -8,7 +8,7 @@ import MarketTrendsClient from "@/components/articles/MarketTrendsClient";
 import NewsletterClient from "@/components/articles/NewsletterClient";
 import AdSlot from "@/components/ads/AdSlot";
 
-export const revalidate = 0;
+export const revalidate = 300;
 
 export default async function Home() {
   // Fetch real articles from Supabase
