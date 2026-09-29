@@ -61,6 +61,11 @@ export default function NewArticlePage() {
   const [isUploadingImage, setIsUploadingImage] = useState(false);
   const fileInputRef = useRef<HTMLInputElement>(null);
 
+  // JSON Import state
+  const [isImportModalOpen, setIsImportModalOpen] = useState(false);
+  const [importJsonText, setImportJsonText] = useState("");
+  const [importError, setImportError] = useState("");
+
   const editor = useEditor({
     extensions: [StarterKit],
     content: "<p>Write the news article content here...</p>",
@@ -210,6 +215,71 @@ export default function NewArticlePage() {
     }
   };
 
+  const handleImportJson = () => {
+    try {
+      setImportError("");
+      if (!importJsonText.trim()) throw new Error("JSON cannot be empty.");
+      
+      const data = JSON.parse(importJsonText);
+      
+      if (data.articleContent && Array.isArray(data.articleContent)) {
+        // Validate first
+        const validTypes = ["paragraph", "highlight"];
+        for (const block of data.articleContent) {
+          if (!validTypes.includes(block.type)) {
+            throw new Error(`Unsupported article content block: ${block.type}`);
+          }
+          if (block.type === "paragraph" && !block.text) {
+            throw new Error("Paragraph block missing 'text'");
+          }
+          if (block.type === "highlight" && (!block.title || !block.text)) {
+             throw new Error("Highlight block missing 'title' or 'text'");
+          }
+        }
+      }
+
+      if (data.headline) setTitle(data.headline);
+      if (data.subHeadline) setSubheadline(data.subHeadline);
+      
+      if (data.categories && Array.isArray(data.categories)) {
+        const newCats = new Set([...selectedCategories]);
+        data.categories.forEach((c: string) => {
+          const match = PREDEFINED_CATEGORIES.find(pc => pc.toLowerCase() === c.toLowerCase().trim());
+          if (match) {
+            newCats.add(match);
+          } else {
+            newCats.add(c.toLowerCase().trim());
+          }
+        });
+        setSelectedCategories(Array.from(newCats));
+      }
+      
+      if (data.articleContent && Array.isArray(data.articleContent)) {
+        let htmlContent = "";
+        data.articleContent.forEach((block: any) => {
+          if (block.type === "paragraph") {
+            htmlContent += `<p>${block.text}</p>`;
+          } else if (block.type === "highlight") {
+            htmlContent += `<blockquote><strong>${block.title}</strong><br />${block.text}</blockquote>`;
+          }
+        });
+        editor?.commands.setContent(htmlContent);
+      }
+      
+      if (data.seoTitle) setSeoTitle(data.seoTitle);
+      if (data.seoDescription) setSeoDescription(data.seoDescription);
+      if (data.seoKeywords) {
+        setSeoKeywords(Array.isArray(data.seoKeywords) ? data.seoKeywords.join(", ") : data.seoKeywords);
+      }
+      if (data.imageAltText) setImageAlt(data.imageAltText);
+      
+      setIsImportModalOpen(false);
+      setImportJsonText("");
+    } catch (e: any) {
+      setImportError(e.message || "Invalid JSON. Please check the format and try again.");
+    }
+  };
+
   const handlePublish = async (e: React.FormEvent) => {
     e.preventDefault();
     if (selectedCategories.length === 0) {
@@ -306,8 +376,61 @@ export default function NewArticlePage() {
         <Link href="/admin" className="p-1.5 border border-gray-300 rounded hover:bg-gray-50 transition-colors bg-white">
           <ArrowLeft size={18} />
         </Link>
-        <h1 className="text-xl font-bold">Write New Article</h1>
+        <h1 className="text-xl font-bold flex-1">Write New Article</h1>
+        <button 
+          type="button" 
+          onClick={() => setIsImportModalOpen(true)} 
+          className="bg-gray-800 text-white px-4 py-2 rounded text-sm font-semibold hover:bg-gray-700 transition-colors shadow-sm"
+        >
+          Import JSON
+        </button>
       </div>
+
+      {/* JSON Import Modal */}
+      {isImportModalOpen && (
+        <div className="fixed inset-0 z-[100] flex items-center justify-center bg-black/50 p-4">
+          <div className="bg-white rounded-lg shadow-xl w-full max-w-2xl overflow-hidden flex flex-col max-h-[90vh]">
+            <div className="flex justify-between items-center p-4 border-b border-gray-200 bg-gray-50">
+              <h2 className="text-lg font-bold text-gray-800">Import Article from JSON</h2>
+              <button type="button" onClick={() => setIsImportModalOpen(false)} className="text-gray-500 hover:text-gray-700">
+                <X size={20} />
+              </button>
+            </div>
+            <div className="p-4 flex-1 overflow-y-auto">
+              <p className="text-sm text-gray-600 mb-3">
+                Paste structured article JSON to automatically fill the form. You can review and edit everything before publishing.
+              </p>
+              <textarea
+                value={importJsonText}
+                onChange={(e) => setImportJsonText(e.target.value)}
+                placeholder="Paste article JSON here..."
+                className="w-full h-64 border border-gray-300 rounded-md p-3 text-sm font-mono focus:outline-none focus:border-blue-500 resize-none bg-gray-50"
+              />
+              {importError && (
+                <div className="mt-3 p-3 bg-red-50 text-red-700 text-sm border border-red-200 rounded-md">
+                  {importError}
+                </div>
+              )}
+            </div>
+            <div className="p-4 border-t border-gray-200 bg-gray-50 flex justify-end gap-3">
+              <button 
+                type="button" 
+                onClick={() => setIsImportModalOpen(false)} 
+                className="px-4 py-2 text-sm font-medium text-gray-700 bg-white border border-gray-300 rounded-md hover:bg-gray-50"
+              >
+                Cancel
+              </button>
+              <button 
+                type="button" 
+                onClick={handleImportJson} 
+                className="px-4 py-2 text-sm font-medium text-white bg-blue-600 rounded-md hover:bg-blue-700"
+              >
+                Import & Fill Form
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
 
       {/* AI ASSISTANT BLOCK */}
       <div className="bg-gradient-to-r from-blue-50 to-indigo-50 p-5 rounded-lg border border-blue-100 mb-6 shadow-sm">
