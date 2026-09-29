@@ -261,12 +261,19 @@ export default function Header() {
         {/* Secondary Category Navigation */}
         <div className="hidden lg:flex items-center justify-between border-t border-gray-100 dark:border-gray-800 py-3 overflow-x-auto no-scrollbar">
           <div className="flex items-center space-x-6 text-sm font-semibold text-gray-700 dark:text-gray-300">
-            <Link href="/india" className={`hover:text-[#472066] border-b-2 pb-1 transition-colors ${pathname === '/india' ? 'border-[#472066] text-[#472066]' : 'border-transparent hover:border-[#472066]'}`}>India</Link>
-            <Link href="/world" className={`hover:text-[#472066] border-b-2 pb-1 transition-colors ${pathname === '/world' ? 'border-[#472066] text-[#472066]' : 'border-transparent hover:border-[#472066]'}`}>World</Link>
+            <Link href="/india" className={`group relative hover:text-[#472066] border-b-2 pb-1 transition-colors ${pathname === '/india' ? 'border-[#472066] text-[#472066]' : 'border-transparent hover:border-[#472066]'}`}>
+              <span className="absolute -left-3 opacity-0 group-hover:opacity-100 group-hover:translate-x-1 transition-all duration-300 text-[#472066]">›</span>
+              India
+            </Link>
+            <Link href="/world" className={`group relative hover:text-[#472066] border-b-2 pb-1 transition-colors ${pathname === '/world' ? 'border-[#472066] text-[#472066]' : 'border-transparent hover:border-[#472066]'}`}>
+              <span className="absolute -left-3 opacity-0 group-hover:opacity-100 group-hover:translate-x-1 transition-all duration-300 text-[#472066]">›</span>
+              World
+            </Link>
             {dropdownCategories.map((cat) => {
               const isActive = pathname === `/${cat.toLowerCase()}`;
               return (
-                <Link key={cat} href={`/${cat.toLowerCase()}`} className={`hover:text-[#472066] border-b-2 pb-1 transition-colors whitespace-nowrap ${isActive ? 'border-[#472066] text-[#472066]' : 'border-transparent hover:border-[#472066]'}`}>
+                <Link key={cat} href={`/${cat.toLowerCase()}`} className={`group relative hover:text-[#472066] border-b-2 pb-1 transition-colors whitespace-nowrap ${isActive ? 'border-[#472066] text-[#472066]' : 'border-transparent hover:border-[#472066]'}`}>
+                  <span className="absolute -left-3 opacity-0 group-hover:opacity-100 group-hover:translate-x-1 transition-all duration-300 text-[#472066]">›</span>
                   {cat}
                 </Link>
               );
@@ -329,7 +336,8 @@ export default function Header() {
               </li>
               {topCategories.map((cat) => (
                 <li key={cat}>
-                  <Link href={`/${cat.toLowerCase()}`} className="block pb-2 border-b border-gray-100 dark:border-gray-800 text-gray-900 dark:text-white" onClick={() => setIsMobileMenuOpen(false)}>
+                  <Link href={`/${cat.toLowerCase()}`} className="group inline-flex items-center pb-2 border-b border-gray-100 dark:border-gray-800 text-gray-900 dark:text-white w-full hover:text-[#472066] transition-colors" onClick={() => setIsMobileMenuOpen(false)}>
+                    <span className="w-0 group-hover:w-3 overflow-hidden transition-all duration-300 ease-out text-[#472066] opacity-0 group-hover:opacity-100 mr-0 group-hover:mr-2">›</span>
                     {cat}
                   </Link>
                 </li>
@@ -337,7 +345,8 @@ export default function Header() {
               <li className="pt-4 pb-2 text-gray-400 text-sm tracking-wider">ALL CATEGORIES</li>
               {dropdownCategories.map((cat) => (
                 <li key={cat}>
-                  <Link href={`/${cat.toLowerCase()}`} className="block pb-2 border-b border-gray-100 dark:border-gray-800 text-gray-600 hover:text-[#472066]" onClick={() => setIsMobileMenuOpen(false)}>
+                  <Link href={`/${cat.toLowerCase()}`} className="group inline-flex items-center pb-2 border-b border-gray-100 dark:border-gray-800 text-gray-600 hover:text-[#472066] w-full transition-colors" onClick={() => setIsMobileMenuOpen(false)}>
+                    <span className="w-0 group-hover:w-3 overflow-hidden transition-all duration-300 ease-out text-[#472066] opacity-0 group-hover:opacity-100 mr-0 group-hover:mr-2">›</span>
                     {cat}
                   </Link>
                 </li>

@@ -3,7 +3,7 @@
 import { useState } from "react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import { LayoutDashboard, FileText, Settings, LogOut, Users, Megaphone, Inbox, BarChart2, Menu, X } from "lucide-react";
+import { LayoutDashboard, FileText, LogOut, Users, Megaphone, Inbox, BarChart2, Menu, X } from "lucide-react";
 import Image from "next/image";
 
 interface AdminMobileNavProps {
@@ -56,9 +56,7 @@ export default function AdminMobileNav({ isSuperAdmin }: AdminMobileNavProps) {
             <Link onClick={closeMenu} href="/admin/inbox" className={`flex items-center px-4 py-3 rounded-lg transition-colors font-medium ${pathname?.includes('/inbox') ? 'bg-blue-50 text-blue-600' : 'text-gray-700 hover:bg-gray-50'}`}>
               <Inbox size={18} className="mr-3" /> Inbox
             </Link>
-            <Link onClick={closeMenu} href="/admin/settings" className={`flex items-center px-4 py-3 rounded-lg transition-colors font-medium ${pathname?.includes('/settings') ? 'bg-blue-50 text-blue-600' : 'text-gray-700 hover:bg-gray-50'}`}>
-              <Settings size={18} className="mr-3" /> Settings
-            </Link>
+
           </nav>
           
           <div className="p-4 border-t border-gray-200 mt-auto bg-gray-50">

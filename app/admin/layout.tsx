@@ -1,5 +1,5 @@
 import Link from "next/link";
-import { LayoutDashboard, FileText, Settings, LogOut, Users, Megaphone, Inbox, BarChart2 } from "lucide-react";
+import { LayoutDashboard, FileText, LogOut, Users, Megaphone, Inbox, BarChart2 } from "lucide-react";
 import Image from "next/image";
 import { createClient } from "@/utils/supabase/server";
 import AdminMobileNav from "./AdminMobileNav";
@@ -52,9 +52,7 @@ export default async function AdminLayout({ children }: { children: React.ReactN
           <Link href="/admin/inbox" className="flex items-center px-4 py-3 text-gray-700 hover:bg-blue-50 hover:text-blue-600 rounded-lg transition-colors font-medium">
             <Inbox size={18} className="mr-3" /> Inbox
           </Link>
-          <Link href="/admin/settings" className="flex items-center px-4 py-3 text-gray-700 hover:bg-blue-50 hover:text-blue-600 rounded-lg transition-colors font-medium">
-            <Settings size={18} className="mr-3" /> Settings
-          </Link>
+
         </nav>
         <div className="p-4 border-t border-gray-200 mt-auto">
           <Link href="/" className="flex items-center px-4 py-3 text-gray-500 hover:bg-red-50 hover:text-red-600 rounded-lg transition-colors font-medium">
