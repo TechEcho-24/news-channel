@@ -25,35 +25,31 @@ export async function generateMetadata(
   const articleUrl = `${SITE_URL}/${category}/${slug}`;
 
   return {
-    title: article.seo_title || article.title,
+    title: { absolute: article.seo_title || article.title },
     description: article.seo_description || article.subheadline || "",
-    keywords: Array.from(new Set([
-      article.category,
-      ...(article.categories || []),
-      ...(article.seo_keywords ? article.seo_keywords.split(",").map(k => k.trim()) : []),
-      "news", "india", SITE_NAME
-    ])).filter(Boolean),
     authors: [{ name: article.author_name || SITE_NAME }],
     alternates: { canonical: articleUrl },
     robots: {
+      index: true,
+      follow: true,
       "max-image-preview": "large",
     },
     openGraph: {
       type: "article",
       url: articleUrl,
-      title: article.seo_title || article.title,
+      title: article.title,
       description: article.seo_description || article.subheadline || "",
       publishedTime: article.published_at,
       modifiedTime: article.updated_at,
       authors: [article.author_name || SITE_NAME],
       siteName: SITE_NAME,
       images: article.cover_image
-        ? [{ url: article.cover_image, width: 1200, height: 630, alt: article.title }]
+        ? [{ url: article.cover_image, width: 1200, height: 630, alt: article.image_alt || article.title }]
         : [],
     },
     twitter: {
       card: "summary_large_image",
-      title: article.seo_title || article.title,
+      title: article.title,
       description: article.seo_description || article.subheadline || "",
       images: article.cover_image ? [article.cover_image] : [],
     },
@@ -81,15 +77,13 @@ export default async function ArticlePage({ params }: { params: Promise<{ catego
     ...(article.categories || [])
   ])).filter(Boolean);
 
+  const articleUrl = `${SITE_URL}/${resolvedParams.category}/${resolvedParams.slug}`;
+
   const jsonLd = {
     "@context": "https://schema.org",
     "@type": "NewsArticle",
-    "mainEntityOfPage": {
-      "@type": "WebPage",
-      "@id": `${SITE_URL}/${resolvedParams.category}/${resolvedParams.slug}`
-    },
     "headline": article.title,
-    "description": article.subheadline || article.seo_description || "",
+    "description": article.seo_description || article.subheadline || "",
     "image": article.cover_image ? [article.cover_image] : [],
     "datePublished": new Date(article.published_at || Date.now()).toISOString(),
     "dateModified": new Date(article.updated_at || article.published_at || Date.now()).toISOString(),
@@ -99,14 +93,15 @@ export default async function ArticlePage({ params }: { params: Promise<{ catego
     },
     "publisher": {
       "@type": "Organization",
-      "name": SITE_NAME,
-      "logo": {
-        "@type": "ImageObject",
-        "url": `${SITE_URL}/bnblogo.png`
-      }
+      "name": "Bharat News Bulletin",
+      "url": "https://bharatnewsbulletin.com"
     },
-    "articleSection": article.category,
-    "keywords": article.seo_keywords ? article.seo_keywords : allCategories.join(", ")
+    "mainEntityOfPage": {
+      "@type": "WebPage",
+      "@id": articleUrl
+    },
+    "articleSection": allCategories,
+    "keywords": article.seo_keywords ? article.seo_keywords : undefined
   };
 
   const breadcrumbLd = {
@@ -158,9 +153,14 @@ export default async function ArticlePage({ params }: { params: Promise<{ catego
             {article.category}
           </Link>
         </div>
-        <h1 className="text-[32px] font-bold leading-tight mb-6">
+        <h1 className="text-[32px] font-bold leading-tight mb-4">
           {article.title}
         </h1>
+        {article.subheadline && (
+          <p className="text-xl font-semibold italic text-gray-700 dark:text-gray-300 mb-6 leading-relaxed">
+            {article.subheadline}
+          </p>
+        )}
       </div>
 
       {/* Author Meta (Moved above image) */}
@@ -170,7 +170,10 @@ export default async function ArticlePage({ params }: { params: Promise<{ catego
             <div className="font-bold text-sm text-gray-900 dark:text-gray-200">By {article.author_name || "Bharat News Bulletin Staff"}</div>
             <span className="text-gray-300 dark:text-gray-700 hidden sm:inline">•</span>
             <div className="text-xs text-gray-500 dark:text-gray-400">
-              {format(publishedDate, "MMM d, yyyy")}
+              Published: {format(publishedDate, "MMM d, yyyy")}
+              {article.updated_at && article.updated_at !== article.published_at && (
+                <span className="ml-2 border-l border-gray-300 dark:border-gray-700 pl-2">Updated: {format(new Date(article.updated_at), "MMM d, yyyy")}</span>
+              )}
             </div>
           </div>
           <ShareButtons title={article.title} />
@@ -199,11 +202,7 @@ export default async function ArticlePage({ params }: { params: Promise<{ catego
 
           {/* Main Content */}
           <div className="flex-1 max-w-2xl mx-auto lg:mx-0">
-            {article.subheadline && (
-              <p className="text-xl font-semibold italic text-gray-700 dark:text-gray-300 mb-8 leading-relaxed border-l-4 border-blue-600 pl-4">
-                {article.subheadline}
-              </p>
-            )}
+
 
             <div 
               className="prose prose-lg prose-blue dark:prose-invert max-w-none mb-12 [&_h3]:font-bold [&_h3]:text-[22px] [&_h3]:mt-10 [&_h3]:mb-4 [&_h3]:text-gray-900 dark:[&_h3]:text-gray-100 [&_blockquote]:border-l-4 [&_blockquote]:border-blue-600 [&_blockquote]:bg-blue-50/70 dark:[&_blockquote]:bg-blue-900/20 [&_blockquote]:py-3.5 [&_blockquote]:px-5 [&_blockquote]:rounded-r-md [&_blockquote]:font-medium [&_blockquote]:text-gray-900 dark:[&_blockquote]:text-gray-200 [&_blockquote]:my-8 [&_blockquote_p]:m-0 [&_p]:mb-6 [&_p]:text-gray-800 dark:[&_p]:text-gray-300 [&_p]:leading-relaxed"
