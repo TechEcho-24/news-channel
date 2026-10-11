@@ -61,22 +61,55 @@ export async function getArticlesByCategory(category: string, limit = 10): Promi
   return data as Article[];
 }
 
-// Get single article by exact title match (using slug as an approximation for now)
-// In a real app, it's better to store the slug directly in the DB. We'll find by title ilike.
+// Get single article by slug
 export async function getArticleBySlug(slug: string): Promise<Article | null> {
-  // Convert slug back to a rough title format to search, or fetch all and match
-  // Since we don't have a 'slug' column in the articles table right now, 
-  // we will fetch recent articles and find the one that matches the slug.
-  // A better approach is to add a 'slug' column, but this works for our current schema.
-  
-  const { data, error } = await supabase
+  if (!slug) return null;
+
+  // 1. Fast path: Query using distinct keywords from slug to find candidates efficiently
+  const words = slug.split("-").filter((w) => w.length >= 3 && !/^\d+$/.test(w));
+  words.sort((a, b) => b.length - a.length);
+
+  if (words.length > 0) {
+    // Search with top 2 most distinctive words
+    const topWords = words.slice(0, 2);
+    let query = supabase.from("articles").select("*");
+    for (const w of topWords) {
+      query = query.ilike("title", `%${w}%`);
+    }
+    const { data: candidates } = await query.limit(20);
+    const match = candidates?.find((a) => generateSlug(a.title) === slug);
+    if (match) return match as Article;
+
+    // Fallback search with the single longest word
+    if (words.length > 1) {
+      const { data: candidates2 } = await supabase
+        .from("articles")
+        .select("*")
+        .ilike("title", `%${words[0]}%`)
+        .limit(40);
+      const match2 = candidates2?.find((a) => generateSlug(a.title) === slug);
+      if (match2) return match2 as Article;
+    }
+  }
+
+  // 2. Comprehensive fallback: Search lightweight id & title list across all articles
+  // This guarantees articles of any age (older than 11-12 days) or with numbers/special chars are ALWAYS found!
+  const { data: indexList } = await supabase
     .from("articles")
-    .select("*")
+    .select("id, title")
     .order("published_at", { ascending: false })
-    .limit(100);
+    .limit(5000);
 
-  if (error || !data) return null;
+  const hit = indexList?.find((a) => generateSlug(a.title) === slug);
+  if (hit) {
+    const { data: fullArticle } = await supabase
+      .from("articles")
+      .select("*")
+      .eq("id", hit.id)
+      .single();
+    return (fullArticle as Article) || null;
+  }
 
-  const article = data.find(a => generateSlug(a.title) === slug);
-  return (article as Article) || null;
+  return null;
 }
+
