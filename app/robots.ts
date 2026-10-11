@@ -7,11 +7,33 @@ export default function robots(): MetadataRoute.Robots {
       {
         userAgent: "*",
         allow: "/",
-        disallow: ["/admin/", "/api/", "/profile/", "/login", "/register"],
+        disallow: [
+          "/admin/",
+          "/api/",
+          "/profile/",
+          "/login",
+          "/register",
+          "/wp-admin/",
+          "/wp-content/",
+          "/wp-includes/",
+          "/wp-json/",
+          "/*.php$",
+        ],
       },
       {
         userAgent: "Googlebot-News",
         allow: "/",
+        disallow: [
+          "/admin/",
+          "/api/",
+          "/profile/",
+          "/login",
+          "/register",
+          "/wp-admin/",
+          "/wp-content/",
+          "/wp-includes/",
+          "/*.php$",
+        ],
       }
     ],
     sitemap: [
