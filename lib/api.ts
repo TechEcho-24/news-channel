@@ -19,14 +19,19 @@ export type Article = {
   updated_at: string;
 };
 
-// Generate a slug from a title
+// Generate a clean slug from a title
 export function generateSlug(title: string) {
+  if (!title) return "";
   return title
     .toLowerCase()
-    .replace(/[^\w\s-]/g, '')
-    .replace(/[\s_-]+/g, '-')
-    .replace(/^-+|-+$/g, '');
+    .replace(/[’‘']/g, "")
+    .replace(/[“”"]/g, "")
+    .replace(/[–—]/g, "-")
+    .replace(/[^\w\s-]/g, "")
+    .replace(/[\s_-]+/g, "-")
+    .replace(/^-+|-+$/g, "");
 }
+
 
 // Get the latest articles for the homepage
 export async function getLatestArticles(limit = 10): Promise<Article[]> {

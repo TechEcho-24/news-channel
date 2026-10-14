@@ -1,18 +1,12 @@
 export default function supabaseLoader({
   src,
-  width,
-  quality,
 }: {
   src: string;
-  width: number;
+  width?: number;
   quality?: number;
 }) {
-  // Local images (jaise logo) ko direct return karein bina kisi CDN ke
-  if (src.startsWith("/")) {
-    return src;
-  }
-
-  // Supabase (ya kisi bhi external) images ko wsrv.nl ke through compress aur resize karein
-  const encodedUrl = encodeURIComponent(src);
-  return `https://wsrv.nl/?url=${encodedUrl}&w=${width}&q=${quality || 75}&output=webp`;
+  // Return the original image URL directly so Google Discover and crawlers
+  // can index high-resolution publisher images without external proxy/canonical issues.
+  return src;
 }
+

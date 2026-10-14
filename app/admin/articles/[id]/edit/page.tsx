@@ -7,6 +7,8 @@ import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { ArrowLeft, Save, Image as ImageIcon, Sparkles, Loader2, X, Bot, Wand2, Trash2 } from "lucide-react";
 import { createClient } from "@/utils/supabase/client";
+import { generateSlug } from "@/lib/api";
+
 
 const PREDEFINED_CATEGORIES = ["markets", "business", "technology", "economy", "india", "world", "sports", "entertainment", "startups", "lifestyle", "health", "politics", "auto", "gadgets"];
 
@@ -286,11 +288,8 @@ export default function EditArticlePage({ params }: { params: Promise<{ id: stri
       
       // Trigger cache revalidation and IndexNow for updated article
       try {
-        const articleUrl = `/${primaryCategory.toLowerCase()}/${title
-          .toLowerCase()
-          .replace(/[^\w\s-]/g, '')
-          .replace(/[\s_-]+/g, '-')
-          .replace(/^-+|-+$/g, '')}`;
+        const slug = generateSlug(title);
+        const articleUrl = `/${primaryCategory.toLowerCase()}/${slug}`;
           
         await fetch("/api/admin/publish-hook", {
           method: "POST",

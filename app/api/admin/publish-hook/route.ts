@@ -6,11 +6,17 @@ export async function POST(request: Request) {
   try {
     const { url, category } = await request.json();
 
-    // 1. Invalidate caches for homepage and category
+    // 1. Invalidate caches for homepage, category, sitemaps, and the article itself
     revalidatePath("/", "layout");
     revalidatePath("/(home)", "page");
+    revalidatePath("/sitemap.xml");
+    revalidatePath("/news-sitemap.xml");
+    revalidatePath("/feed.xml");
     if (category) {
       revalidatePath(`/${category}`, "page");
+    }
+    if (url) {
+      revalidatePath(url, "page");
     }
 
     // 2. Ping IndexNow if a URL is provided

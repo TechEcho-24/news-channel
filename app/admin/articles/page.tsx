@@ -5,8 +5,10 @@ import Link from "next/link";
 import { formatDistanceToNow } from "date-fns";
 import { Eye, Pencil, FileText, Search, Loader2, Link2, Check } from "lucide-react";
 import { createClient } from "@/utils/supabase/client";
+import { generateSlug } from "@/lib/api";
 
 const supabase = createClient();
+
 
 export default function AllArticlesPage() {
   const [articles, setArticles] = useState<any[]>([]);
@@ -147,11 +149,7 @@ export default function AllArticlesPage() {
                   <button
                     title="Copy article URL"
                     onClick={() => {
-                      const slug = article.title
-                        .toLowerCase()
-                        .replace(/[^\w\s-]/g, '')
-                        .replace(/[\s_-]+/g, '-')
-                        .replace(/^-+|-+$/g, '');
+                      const slug = generateSlug(article.title);
                       const url = `${window.location.origin}/${article.category.toLowerCase()}/${slug}`;
                       navigator.clipboard.writeText(url);
                       setCopiedId(article.id);

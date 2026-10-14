@@ -21,6 +21,22 @@ export default function robots(): MetadataRoute.Robots {
         ],
       },
       {
+        userAgent: "Googlebot",
+        allow: "/",
+        disallow: [
+          "/admin/",
+          "/api/",
+          "/profile/",
+          "/login",
+          "/register",
+          "/wp-admin/",
+          "/wp-content/",
+          "/wp-includes/",
+          "/wp-json/",
+          "/*.php$",
+        ],
+      },
+      {
         userAgent: "Googlebot-News",
         allow: "/",
         disallow: [
@@ -32,6 +48,7 @@ export default function robots(): MetadataRoute.Robots {
           "/wp-admin/",
           "/wp-content/",
           "/wp-includes/",
+          "/wp-json/",
           "/*.php$",
         ],
       }

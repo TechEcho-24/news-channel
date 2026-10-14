@@ -22,23 +22,26 @@ export default function ArticleActionsClient({ articleId, initialImpressions }: 
 
     const recordImpression = async () => {
       // Immediate UI update on view
-      setImpressions(prev => prev + 1);
+      setImpressions((prev) => prev + 1);
 
-      // Record view in database instantly without 3-hour timer delay
-      const { error: rpcError } = await supabase.rpc('increment_impressions', { row_id: articleId });
-      if (rpcError) {
-        const { data: art } = await supabase
-          .from('articles')
-          .select('impressions')
-          .eq('id', articleId)
-          .single();
+      try {
+        // 1. First-party internal API route (not blocked by ad-blockers or privacy shields)
+        const res = await fetch("/api/articles/view", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ articleId }),
+          keepalive: true,
+        });
 
-        if (art) {
-          const current = (art as any).impressions || 0;
-          await supabase
-            .from('articles')
-            .update({ impressions: current + 1 })
-            .eq('id', articleId);
+        if (!res.ok) {
+          throw new Error("Internal view API failed");
+        }
+      } catch {
+        // 2. Direct Supabase RPC fallback
+        try {
+          await supabase.rpc("increment_impressions", { row_id: articleId });
+        } catch (rpcErr) {
+          console.error("Failed to record view:", rpcErr);
         }
       }
     };
